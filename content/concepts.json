@@ -575,7 +575,8 @@
       "discipline": "KE",
       "tags": [
         "knowledge"
-      ]
+      ],
+      "planned_article": "KE-RDF-001"
     },
     {
       "id": "software-testing",
@@ -639,7 +640,8 @@
       "discipline": "PE",
       "tags": [
         "role"
-      ]
+      ],
+      "planned_article": "PE-FDE-001"
     }
   ],
   "relations": [
