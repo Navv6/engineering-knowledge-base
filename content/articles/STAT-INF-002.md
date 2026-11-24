@@ -281,7 +281,7 @@ ASA 성명(2016)의 원칙을 중심으로 정리한다.
 ## 13. 선행·후속 학습
 
 - 선행: 모집단, 표본, 추정, 신뢰구간(STAT-INF-001), 확률, 조건부확률, 확률분포(STAT-PROB-001)
-- 후속: 통계적 공정관리(STAT-SPC-001, 준비 중), RAG 검색 및 평가(AI-RAG-001)의 평가 불확실성, Context Engineering과 Harness Engineering(AI-NATIVE-001)의 평가 세트 크기
+- 후속: 통계적 공정관리(STAT-SPC-001), RAG 검색 및 평가(AI-RAG-001)의 평가 불확실성, Context Engineering과 Harness Engineering(AI-NATIVE-001)의 평가 세트 크기
 - 더 나아가기: 검정력 분석과 표본 크기 계산, 베이즈 추론, 다중 검정과 FDR
 
 ## 14. 참고 자료
