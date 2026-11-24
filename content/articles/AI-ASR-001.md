@@ -275,7 +275,7 @@ STT 평가 결과의 RTF로 녹음 1시간(3,600초)을 처리하는 시간:
 
 - 선행: 편집 거리와 동적계획법(CS-ALG-003), 모집단, 표본, 추정, 신뢰구간(STAT-INF-001)
 - 함께 보기: 가설검정과 p-value(STAT-INF-002), 임베딩(AI-EMB-001), Context Engineering과 Harness Engineering(AI-NATIVE-001)
-- 더 나아가기: 화자 분리, 음성 활동 감지(VAD), 언어 모델 결합(shallow fusion), 트랜스포머(AI-LLM-001, 준비 중)
+- 더 나아가기: 화자 분리, 음성 활동 감지(VAD), 언어 모델 결합(shallow fusion), 트랜스포머(AI-LLM-001)
 
 ## 14. 참고 자료
 
