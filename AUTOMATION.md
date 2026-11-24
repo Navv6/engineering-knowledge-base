@@ -3,16 +3,14 @@
 이 문서는 예약 실행(Claude Code 예약 작업)이 매번 따르는 절차다. 사람이 수동으로 실행할 때도 같은 순서를 따른다.
 원칙: **검증을 통과한 설명집만 공개한다. 정확성과 설명 깊이가 개수보다 우선이다. 코딩 과제나 프로젝트 제작을 학습 방식으로 넣지 않는다.**
 
-- 아티팩트(학습 페이지 + 원본 소스): https://claude.ai/artifact/9HaTcQsou8fb2sZbwC5F8q
-- 원본 소스는 아티팩트의 부속 파일 `source/…`에 있다. 목록은 `source/MANIFEST.json`.
+- 원본 소스(단일 기준): GitHub `Navv6/engineering-knowledge-base`의 `main` 브랜치 (비공개)
+- 학습 페이지(아티팩트): https://claude.ai/artifact/9HaTcQsou8fb2sZbwC5F8q — 빌드 결과(`dist/artifact.html`)만 게시한다. 소스는 올리지 않는다.
 
-## 1. 소스 복원
+## 1. 소스 준비
 
-1. Artifact 도구 `action: "read"`, `url`: 위 주소, `path: "source/MANIFEST.json"`으로 목록을 읽는다.
-2. 목록의 모든 파일을 `paths`로 한 번에 읽는다. 게시 경로는 `source/<path>`이며, 경로 조각 앞의 `.`은 `_dot_`로 바뀌어 있다(예: `source/_dot_github/workflows/pages.yml` → `.github/workflows/pages.yml`).
-   기본 저장 폴더(스크래치패드의 아티팩트 폴더)에 저장한 뒤 Bash로 작업 디렉터리에 복사한다. 기본 폴더 밖으로 바로 저장하면 승인 요청이 떠서 무인 실행이 멈출 수 있다.
-3. 작업 디렉터리(예: `/home/user/ekb`)에서 `source/` 접두사를 떼고 `_dot_`를 `.`으로 되돌려 같은 상대 경로에 둔다.
-4. `npm ci` → `npm run build` → `npm run test:unit` 으로 기준 상태가 정상인지 확인한다. 여기서 실패하면 콘텐츠를 추가하지 말고 §6의 실패 처리로 간다.
+1. `add_repo`(owner `Navv6`, repo `engineering-knowledge-base`, access `push`)로 저장소를 세션에 붙이고, 그 결과가 안내하는 대로 `/home/user/engineering-knowledge-base`에 한 번만 clone한다.
+2. `cd /home/user/engineering-knowledge-base && npm ci && npm run build && npm run test:unit` 으로 기준 상태를 확인한다. 실패하면 콘텐츠를 추가하지 말고 §6으로.
+3. `content/runs/`에 오늘(KST) 날짜 기록이 있고 status가 success면 새 문서를 만들지 않는다(중복 방지). 이 경우 skipped 기록만 커밋·푸시한다.
 
 ## 2. 후보 선정
 
@@ -66,17 +64,16 @@ npm run build && npm run test:unit && npm run test:e2e
 
 E2E는 2~4분 걸린다. 모두 통과해야 게시한다.
 
-1. 실행 기록 `content/runs/<YYYY-MM-DD>T<HHMM>.json`을 쓴다(§7 형식). 기록을 반영하려고 `npm run build`를 한 번 더 실행한다.
-2. `node scripts/pack-source.mjs > /tmp/files.json` 으로 부속 파일 목록을 만든다.
-3. Artifact 도구로 위 URL을 `action: "read"`한 뒤(다른 대화에서 만든 아티팩트는 읽은 다음에만 게시 가능),
-   `action: "publish"`, `url`: 위 주소, `file_path`: `dist/artifact.html`, `files`: `/tmp/files.json`의 내용으로 게시한다.
-   `capabilities`와 `icon`은 **보내지 않는다**(기존 db·user·downloads 선언과 아이콘 유지).
+1. 실행 기록 `content/runs/<YYYY-MM-DD>T<HHMM>.json`을 쓴다(§7 형식). `npm run build`를 한 번 더 실행한다.
+2. 커밋·푸시: `git add -A && git commit -m "daily: <ID들>"` 후 `git -c push.negotiate=true push origin HEAD:main`. 푸시가 거부되면(다른 변경이 먼저 들어옴) `git pull --rebase origin main` 후 다시 빌드·테스트하고 푸시한다. force push 금지.
+3. Artifact 도구로 위 URL을 `action: "read"`한 뒤 `action: "publish"`, `url`: 위 주소, `file_path`: `dist/artifact.html`로 게시한다. `capabilities`, `icon`, `files`는 보내지 않는다.
 4. 게시 결과에 오류가 없는지 확인한다.
 
 ## 6. 실패 처리
 
-- 기준 상태(§1)나 빌드·테스트(§5)가 실패하면 **페이지를 게시하지 않는다.** 다만 실패 원인을 담은 실행 기록(`status: "failed"`)과 변경되지 않은 소스는 다음 실행이 볼 수 있도록 남기는 것이 좋다. 이 경우 이전에 공개된 `dist/artifact.html`을 다시 빌드할 수 있으면 실행 기록만 추가해 게시하고, 그것도 불가능하면 게시하지 않고 세션 결과로만 보고한다.
-- 동시 실행 충돌: 게시가 `conflict`로 거부되면 최신 버전을 다시 읽어 소스를 복원한 뒤 이번 실행의 새 문서만 다시 합쳐 게시한다. 그대로 덮어쓰지 않는다(`force` 금지).
+- 기준 상태(§1)나 빌드·테스트(§5)가 실패하면 **페이지를 게시하지 않는다.** 새 문서를 빼고 원래 소스로 빌드·테스트가 통과하면 `status: "failed"` 실행 기록만 커밋·푸시하고 페이지를 재게시한다. 그것도 안 되면 아무것도 푸시·게시하지 않고 세션 결과로만 보고한다.
+- 저장소를 붙이거나 clone할 수 없으면 작업을 중단하고 원인을 보고한다(아티팩트에는 소스가 없으므로 다른 경로로 진행하지 않는다).
+- 게시 충돌: 아티팩트 게시가 `conflict`로 거부되면 다시 `read`한 뒤 같은 `dist/artifact.html`로 한 번 더 게시한다. 소스 기준은 저장소이므로 페이지는 항상 `main` 빌드 결과다. `force` 금지.
 - 같은 날 재실행: 이미 오늘 날짜의 실행 기록이 있고 그 실행이 `success`이면 새 문서를 만들지 않고 `skipped` 기록만 남긴다(중복 생성 방지).
 - 사용자 학습 기록은 페이지의 개인 저장소에 있으므로 이 절차가 건드리지 않는다.
 

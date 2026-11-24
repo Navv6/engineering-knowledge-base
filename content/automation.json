@@ -1,8 +1,12 @@
 {
   "status": "connected",
-  "schedule_text": "매일 06:44 KST",
-  "cron": "CRON_TZ=Asia/Seoul 44 6 * * *",
-  "per_run": { "foundations": 1, "engineering": 1 },
+  "schedule_text": "매일 05:44 KST",
+  "cron": "CRON_TZ=Asia/Seoul 44 5 * * *",
+  "per_run": {
+    "foundations": 1,
+    "engineering": 1
+  },
+  "source_of_truth": "https://github.com/Navv6/engineering-knowledge-base (main)",
   "artifact_url": "https://claude.ai/artifact/9HaTcQsou8fb2sZbwC5F8q",
   "trigger_name": "EKB daily reading",
   "connected_at": "2026-11-24"
