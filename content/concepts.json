@@ -841,6 +841,130 @@
         "devops"
       ],
       "planned_article": "OPS-DEPLOY-001"
+    },
+    {
+      "id": "information-entropy",
+      "title_ko": "정보 이론과 엔트로피",
+      "title_en": "Information Theory and Entropy",
+      "aliases": [
+        "엔트로피",
+        "entropy",
+        "교차 엔트로피",
+        "cross entropy",
+        "KL 발산",
+        "정보량"
+      ],
+      "discipline": "MATH",
+      "tags": [
+        "foundation"
+      ],
+      "planned_article": "MATH-INFO-001"
+    },
+    {
+      "id": "time-series",
+      "title_ko": "시계열 분석 기초",
+      "title_en": "Time Series Basics",
+      "aliases": [
+        "시계열",
+        "time series",
+        "이동평균",
+        "계절성",
+        "추세 분석"
+      ],
+      "discipline": "STAT",
+      "tags": [
+        "statistics"
+      ],
+      "planned_article": "STAT-TS-001"
+    },
+    {
+      "id": "caching",
+      "title_ko": "캐시와 캐싱 전략",
+      "title_en": "Caching Strategies",
+      "aliases": [
+        "캐시",
+        "cache",
+        "캐싱",
+        "Redis",
+        "TTL 캐시"
+      ],
+      "discipline": "CS",
+      "tags": [
+        "performance"
+      ],
+      "planned_article": "CS-CACHE-001"
+    },
+    {
+      "id": "web-security",
+      "title_ko": "웹 보안 기초",
+      "title_en": "Web Security Basics",
+      "aliases": [
+        "웹 보안",
+        "OWASP",
+        "XSS",
+        "SQL 인젝션",
+        "CSRF",
+        "SQL injection"
+      ],
+      "discipline": "SE",
+      "tags": [
+        "security"
+      ],
+      "planned_article": "SE-SEC-001"
+    },
+    {
+      "id": "prompt-structured-output",
+      "title_ko": "프롬프트 설계와 구조화 출력",
+      "title_en": "Prompt Design and Structured Output",
+      "aliases": [
+        "프롬프트 설계",
+        "구조화 출력",
+        "structured output",
+        "JSON 스키마",
+        "JSON schema",
+        "few-shot"
+      ],
+      "discipline": "AI",
+      "tags": [
+        "llm"
+      ],
+      "planned_article": "AI-PROMPT-001"
+    },
+    {
+      "id": "observability",
+      "title_ko": "로깅·모니터링·관측성",
+      "title_en": "Logging, Monitoring and Observability",
+      "aliases": [
+        "모니터링",
+        "관측성",
+        "observability",
+        "로깅",
+        "메트릭",
+        "알림 설계"
+      ],
+      "discipline": "OPS",
+      "tags": [
+        "devops"
+      ],
+      "planned_article": "OPS-OBS-001"
+    },
+    {
+      "id": "git-version-control",
+      "title_ko": "Git과 버전 관리",
+      "title_en": "Git and Version Control",
+      "aliases": [
+        "Git",
+        "버전 관리",
+        "version control",
+        "브랜치",
+        "커밋",
+        "pull request"
+      ],
+      "discipline": "SE",
+      "tags": [
+        "tooling"
+      ],
+      "planned_article": "SE-GIT-001"
     }
   ],
   "relations": [
@@ -1137,6 +1261,61 @@
     {
       "from": "software-testing",
       "to": "deployment-environments",
+      "type": "prerequisite"
+    },
+    {
+      "from": "probability-basics",
+      "to": "information-entropy",
+      "type": "prerequisite"
+    },
+    {
+      "from": "math-exp-log",
+      "to": "information-entropy",
+      "type": "prerequisite"
+    },
+    {
+      "from": "stat-descriptive",
+      "to": "time-series",
+      "type": "prerequisite"
+    },
+    {
+      "from": "linear-regression",
+      "to": "time-series",
+      "type": "prerequisite"
+    },
+    {
+      "from": "networking-http",
+      "to": "caching",
+      "type": "prerequisite"
+    },
+    {
+      "from": "rest-api-design",
+      "to": "web-security",
+      "type": "prerequisite"
+    },
+    {
+      "from": "networking-http",
+      "to": "web-security",
+      "type": "prerequisite"
+    },
+    {
+      "from": "llm-transformer",
+      "to": "prompt-structured-output",
+      "type": "prerequisite"
+    },
+    {
+      "from": "deployment-environments",
+      "to": "observability",
+      "type": "prerequisite"
+    },
+    {
+      "from": "spc",
+      "to": "observability",
+      "type": "prerequisite"
+    },
+    {
+      "from": "software-testing",
+      "to": "git-version-control",
       "type": "prerequisite"
     }
   ]
