@@ -98,7 +98,7 @@ export function renderArticleBody(body, articleId) {
   const qaRe = /<details class="qa" data-type="(\w+)"><summary>([\s\S]*?)<\/summary>([\s\S]*?)<\/details>/g;
   let m;
   while ((m = qaRe.exec(html))) {
-    questions.push({ article_id: articleId, type: m[1], question: m[2].trim(), answer: m[3].trim() });
+    questions.push({ qid: `${articleId}#${questions.length}`, article_id: articleId, type: m[1], question: m[2].trim(), answer: m[3].trim() });
   }
   const sec1 = html.match(/<h2 id="s-1"[^>]*>[\s\S]*?<\/h2>([\s\S]*?)(?=<h2 )/);
   const vizUsed = [...body.matchAll(/data-viz="([\w-]+)"/g)].map((x) => x[1]);
@@ -114,7 +114,15 @@ export function loadContent() {
     const { meta, body } = parseArticleSource(src, f);
     return { file: f, meta, body };
   });
-  return { graph, roles, articles };
+  const pfile = path.join(CONTENT, 'profile.json');
+  const profile = fs.existsSync(pfile) ? JSON.parse(fs.readFileSync(pfile, 'utf8')) : { projects: [] };
+  return { graph, roles, articles, profile };
+}
+
+/** 프로젝트 프로필 요약: 사용자가 확인(verified_by_user)한 프로젝트의 사실 수 */
+export function profileSummary(profile) {
+  const projects = (profile?.projects || []).map((p) => ({ id: p.id, name: p.name, verified: p.verified_by_user === true, facts: (p.facts || []).filter((f) => typeof f === 'string' && f.trim()).length }));
+  return { projects, verified_facts: projects.filter((p) => p.verified).reduce((a, p) => a + p.facts, 0) };
 }
 
 /** 선행(prerequisite) 관계의 순환을 찾는다. 반환: 순환 경로 배열 */
@@ -154,7 +162,7 @@ export function prerequisiteDepth(nodes, edges) {
 }
 
 /** 전체 검증. 반환: { errors: [], warnings: [], rendered: Map(id → render) } */
-export function validateAll({ graph, roles, articles }) {
+export function validateAll({ graph, roles, articles, profile = { projects: [] } }) {
   const errors = [];
   const warnings = [];
   const conceptIds = new Set();
@@ -178,6 +186,11 @@ export function validateAll({ graph, roles, articles }) {
     if (!conceptIds.has(r.to)) errors.push(`관계의 끝 개념 없음: ${r.to}`);
     if (!RELATION_TYPES.includes(r.type)) errors.push(`관계 유형 오류: ${r.type}`);
     if (r.from === r.to) errors.push(`자기 자신을 가리키는 관계: ${r.from}`);
+  }
+  for (const p of profile.projects || []) {
+    if (!p.id || !p.name) errors.push('profile.json: 프로젝트에 id/name 필요');
+    for (const k of ['facts', 'stack', 'problems']) if (p[k] !== undefined && !Array.isArray(p[k])) errors.push(`profile.json ${p.id}: ${k}는 배열이어야 함`);
+    if (typeof p.verified_by_user !== 'boolean') errors.push(`profile.json ${p.id}: verified_by_user는 true/false`);
   }
   const cycles = detectCycles([...conceptIds], graph.relations);
   for (const c of cycles) errors.push(`선행 관계 순환: ${c.join(' → ')}`);

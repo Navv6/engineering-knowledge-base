@@ -3,7 +3,7 @@
 //  dist/artifact.html : Claude 아티팩트용(문서 골격 없이 본문만, 게시 시 골격이 씌워짐)
 import fs from 'node:fs';
 import path from 'node:path';
-import { ROOT, CONTENT, loadContent, validateAll } from './lib.mjs';
+import { ROOT, CONTENT, loadContent, validateAll, profileSummary } from './lib.mjs';
 
 const content = loadContent();
 const { errors, rendered } = validateAll(content);
@@ -25,7 +25,7 @@ const questions = pub.flatMap(({ meta }) => rendered.get(meta.id).questions);
 const KB = {
   generatedAt: new Date().toISOString(),
   disciplines: content.graph.disciplines, concepts: content.graph.concepts, relations: content.graph.relations,
-  roles: content.roles.roles, articles, questions, sourceChecks, draftCount, runs, automation,
+  roles: content.roles.roles, articles, questions, sourceChecks, draftCount, runs, automation, profile: profileSummary(content.profile),
 };
 const json = JSON.stringify(KB).replace(/</g, '\\u003c');
 

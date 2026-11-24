@@ -14,7 +14,7 @@ export const DEFAULT_SETTINGS = {
 };
 
 export function emptyState() {
-  return { v: 1, savedAt: null, progress: {}, evidence: [], manualPriority: {}, settings: { ...DEFAULT_SETTINGS }, readLog: [] };
+  return { v: 1, savedAt: null, progress: {}, evidence: [], manualPriority: {}, settings: { ...DEFAULT_SETTINGS }, readLog: [], cards: {} };
 }
 
 /** 가져오기·원격 데이터를 안전하게 정리(모르는 필드는 버림) */
@@ -31,6 +31,8 @@ export function sanitizeState(raw) {
       notes: typeof p.notes === 'string' ? p.notes.slice(0, 5000) : '',
       review_due_at: typeof p.review_due_at === 'string' ? p.review_due_at : null,
       updated_at: typeof p.updated_at === 'string' ? p.updated_at : null,
+      explanation: typeof p.explanation === 'string' ? p.explanation.slice(0, 2000) : '',
+      feedback: p.feedback && typeof p.feedback.text === 'string' ? { text: p.feedback.text.slice(0, 4000), at: String(p.feedback.at || '') } : null,
     };
   }
   if (Array.isArray(raw.evidence)) {
@@ -46,6 +48,11 @@ export function sanitizeState(raw) {
   const st = raw.settings || {};
   s.settings = { ...DEFAULT_SETTINGS };
   for (const k of Object.keys(DEFAULT_SETTINGS)) if (st[k] !== undefined && typeof st[k] === typeof DEFAULT_SETTINGS[k]) s.settings[k] = st[k];
+  for (const [qid, c] of Object.entries(raw.cards || {})) {
+    if (!/^[A-Z]{2,6}-[A-Z]{2,6}-\d{3}#\d{1,2}$/.test(qid) || !c || typeof c !== 'object') continue;
+    if (!['good', 'hard', 'again'].includes(c.last) || typeof c.due !== 'string') continue;
+    s.cards[qid] = { box: Math.max(0, Math.min(4, Number(c.box) || 0)), reps: Number(c.reps) || 0, lapses: Number(c.lapses) || 0, last: c.last, due: c.due, graded_at: String(c.graded_at || '') };
+  }
   if (Array.isArray(raw.readLog)) s.readLog = raw.readLog.filter((r) => r && r.id && r.at).slice(-300);
   s.savedAt = typeof raw.savedAt === 'string' ? raw.savedAt : null;
   return s;

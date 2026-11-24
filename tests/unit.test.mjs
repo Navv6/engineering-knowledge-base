@@ -141,3 +141,28 @@ test('공고 매칭: "필수"가 들어간 글머리표 줄은 섹션 제목으�
   assert.equal(by['rag-retrieval-eval'], 'preferred');
   assert.equal(by['btree-index'], 'preferred');
 });
+
+test('간격 복습: 맞힘은 상자 상승, 틀림은 0으로, 기한 지난 카드만 복습 대상', () => {
+  const t0 = new Date('2026-11-24T00:00:00Z');
+  let c = core.gradeCard(null, 'good', t0);
+  assert.equal(c.box, 1); assert.equal(c.due, '2026-11-27T00:00:00.000Z');
+  c = core.gradeCard(c, 'good', t0); assert.equal(c.box, 2); assert.equal(c.due, '2026-12-01T00:00:00.000Z');
+  c = core.gradeCard(c, 'hard', t0); assert.equal(c.box, 2); assert.equal(c.due, '2026-11-25T00:00:00.000Z');
+  c = core.gradeCard(c, 'again', t0); assert.equal(c.box, 0); assert.equal(c.lapses, 1);
+  for (let i = 0; i < 10; i++) c = core.gradeCard(c, 'good', t0);
+  assert.equal(c.box, 4);
+  const cards = { 'A-B-001#0': { due: '2026-11-23T00:00:00Z', last: 'good' }, 'A-B-001#1': { due: '2026-12-30T00:00:00Z', last: 'good' } };
+  assert.deepEqual(core.dueCards(cards, t0), ['A-B-001#0']);
+  assert.deepEqual(core.quizStats('A-B-001', 3, cards), { total: 3, graded: 2, mastered: 2 });
+  assert.throws(() => core.gradeCard(null, 'maybe'));
+});
+
+test('후보 선정: 공개 설명집의 빠진 선행 개념을 먼저 고름', async () => {
+  const { execFileSync } = await import('node:child_process');
+  const out = JSON.parse(execFileSync('node', ['scripts/next-candidates.mjs'], { cwd: new URL('..', import.meta.url).pathname }).toString());
+  const content = loadContent();
+  const pubConcepts = new Set(content.articles.filter((a) => a.meta.status === 'published').map((a) => a.meta.concept));
+  assert.ok(out.pick, '후보 없음');
+  assert.ok(!pubConcepts.has(out.pick.concept), '이미 공개된 개념을 고름');
+  if (out.gaps.length) assert.equal(out.pick.concept, out.gaps[0].concept);
+});

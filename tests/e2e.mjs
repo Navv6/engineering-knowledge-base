@@ -164,6 +164,43 @@ await check('학습 상태·북마크·메모가 새로고침 후 유지', async
   assert((await page.inputValue('#notes')) === '점근 표기는 증가율 비교', '메모 유지 실패');
 });
 
+await check('자가 채점: 채점 저장·새로고침 유지, 기한 도래 시 오늘의 복습에 표시', async () => {
+  await page.goto(`${BASE}#a-STAT-INF-001`);
+  await page.waitForSelector('.prose details.qa .grade', { state: 'attached' });
+  const d = page.locator('.prose details.qa').first();
+  await d.locator('summary').click();
+  await d.locator('.grade button[data-g="again"]').click();
+  let c = await page.evaluate(() => window.__ekb.store.state.cards['STAT-INF-001#0']);
+  assert(c && c.box === 0 && c.last === 'again', `카드 ${JSON.stringify(c)}`);
+  assert((await page.textContent('#quiz-info')).includes('채점 1'), '문항 통계');
+  await page.reload();
+  await page.waitForSelector('.prose details.qa .grade', { state: 'attached' });
+  assert((await page.getAttribute('.prose details.qa .grade button[data-g="again"]', 'aria-pressed')) === 'true', '채점 유지 실패');
+  await page.goto(`${BASE}#review`);
+  await page.waitForSelector('#iv-list');
+  assert((await page.$$('#iv-list details.qa')).length === 0, '기한 전인데 복습에 나옴');
+  await page.evaluate(() => window.__ekb.store.update((s) => { s.cards['STAT-INF-001#0'].due = '2020-01-01T00:00:00Z'; }));
+  await page.goto(`${BASE}#today`);
+  assert((await page.textContent('.review-card')).includes('오늘 복습할 문항 1개'), '오늘 화면 복습 카드');
+  await page.click('.review-card');
+  await page.waitForSelector('#iv-list details.qa');
+  assert((await page.$$('#iv-list details.qa')).length === 1, '복습 목록');
+  await page.locator('#iv-list details.qa summary').click();
+  await page.locator('#iv-list .grade button[data-g="good"]').click();
+  c = await page.evaluate(() => window.__ekb.store.state.cards['STAT-INF-001#0']);
+  assert(c.box === 1 && Date.parse(c.due) > Date.now() + 2 * 86400000, '복습 채점 반영');
+});
+
+await check('30초 설명: 저장 유지, 아티팩트 밖에서는 피드백 버튼 숨김', async () => {
+  await page.goto(`${BASE}#a-CS-ALG-002`);
+  await page.fill('#explain', 'Big-O는 입력이 커질 때 비용 증가율을 상수배를 빼고 비교하는 상한 표기다.');
+  await page.waitForTimeout(900);
+  await page.reload();
+  await page.waitForSelector('#explain');
+  assert((await page.inputValue('#explain')).startsWith('Big-O는'), '설명 유지 실패');
+  assert(await page.isHidden('#explain-fb'), '피드백 버튼이 보임');
+});
+
 await check('설명집을 열어도 학습 상태를 자동 변경하지 않음', async () => {
   await page.goto(`${BASE}#a-MATH-LA-001`);
   await page.waitForSelector('.prose h2');

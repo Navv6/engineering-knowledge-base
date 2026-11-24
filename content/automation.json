@@ -1,10 +1,9 @@
 {
   "status": "connected",
-  "schedule_text": "매일 05:44 KST",
+  "schedule_text": "매일 05:44 KST (일요일은 주간 검수)",
   "cron": "CRON_TZ=Asia/Seoul 44 5 * * *",
   "per_run": {
-    "foundations": 1,
-    "engineering": 1
+    "total": 1
   },
   "source_of_truth": "https://github.com/Navv6/engineering-knowledge-base (main)",
   "artifact_url": "https://claude.ai/artifact/9HaTcQsou8fb2sZbwC5F8q",

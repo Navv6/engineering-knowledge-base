@@ -1,0 +1,32 @@
+{
+  "_note": "사용자가 직접 확인한 사실만 적는다. verified_by_user가 true인 프로젝트의 facts만 설명집의 '기존 프로젝트와의 연결' 절에 사실로 쓰이고, false면 점검 질문 형태로만 쓰인다. 예: \"PostgreSQL 15에 설비·작업지시 테이블을 두고 FastAPI로 조회 API를 제공\".",
+  "projects": [
+    {
+      "id": "preflight",
+      "name": "Preflight",
+      "summary": "제조 현장 업무 자동화",
+      "facts": [],
+      "stack": [],
+      "problems": [],
+      "verified_by_user": false
+    },
+    {
+      "id": "deepvi",
+      "name": "DeepVi",
+      "summary": "LLM/RAG 서비스",
+      "facts": [],
+      "stack": [],
+      "problems": [],
+      "verified_by_user": false
+    },
+    {
+      "id": "stt-report",
+      "name": "STT·보고서 자동화",
+      "summary": "음성 인식 기반 보고서 자동화",
+      "facts": [],
+      "stack": [],
+      "problems": [],
+      "verified_by_user": false
+    }
+  ]
+}

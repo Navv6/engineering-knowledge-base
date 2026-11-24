@@ -378,3 +378,38 @@ export function dateInTZ(date, timeZone) {
   const wd = { Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6 }[parts.weekday];
   return { ymd: `${parts.year}-${parts.month}-${parts.day}`, weekday: wd };
 }
+
+/* ---------- 간격 복습(Leitner 방식) ---------- */
+// 상자 0~4, 각 상자의 다음 복습 간격(일). 맞히면 한 칸 올라가고, 틀리면 0으로, 헷갈리면 제자리에서 하루 뒤 다시.
+export const SRS_INTERVALS = [1, 3, 7, 21, 60];
+export const GRADE_KO = { good: '맞힘', hard: '헷갈림', again: '틀림' };
+export function gradeCard(card, grade, now = new Date()) {
+  const c = card ? { ...card } : { box: 0, reps: 0, lapses: 0 };
+  let days;
+  if (grade === 'good') { c.box = card ? Math.min(c.box + 1, SRS_INTERVALS.length - 1) : 1; days = SRS_INTERVALS[c.box]; }
+  else if (grade === 'hard') { days = 1; }
+  else if (grade === 'again') { c.box = 0; c.lapses = (c.lapses || 0) + 1; days = 1; }
+  else throw new Error(`알 수 없는 채점 ${grade}`);
+  c.reps = (c.reps || 0) + 1;
+  c.last = grade;
+  c.graded_at = now.toISOString();
+  c.due = new Date(now.getTime() + days * 86400000).toISOString();
+  return c;
+}
+export function dueCards(cards, now = new Date()) {
+  return Object.entries(cards || {})
+    .filter(([, c]) => c && c.due && Date.parse(c.due) <= now.getTime())
+    .sort((a, b) => a[1].due.localeCompare(b[1].due))
+    .map(([qid]) => qid);
+}
+/** 설명집 하나의 문항 통계 */
+export function quizStats(articleId, nQuestions, cards) {
+  let graded = 0, mastered = 0;
+  for (let i = 0; i < nQuestions; i++) {
+    const c = cards?.[`${articleId}#${i}`];
+    if (!c) continue;
+    graded++;
+    if (c.last === 'good') mastered++;
+  }
+  return { total: nQuestions, graded, mastered };
+}

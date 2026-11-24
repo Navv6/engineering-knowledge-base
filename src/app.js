@@ -1,5 +1,5 @@
 // UI 계층. 빌드 시 core.js, store.js, viz.js와 하나의 모듈로 합쳐진다.
-import { STATUS, STATUS_KEYS, WEIGHTS, buildSearchIndex, search, prerequisiteDepth, neighbors, curriculumOrder, computePriorities, pickToday, weeklyReview, matchJobText, dedupKey, dateInTZ } from './core.js';
+import { gradeCard, dueCards, quizStats, GRADE_KO, SRS_INTERVALS, STATUS, STATUS_KEYS, WEIGHTS, buildSearchIndex, search, prerequisiteDepth, neighbors, curriculumOrder, computePriorities, pickToday, weeklyReview, matchJobText, dedupKey, dateInTZ } from './core.js';
 import { createStore, sanitizeState, emptyState } from './store.js';
 import { mountViz, mountKnowledgeMap, DISCIPLINE_COLOR } from './viz.js';
 
@@ -79,14 +79,49 @@ function articleCard(a, { reason = '', snippet = '', query = '' } = {}) {
 const AUTO = KB.automation || { status: 'not_connected' };
 const RUNS = KB.runs || [];
 const RUN_KO = { success: '성공', partial: '부분 성공', failed: '실패', skipped: '건너뜀' };
+const KIND_KO = { review: '검수', daily: '작성' };
 const autoPill = () => (AUTO.status === 'connected' ? '<span class="pill ok">연동됨</span>' : '<span class="pill warn">미연동</span>');
 const autoText = () => AUTO.status === 'connected'
-  ? `<p class="small">예약 실행: <b>${esc(AUTO.schedule_text)}</b> · 회당 기초 ${AUTO.per_run?.foundations ?? 1}편, 실무 ${AUTO.per_run?.engineering ?? 1}편. 실행마다 다음 개념을 골라 설명집을 쓰고, 검증 게이트와 테스트를 통과한 것만 이 페이지에 추가합니다. 실패한 초안은 공개하지 않고 기록만 남깁니다. 시각·분량·중지 변경은 Claude에게 요청하세요(예약 작업 설정을 바꿉니다).</p>`
+  ? `<p class="small">예약 실행: <b>${esc(AUTO.schedule_text)}</b> · 하루 ${AUTO.per_run?.total ?? 1}편(이미 공개된 글의 빠진 선행 개념을 먼저 채움), 일요일은 새 글 대신 그 주 글을 다시 검산하는 검수 실행. 실행마다 검증 게이트와 테스트를 통과한 것만 이 페이지에 추가합니다. 실패한 초안은 공개하지 않고 기록만 남깁니다. 시각·분량·중지 변경은 Claude에게 요청하세요(예약 작업 설정을 바꿉니다).</p>`
   : '<p class="muted small">새 설명집을 작성·검증·배포하는 예약 실행이 연결되어 있지 않습니다. Claude에게 다음 설명집 작성을 요청하면 검증을 통과한 문서만 배포합니다.</p>';
 function runsTable(n) {
   if (!RUNS.length) return '<p class="muted small">실행 기록(RefreshRun): 아직 없음</p>';
   const name = (id) => (ART[id] ? `<a href="#a-${id}">${esc(ART[id].title)}</a>` : esc(id));
-  return `<div class="table-wrap"><table class="data"><caption>최근 실행 기록</caption><thead><tr><th>시작(UTC)</th><th>결과</th><th>공개</th><th>초안·건너뜀</th></tr></thead><tbody>${RUNS.slice(0, n).map((r) => `<tr><td class="mono small">${esc(String(r.started_at || '').slice(0, 16).replace('T', ' '))}</td><td><span class="pill ${r.status === 'success' ? 'ok' : r.status === 'failed' ? 'warn' : 'ghost'}">${RUN_KO[r.status] || esc(r.status)}</span></td><td>${(r.created || []).map(name).join(', ') || '—'}</td><td class="small">${[...(r.drafts || []).map((d) => `${esc(d)}(초안)`), ...(r.skipped || []).map((x) => `${esc(x.concept || '')}: ${esc(x.reason || '')}`), ...(r.errors || []).map((e) => `오류: ${esc(e)}`)].join('<br>') || '—'}</td></tr>`).join('')}</tbody></table></div>`;
+  return `<div class="table-wrap"><table class="data"><caption>최근 실행 기록</caption><thead><tr><th>시작(UTC)</th><th>결과</th><th>공개</th><th>초안·건너뜀</th></tr></thead><tbody>${RUNS.slice(0, n).map((r) => `<tr><td class="mono small">${esc(String(r.started_at || '').slice(0, 16).replace('T', ' '))}</td><td><span class="pill ${r.status === 'success' ? 'ok' : r.status === 'failed' ? 'warn' : 'ghost'}">${RUN_KO[r.status] || esc(r.status)}</span>${r.kind === 'review' ? ' <span class="chip">검수</span>' : ''}</td><td>${(r.created || []).map(name).join(', ') || '—'}</td><td class="small">${[...(r.drafts || []).map((d) => `${esc(d)}(초안)`), ...(r.skipped || []).map((x) => `${esc(x.concept || '')}: ${esc(x.reason || '')}`), ...(r.errors || []).map((e) => `오류: ${esc(e)}`)].join('<br>') || '—'}</td></tr>`).join('')}</tbody></table></div>`;
+}
+
+/* ---------- 자가 채점·간격 복습 ---------- */
+const QCOUNT = {};
+for (const q of KB.questions) QCOUNT[q.article_id] = (QCOUNT[q.article_id] || 0) + 1;
+const QBYID = Object.fromEntries(KB.questions.map((q) => [q.qid, q]));
+const cards = () => store.state.cards || {};
+const fmtDue = (iso) => { const d = Math.round((Date.parse(iso) - Date.now()) / 86400000); return d <= 0 ? '오늘' : `${d}일 뒤`; };
+function gradeBar(qid) {
+  const c = cards()[qid];
+  return `<div class="grade" data-qid="${esc(qid)}" role="group" aria-label="스스로 채점"><span class="muted small">스스로 채점</span>${['good', 'hard', 'again'].map((g) => `<button type="button" class="btn small ghost g-${g} ${c?.last === g ? 'on' : ''}" data-g="${g}" aria-pressed="${c?.last === g}">${GRADE_KO[g]}</button>`).join('')}<span class="muted small grade-state">${c ? `다음 복습 ${fmtDue(c.due)} · ${c.reps}회 풀이` : ''}</span></div>`;
+}
+/** root 안의 details.qa에 채점 막대를 붙인다. qidOf(details, index) → qid */
+function attachGrades(root, qidOf, onGraded) {
+  root.querySelectorAll('details.qa').forEach((d, i) => {
+    const qid = qidOf(d, i);
+    if (!qid || d.querySelector('.grade')) return;
+    d.insertAdjacentHTML('beforeend', gradeBar(qid));
+  });
+  root.addEventListener('click', (e) => {
+    const b = e.target.closest('.grade button[data-g]');
+    if (!b || !root.contains(b)) return;
+    const bar = b.closest('.grade'); const qid = bar.dataset.qid;
+    store.update((s) => { s.cards ||= {}; s.cards[qid] = gradeCard(s.cards[qid], b.dataset.g); });
+    bar.outerHTML = gradeBar(qid);
+    onGraded?.(qid);
+  });
+}
+function reviewCard() {
+  const due = dueCards(cards());
+  const total = Object.keys(cards()).length;
+  if (!total) return `<a class="review-card" href="#interview"><span class="eyebrow mono">간격 복습</span><b>아직 채점한 문항이 없습니다</b><span class="muted small">설명집이나 Interview에서 문항을 풀고 "맞힘·헷갈림·틀림"을 고르면 ${SRS_INTERVALS.join('·')}일 간격으로 다시 나옵니다.</span></a>`;
+  if (!due.length) { const next = Object.values(cards()).map((c) => c.due).sort()[0]; return `<a class="review-card" href="#review"><span class="eyebrow mono">간격 복습</span><b>오늘 복습할 문항 없음</b><span class="muted small">채점한 문항 ${total}개 · 다음 복습 ${fmtDue(next)}</span></a>`; }
+  return `<a class="review-card due" href="#review"><span class="eyebrow mono">간격 복습</span><b>오늘 복습할 문항 ${due.length}개</b><span class="muted small">먼저 떠올려 보고 정답을 펼친 뒤 스스로 채점하세요 →</span></a>`;
 }
 
 /* ---------- 화면: 오늘의 읽기 ---------- */
@@ -111,6 +146,7 @@ function viewToday() {
     <p class="lede">기초 학문 ${st.daily_foundation_count}편과 실무 기술 ${st.daily_engineering_count}편을 각자의 순서로 고릅니다. 공개 설명집 ${ARTICLES.length}편 중 ${done}편을 이해 완료로 표시했습니다.</p>
   </header>
   ${(() => { const last = RUNS.find((r) => (r.created || []).length); return last ? `<p class="new-banner">최근 추가 <span class="mono">${esc(String(last.started_at).slice(0, 10))}</span> · ${last.created.filter((id) => ART[id]).map((id) => `<a href="#a-${id}">${esc(ART[id].title)}</a>`).join(', ')}</p>` : ''; })()}
+  ${reviewCard()}
   <section class="today-grid" aria-label="오늘의 추천">
     <div class="lane"><h2 class="lane-h">Foundations <small>선행 관계 순서</small></h2>${pick.foundations.map((x) => articleCard(x.article, { reason: x.reason })).join('')}${emptyF}</div>
     <div class="lane"><h2 class="lane-h">Engineering <small>직무·공고 우선순위</small></h2>${pick.engineering.map((x) => articleCard(x.article, { reason: x.reason })).join('')}${emptyE}</div>
@@ -175,6 +211,7 @@ function viewArticle(id) {
     <fieldset class="seg"><legend>학습 상태</legend>${STATUS_KEYS.map((k) => `<label><input type="radio" name="st" value="${k}" ${p.status === k ? 'checked' : ''}><span>${STATUS[k].ko}</span></label>`).join('')}</fieldset>
     <button type="button" class="btn ${p.bookmarked ? 'on' : ''}" id="bm-btn" aria-pressed="${p.bookmarked}">${p.bookmarked ? '★ 북마크됨' : '☆ 북마크'}</button>
     <label class="inline" for="review-sel">복습 예약 <select id="review-sel"><option value="">없음</option><option value="3">3일 후</option><option value="7">7일 후</option><option value="14">14일 후</option></select></label>
+    <span class="muted small" id="quiz-info"></span>
     <span class="muted small" id="review-info">${p.review_due_at ? `예약됨: ${new Date(p.review_due_at).toLocaleDateString('ko-KR')}` : ''}</span>
   </section>
   <div class="art-layout">
@@ -187,9 +224,47 @@ function viewArticle(id) {
     return `<li>${s.url ? `<a href="${esc(s.url)}" target="_blank" rel="noopener noreferrer">${esc(s.title)}</a>` : esc(s.title)} <span class="chip">${esc(s.source_type)}</span> ${badge}</li>`;
   }).join('')}</ol><p class="muted small">서지 정보는 교재·논문의 출판 정보이며 URL을 만들어 넣지 않았습니다. 링크 확인 표시는 해당 날짜에 페이지가 열리고 제목이 일치함을 확인했다는 뜻입니다.</p></section>
   <section class="relations" aria-label="관련 개념"><h2>개념 연결</h2><div class="rel-grid">${relBlock('선행 개념', nb.prerequisites)}${relBlock('후속 개념', nb.next)}${relBlock('응용되는 곳', nb.applications)}${relBlock('이 개념에 기반', nb.appliedFrom)}${relBlock('관련 개념', nb.related)}</div></section>
+  <section class="explain"><h2><label for="explain">30초 설명</label></h2>
+    <p class="muted small">면접관에게 30초 안에 설명한다고 생각하고 자기 말로 써 보세요. 학습 목표를 다 덮었는지가 기준입니다.</p>
+    <textarea id="explain" rows="4" placeholder="예: Big-O는 입력이 커질 때 비용이 어떤 속도로 늘어나는지를 상수배를 빼고 비교하는 표기다. …"></textarea>
+    <div class="row"><button type="button" class="btn" id="explain-fb" hidden>Claude에게 피드백 받기</button><span class="muted small" id="explain-state" aria-live="polite"></span></div>
+    <div id="explain-out" class="feedback" aria-live="polite" hidden></div></section>
   <section class="notes"><h2><label for="notes">내 메모</label></h2><textarea id="notes" rows="4" placeholder="내 언어로 요약하거나, 면접에서 말할 문장을 적어 두세요."></textarea><p class="muted small" id="notes-state" aria-live="polite"></p></section>
   <nav class="pager" aria-label="이전·다음 학습">${prev ? `<a href="#a-${prev.id}" class="prev">← ${esc(prev.title)}</a>` : '<span></span>'}${next ? `<a href="#a-${next.id}" class="next">${esc(next.title)} →</a>` : '<span></span>'}</nav>
   </article>`;
+}
+function wireExplain(id) {
+  const a = ART[id];
+  const ta = $('#explain'), out = $('#explain-out'), st = $('#explain-state'), btn = $('#explain-fb');
+  const p = prog(id);
+  ta.value = p.explanation || '';
+  const showFb = (fb) => { if (!fb) return; out.hidden = false; out.textContent = fb.text; st.textContent = `마지막 피드백 ${new Date(fb.at).toLocaleString('ko-KR')}`; };
+  showFb(p.feedback);
+  let t; ta.addEventListener('input', () => { clearTimeout(t); t = setTimeout(() => setProgress(id, { explanation: ta.value.slice(0, 2000) }), 600); });
+  // Claude 아티팩트 안에서 sample 기능이 있을 때만 피드백 버튼을 보인다(GitHub Pages 등에서는 숨김)
+  const tok = routeToken;
+  (window.claude?.use ? window.claude.use('sample') : Promise.resolve(null)).then((sample) => {
+    if (!sample || tok !== routeToken) return;
+    btn.hidden = false;
+    btn.addEventListener('click', async () => {
+      const text = ta.value.trim();
+      if (text.length < 20) { st.textContent = '20자 이상 써야 피드백할 수 있습니다.'; return; }
+      setProgress(id, { explanation: text.slice(0, 2000) });
+      const tmp = document.createElement('div'); tmp.innerHTML = a.summaryHtml;
+      const prompt = `너는 공학 개념 설명을 평가하는 튜터다. 학습자가 "${a.title}"을(를) 30초 안에 설명하려고 쓴 글을 평가하라.\n\n[학습 목표]\n${a.objectives.map((o) => `- ${o}`).join('\n')}\n\n[설명집 핵심 요약]\n${tmp.textContent.trim()}\n\n[학습자 설명]\n${text}\n\n한국어로, 다음 형식으로만 답하라.\n1) 잘 설명한 점: 1~2줄\n2) 빠졌거나 부정확한 점: 최대 3개, 각 1줄. 왜 그런지 근거를 붙인다.\n3) 고쳐 쓴 한두 문장 예시\n위 학습 목표와 요약에 근거해 판단하고, 근거가 없는 사실은 지어내지 마라. 확실하지 않으면 그렇다고 말하라. 전체 400자 이내.`;
+      btn.disabled = true; st.textContent = '피드백을 받는 중…'; out.hidden = false; out.textContent = '';
+      try {
+        const res = await sample(prompt, { onText: ({ text: tx }) => { out.textContent = tx; }, cache: false });
+        const fb = { text: res.text, at: new Date().toISOString() };
+        setProgress(id, { feedback: fb }); showFb(fb);
+      } catch (e) {
+        out.textContent = '';
+        out.hidden = true;
+        st.textContent = e?.code === 'not_granted' ? 'Claude 호출이 허용되지 않아 피드백을 받을 수 없습니다.' : e?.code === 'rate_limited' ? '잠시 뒤 다시 시도하세요(사용량 제한).' : '피드백을 받지 못했습니다. 잠시 뒤 다시 시도하세요.';
+        if (e?.code === 'not_granted') btn.hidden = true;
+      } finally { btn.disabled = false; }
+    });
+  });
 }
 function wireArticle(id) {
   const a = ART[id]; if (!a) return;
@@ -201,7 +276,19 @@ function wireArticle(id) {
     if (!last || last.id !== id || Date.now() - Date.parse(last.at) > 30 * 60000) s.readLog.push({ id, at: new Date().toISOString() });
     s.readLog = s.readLog.slice(-300);
   });
-  main.querySelectorAll('input[name="st"]').forEach((r) => r.addEventListener('change', () => { setProgress(id, { status: r.value }); }));
+  const showQuiz = () => {
+    const st = quizStats(id, QCOUNT[id] || 0, cards());
+    $('#quiz-info').textContent = st.total ? `문항 ${st.total}개 중 채점 ${st.graded} · 맞힘 ${st.mastered}` : '';
+    return st;
+  };
+  showQuiz();
+  attachGrades($('#prose'), (d, i) => `${id}#${i}`, showQuiz);
+  main.querySelectorAll('input[name="st"]').forEach((r) => r.addEventListener('change', () => {
+    setProgress(id, { status: r.value });
+    const st = showQuiz();
+    if (r.value === 'understood' && st.total && st.mastered < st.total) $('#quiz-info').textContent += ` — 아직 맞히지 않은 문항 ${st.total - st.mastered}개가 있습니다. 12절에서 풀어 보면 이해를 확인할 수 있습니다.`;
+  }));
+  wireExplain(id);
   $('#bm-btn').addEventListener('click', (e) => { const on = !prog(id).bookmarked; setProgress(id, { bookmarked: on }); e.currentTarget.classList.toggle('on', on); e.currentTarget.setAttribute('aria-pressed', on); e.currentTarget.textContent = on ? '★ 북마크됨' : '☆ 북마크'; });
   $('#review-sel').addEventListener('change', (e) => { const d = Number(e.target.value); const due = d ? new Date(Date.now() + d * 86400000).toISOString() : null; setProgress(id, { review_due_at: due }); $('#review-info').textContent = due ? `예약됨: ${new Date(due).toLocaleDateString('ko-KR')}` : ''; });
   const ta = $('#notes'); ta.value = prog(id).notes || '';
@@ -351,23 +438,26 @@ function wireGap() {
 }
 
 /* ---------- 화면: Interview ---------- */
-const ivState = { type: '', disc: '' };
+const ivState = { type: '', disc: '', due: false };
 function viewInterview() {
   const qs = KB.questions.filter((q) => ART[q.article_id]);
   return `<header class="page-head"><h1>Interview</h1><p class="lede">설명집에서 모은 문항 ${qs.length}개입니다. 개념 설명형은 정의와 원리를, 선택 근거형은 대안 비교를, 실무 응용형은 상황 판단을 묻습니다. 먼저 소리 내어 답해 본 뒤 정답을 펼치세요.</p></header>
   <div class="filters"><select id="iv-type" aria-label="문항 유형"><option value="">모든 유형</option>${Object.entries(TYPE_KO).map(([k, v]) => `<option value="${k}" ${ivState.type === k ? 'selected' : ''}>${v}</option>`).join('')}</select>
   <select id="iv-disc" aria-label="학문"><option value="">모든 학문</option>${DISC_ORDER.filter((d) => ARTICLES.some((a) => CON[a.concept].discipline === d)).map((d) => `<option value="${d}" ${ivState.disc === d ? 'selected' : ''}>${esc(KB.disciplines[d].ko)}</option>`).join('')}</select>
+  <label class="inline" for="iv-due"><input id="iv-due" type="checkbox" ${ivState.due ? 'checked' : ''}> 오늘 복습할 문항만</label>
   <button type="button" class="btn" id="iv-rand">무작위 한 문항</button></div>
   <div id="iv-list" class="qa-list"></div>`;
 }
 function wireInterview() {
   const qs = KB.questions.filter((q) => ART[q.article_id]);
   const draw = () => {
-    ivState.type = $('#iv-type').value; ivState.disc = $('#iv-disc').value;
-    const list = qs.filter((q) => (!ivState.type || q.type === ivState.type) && (!ivState.disc || CON[ART[q.article_id].concept].discipline === ivState.disc));
-    $('#iv-list').innerHTML = list.map((q, i) => `<details class="qa" id="iv-${i}"><summary><span class="chip">${TYPE_KO[q.type]}</span> ${q.question}</summary><div class="prose">${q.answer}<p class="small"><a href="#a-${q.article_id}">${esc(ART[q.article_id].title)} 설명집으로</a></p></div></details>`).join('') || '<p class="empty">조건에 맞는 문항이 없습니다.</p>';
+    ivState.type = $('#iv-type').value; ivState.disc = $('#iv-disc').value; ivState.due = $('#iv-due').checked;
+    const due = new Set(dueCards(cards()));
+    const list = qs.filter((q) => (!ivState.type || q.type === ivState.type) && (!ivState.disc || CON[ART[q.article_id].concept].discipline === ivState.disc) && (!ivState.due || due.has(q.qid)));
+    $('#iv-list').innerHTML = list.map((q, i) => `<details class="qa" id="iv-${i}" data-qid="${esc(q.qid)}"><summary><span class="chip">${TYPE_KO[q.type]}</span> ${q.question}</summary><div class="prose">${q.answer}<p class="small"><a href="#a-${q.article_id}">${esc(ART[q.article_id].title)} 설명집으로</a></p></div></details>`).join('') || `<p class="empty">${ivState.due ? '오늘 복습할 문항이 없습니다. 채점한 문항은 정해진 간격이 지나면 여기에 다시 나타납니다.' : '조건에 맞는 문항이 없습니다.'}</p>`;
+    attachGrades($('#iv-list'), (d) => d.dataset.qid);
   };
-  $('#iv-type').addEventListener('change', draw); $('#iv-disc').addEventListener('change', draw);
+  $('#iv-type').addEventListener('change', draw); $('#iv-disc').addEventListener('change', draw); $('#iv-due').addEventListener('change', draw);
   $('#iv-rand').addEventListener('click', () => { const all = main.querySelectorAll('#iv-list details'); if (!all.length) return; all.forEach((d) => { d.open = false; d.classList.remove('picked'); }); const d = all[Math.floor(Math.random() * all.length)]; d.classList.add('picked'); d.scrollIntoView({ block: 'center' }); d.querySelector('summary').focus(); });
   draw();
 }
@@ -389,6 +479,7 @@ function viewPrefs() {
     <fieldset><legend>콘텐츠 자동 생성 ${autoPill()}</legend>
       ${autoText()}
       <div class="full">${runsTable(10)}</div>
+      <p class="small full">프로젝트 프로필: ${KB.profile?.verified_facts ? `확인된 사실 ${KB.profile.verified_facts}개(${KB.profile.projects.filter((p) => p.verified).map((p) => esc(p.name)).join(', ')})` : '아직 확인된 사실 없음'}. 저장소의 <code>content/profile.json</code>에 Preflight·DeepVi·STT의 실제 구현 사실을 적고 <code>verified_by_user</code>를 true로 바꾸면, 새 설명집의 "기존 프로젝트와의 연결" 절이 그 사실에 맞춰 쓰입니다.</p>
       <p class="muted small">콘텐츠 빌드 ${esc(KB.generatedAt.slice(0, 16).replace('T', ' '))} UTC · 공개 ${ARTICLES.length}편 · 비공개 초안 ${drafts}편</p>
     </fieldset>
     <p class="muted small" id="pf-msg" aria-live="polite"></p>
@@ -439,10 +530,10 @@ function wirePrefs() {
 
 /* ---------- 라우팅 ---------- */
 const ROUTES = {
-  today: [viewToday], foundations: [viewFoundations], engineering: [viewEngineering], map: [viewMap, wireMap],
+  today: [viewToday], review: [() => { ivState.due = true; return viewInterview(); }, wireInterview], foundations: [viewFoundations], engineering: [viewEngineering], map: [viewMap, wireMap],
   gap: [viewGap, wireGap], interview: [viewInterview, wireInterview], library: [viewLibrary, wireLibrary], prefs: [viewPrefs, wirePrefs],
 };
-const TITLES = { today: '오늘의 읽기', foundations: 'Foundations', engineering: 'Engineering', map: 'Knowledge Map', gap: 'Skill Gap', interview: 'Interview', library: 'Library', prefs: '학습 설정' };
+const TITLES = { review: '오늘의 복습', today: '오늘의 읽기', foundations: 'Foundations', engineering: 'Engineering', map: 'Knowledge Map', gap: 'Skill Gap', interview: 'Interview', library: 'Library', prefs: '학습 설정' };
 function route() {
   cleanup();
   const hash = decodeURIComponent(location.hash.slice(1)) || 'today';
