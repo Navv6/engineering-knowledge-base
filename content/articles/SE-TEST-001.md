@@ -292,7 +292,7 @@ Preflight는 704(단위) : 64(실제 DB) 비율로, 아래층이 훨씬 두꺼�
 ## 13. 선행·후속 학습
 
 - 선행: 상태 머신(CS-GEN-001), 집합과 명제논리(MATH-DM-001)
-- 후속: Context Engineering과 Harness Engineering(준비 중, AI 출력 평가 하네스), 트랜잭션과 ACID(준비 중), 데이터 모델링(DE-MODEL-001)의 제약
+- 후속: Context Engineering과 Harness Engineering(AI-NATIVE-001, AI 출력 평가 하네스), 트랜잭션과 ACID(DE-DB-002), 데이터 모델링(DE-MODEL-001)의 제약
 - 더 나아가기: 속성 기반 테스트(property-based testing), 뮤테이션 테스트, 계약 테스트
 
 ## 14. 참고 자료

@@ -339,8 +339,8 @@ Index Scan using idx_orders_customer_date on orders
 
 ## 13. 선행·후속 학습
 
-- 선행: Big-O와 시간·공간복잡도(CS-ALG-002), 관계형 데이터 모델링(준비 중)
-- 후속: 트랜잭션과 ACID(DE-DB-002, 준비 중), 근사 최근접 이웃 탐색(준비 중)
+- 선행: Big-O와 시간·공간복잡도(CS-ALG-002), 관계형 데이터 모델링(DE-MODEL-001)
+- 후속: 트랜잭션과 ACID(DE-DB-002), 근사 최근접 이웃 탐색(AI-ANN-001)
 - 더 나아가기: MVCC와 VACUUM, LSM-Tree와 쓰기 증폭, 쿼리 옵티마이저의 비용 모델
 
 ## 14. 참고 자료

@@ -273,7 +273,7 @@ $n = 20$이면 $40000 + 1000 \times 210 = 250000$. 반복을 2배로 늘렸는�
 ## 13. 선행·후속 학습
 
 - 선행: 상태 머신(CS-GEN-001), RAG(AI-RAG-001)
-- 후속: Context Engineering과 Harness Engineering(AI-NATIVE-001, 준비 중), 소프트웨어 테스트와 유지보수(SE-TEST-001)
+- 후속: Context Engineering과 Harness Engineering(AI-NATIVE-001), 소프트웨어 테스트와 유지보수(SE-TEST-001)
 - 더 나아가기: 다중 에이전트, 장기 기억, 에이전트 평가 벤치마크
 
 ## 14. 참고 자료
