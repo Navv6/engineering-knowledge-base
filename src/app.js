@@ -91,8 +91,8 @@ function runsTable(n) {
 }
 
 /* ---------- 자가 채점·간격 복습 ---------- */
-const QCOUNT = {};
-for (const q of KB.questions) QCOUNT[q.article_id] = (QCOUNT[q.article_id] || 0) + 1;
+const QIDS = {};
+for (const q of KB.questions) (QIDS[q.article_id] ||= []).push(q.qid);
 const QBYID = Object.fromEntries(KB.questions.map((q) => [q.qid, q]));
 const cards = () => store.state.cards || {};
 const fmtDue = (iso) => { const d = Math.round((Date.parse(iso) - Date.now()) / 86400000); return d <= 0 ? '오늘' : `${d}일 뒤`; };
@@ -214,8 +214,13 @@ function viewArticle(id) {
     <span class="muted small" id="quiz-info"></span>
     <span class="muted small" id="review-info">${p.review_due_at ? `예약됨: ${new Date(p.review_due_at).toLocaleDateString('ko-KR')}` : ''}</span>
   </section>
+  <div class="level-bar" role="group" aria-label="학습 단계">
+    <span class="muted small">학습 단계</span>
+    <fieldset class="seg" id="lvl-seg"><legend>학습 단계</legend>${[[1, '1 입문'], [2, '2 기본'], [3, '3 심화']].map(([v, t]) => `<label><input type="radio" name="lvl" value="${v}"><span>${t}</span></label>`).join('')}</fieldset>
+    <span class="muted small" id="lvl-note"></span>
+  </div>
   <div class="art-layout">
-    <nav class="toc" aria-label="목차"><details open><summary>목차</summary><ol>${a.toc.map((t) => `<li><a href="#a-${a.id}" data-target="${t.id}">${esc(t.text)}</a></li>`).join('')}</ol></details></nav>
+    <nav class="toc" aria-label="목차"><details open><summary>목차</summary><ol>${a.toc.map((t) => `<li data-level="${t.level || 3}"><a href="#a-${a.id}" data-target="${t.id}">${esc(t.text)}</a></li>`).join('')}</ol></details></nav>
     <div class="prose" id="prose">${a.html}</div>
   </div>
   <section class="sources" aria-labelledby="src-h"><h2 id="src-h">참고 자료 및 검증</h2><ol>${a.sources.map((s) => {
@@ -232,6 +237,30 @@ function viewArticle(id) {
   <section class="notes"><h2><label for="notes">내 메모</label></h2><textarea id="notes" rows="4" placeholder="내 언어로 요약하거나, 면접에서 말할 문장을 적어 두세요."></textarea><p class="muted small" id="notes-state" aria-live="polite"></p></section>
   <nav class="pager" aria-label="이전·다음 학습">${prev ? `<a href="#a-${prev.id}" class="prev">← ${esc(prev.title)}</a>` : '<span></span>'}${next ? `<a href="#a-${next.id}" class="next">${esc(next.title)} →</a>` : '<span></span>'}</nav>
   </article>`;
+}
+const LEVEL_KO = { 1: '입문', 2: '기본', 3: '심화' };
+function wireLevel(id) {
+  const a = ART[id];
+  const apply = (lv) => {
+    $('#prose').dataset.showLevel = lv;
+    $('.toc').dataset.showLevel = lv;
+    main.querySelectorAll('input[name="lvl"]').forEach((r) => { r.checked = Number(r.value) === lv; });
+    const hidden = a.toc.filter((t) => (t.level || 3) > lv).length;
+    const note = $('#lvl-note');
+    note.innerHTML = '';
+    if (hidden) {
+      note.append(`${LEVEL_KO[lv]} 단계에서는 ${hidden}개 절을 접어 두었습니다. `);
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'linkish'; b.textContent = `${LEVEL_KO[lv + 1]} 단계로 더 보기 →`;
+      b.addEventListener('click', () => set(lv + 1)); note.append(b);
+    } else note.textContent = '모든 절을 보고 있습니다.';
+  };
+  const set = (lv) => {
+    setProgress(id, { level: lv });
+    store.update((s) => { s.settings.reading_level = lv; });
+    apply(lv);
+  };
+  apply(prog(id).level || store.state.settings.reading_level || 1);
+  main.querySelectorAll('input[name="lvl"]').forEach((r) => r.addEventListener('change', () => set(Number(r.value))));
 }
 function wireExplain(id) {
   const a = ART[id];
@@ -277,12 +306,13 @@ function wireArticle(id) {
     s.readLog = s.readLog.slice(-300);
   });
   const showQuiz = () => {
-    const st = quizStats(id, QCOUNT[id] || 0, cards());
+    const st = quizStats(QIDS[id] || [], cards());
     $('#quiz-info').textContent = st.total ? `문항 ${st.total}개 중 채점 ${st.graded} · 맞힘 ${st.mastered}` : '';
     return st;
   };
   showQuiz();
-  attachGrades($('#prose'), (d, i) => `${id}#${i}`, showQuiz);
+  attachGrades($('#prose'), (d) => d.dataset.qid, showQuiz);
+  wireLevel(id);
   main.querySelectorAll('input[name="st"]').forEach((r) => r.addEventListener('change', () => {
     setProgress(id, { status: r.value });
     const st = showQuiz();
@@ -474,6 +504,7 @@ function viewPrefs() {
       <label for="pf-tz">시간대<select id="pf-tz">${['Asia/Seoul', 'UTC', 'America/Los_Angeles', 'Europe/London'].map((z) => `<option ${s.timezone === z ? 'selected' : ''}>${z}</option>`).join('')}</select></label>
       <label for="pf-f">기초 설명집 / 일<input id="pf-f" type="number" min="0" max="3" value="${s.daily_foundation_count}"></label>
       <label for="pf-e">실무 설명집 / 일<input id="pf-e" type="number" min="0" max="3" value="${s.daily_engineering_count}"></label>
+      <label for="pf-lv">설명집 기본 단계<select id="pf-lv">${[1, 2, 3].map((v) => `<option value="${v}" ${s.reading_level === v ? 'selected' : ''}>${v} ${LEVEL_KO[v]}</option>`).join('')}</select></label>
       <label for="pf-rd">주간 복습 요일<select id="pf-rd">${DAYS.map((d, i) => `<option value="${i}" ${s.weekly_review_day === i ? 'selected' : ''}>${d}요일</option>`).join('')}</select></label>
     </fieldset>
     <fieldset><legend>콘텐츠 자동 생성 ${autoPill()}</legend>
@@ -504,6 +535,7 @@ function wirePrefs() {
       s.settings.daily_foundation_count = Math.max(0, Math.min(3, Number($('#pf-f').value) || 0));
       s.settings.daily_engineering_count = Math.max(0, Math.min(3, Number($('#pf-e').value) || 0));
       s.settings.weekly_review_day = Number($('#pf-rd').value);
+      s.settings.reading_level = Number($('#pf-lv').value);
     });
     $('#pf-msg').textContent = '설정을 저장했습니다.';
   });

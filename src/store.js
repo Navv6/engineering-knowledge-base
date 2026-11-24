@@ -11,6 +11,7 @@ export const DEFAULT_SETTINGS = {
   notification_mode: 'none',
   enabled: false, // 자동 생성 스케줄러는 미연동 → 기본 비활성
   selected_roles: ['fde', 'ai-app', 'ontology', 'ai-native'],
+  reading_level: 1, // 설명집 기본 단계: 1 입문, 2 기본, 3 심화
 };
 
 export function emptyState() {
@@ -31,6 +32,7 @@ export function sanitizeState(raw) {
       notes: typeof p.notes === 'string' ? p.notes.slice(0, 5000) : '',
       review_due_at: typeof p.review_due_at === 'string' ? p.review_due_at : null,
       updated_at: typeof p.updated_at === 'string' ? p.updated_at : null,
+      level: [1, 2, 3].includes(p.level) ? p.level : null,
       explanation: typeof p.explanation === 'string' ? p.explanation.slice(0, 2000) : '',
       feedback: p.feedback && typeof p.feedback.text === 'string' ? { text: p.feedback.text.slice(0, 4000), at: String(p.feedback.at || '') } : null,
     };
@@ -49,7 +51,7 @@ export function sanitizeState(raw) {
   s.settings = { ...DEFAULT_SETTINGS };
   for (const k of Object.keys(DEFAULT_SETTINGS)) if (st[k] !== undefined && typeof st[k] === typeof DEFAULT_SETTINGS[k]) s.settings[k] = st[k];
   for (const [qid, c] of Object.entries(raw.cards || {})) {
-    if (!/^[A-Z]{2,6}-[A-Z]{2,6}-\d{3}#\d{1,2}$/.test(qid) || !c || typeof c !== 'object') continue;
+    if (!/^[A-Z]{2,6}-[A-Z]{2,6}-\d{3}#e?\d{1,2}$/.test(qid) || !c || typeof c !== 'object') continue;
     if (!['good', 'hard', 'again'].includes(c.last) || typeof c.due !== 'string') continue;
     s.cards[qid] = { box: Math.max(0, Math.min(4, Number(c.box) || 0)), reps: Number(c.reps) || 0, lapses: Number(c.lapses) || 0, last: c.last, due: c.due, graded_at: String(c.graded_at || '') };
   }

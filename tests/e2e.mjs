@@ -58,6 +58,7 @@ const { ctx, page, errors } = await newPage(browser);
 
 await check('첫 화면(오늘의 읽기) 렌더링, 두 트랙 추천 표시', async () => {
   await page.goto(BASE);
+  await page.evaluate(() => window.__ekb.store.update((st) => { st.settings.reading_level = 3; })); // 아래 상세 검사는 심화 단계(전체 절) 기준
   await page.waitForSelector('h1:has-text("오늘의 읽기")');
   const lanes = await page.$$eval('.lane .card h3', (els) => els.map((e) => e.textContent));
   assert(lanes.length >= 2, `추천 카드 ${lanes.length}개`);
@@ -78,10 +79,10 @@ await check('설명집 상세: 수식·목차·문항·출처 렌더링', async 
   await page.waitForSelector('.prose h2');
   const n = await page.$$eval('.prose .katex', (e) => e.length);
   assert(n > 50, `KaTeX 요소 ${n}개`);
-  assert((await page.$$('.toc li')).length === 14, '목차 14개 아님');
+  assert((await page.$$('.toc li')).length === 15, '목차 15개 아님');
   assert((await page.$$('.prose details.qa')).length >= 3, '문항 부족');
   assert((await page.$$('.sources li')).length >= 2, '출처 부족');
-  const closed = await page.$eval('.prose details.qa', (d) => !d.open);
+  const closed = await page.$eval('.prose details.qa:not([data-type="easy"])', (d) => !d.open);
   assert(closed, '정답이 기본으로 펼쳐져 있음');
   await shot(page, '02-article');
 });
@@ -167,7 +168,7 @@ await check('학습 상태·북마크·메모가 새로고침 후 유지', async
 await check('자가 채점: 채점 저장·새로고침 유지, 기한 도래 시 오늘의 복습에 표시', async () => {
   await page.goto(`${BASE}#a-STAT-INF-001`);
   await page.waitForSelector('.prose details.qa .grade', { state: 'attached' });
-  const d = page.locator('.prose details.qa').first();
+  const d = page.locator('.prose details.qa:not([data-type="easy"])').first();
   await d.locator('summary').click();
   await d.locator('.grade button[data-g="again"]').click();
   let c = await page.evaluate(() => window.__ekb.store.state.cards['STAT-INF-001#0']);
@@ -175,7 +176,7 @@ await check('자가 채점: 채점 저장·새로고침 유지, 기한 도래 �
   assert((await page.textContent('#quiz-info')).includes('채점 1'), '문항 통계');
   await page.reload();
   await page.waitForSelector('.prose details.qa .grade', { state: 'attached' });
-  assert((await page.getAttribute('.prose details.qa .grade button[data-g="again"]', 'aria-pressed')) === 'true', '채점 유지 실패');
+  assert((await page.getAttribute('.prose details.qa[data-qid="STAT-INF-001#0"] .grade button[data-g="again"]', 'aria-pressed')) === 'true', '채점 유지 실패');
   await page.goto(`${BASE}#review`);
   await page.waitForSelector('#iv-list');
   assert((await page.$$('#iv-list details.qa')).length === 0, '기한 전인데 복습에 나옴');
@@ -199,6 +200,24 @@ await check('30초 설명: 저장 유지, 아티팩트 밖에서는 피드백 �
   await page.waitForSelector('#explain');
   assert((await page.inputValue('#explain')).startsWith('Big-O는'), '설명 유지 실패');
   assert(await page.isHidden('#explain-fb'), '피드백 버튼이 보임');
+});
+
+await check('학습 단계: 1단계는 한눈에 보기만, 단계 선택은 기억됨', async () => {
+  await page.evaluate(() => window.__ekb.store.update((st) => { st.settings.reading_level = 1; delete st.progress['AI-EMB-001']; }));
+  await page.goto(`${BASE}#a-AI-EMB-001`);
+  await page.waitForSelector('#lvl-seg');
+  const vis = async () => page.$$eval('#prose section.lv', (ss) => ss.filter((x) => getComputedStyle(x).display !== 'none').length);
+  const v1 = await vis();
+  assert(await page.isVisible('#prose section.lv[data-level="1"] h2'), '한눈에 보기 안 보임');
+  assert(!(await page.isVisible('#prose section.lv[data-level="3"] h2')), '1단계에서 심화 절이 보임');
+  assert((await page.$$('#prose section.lv[data-level="1"] details.qa[data-type="easy"]')).length >= 2, '쉬운 질문 부족');
+  await page.click('#lvl-seg label:has-text("2 기본")');
+  const v2 = await vis();
+  assert(v2 > v1, `2단계에서 더 보여야 함 ${v1}→${v2}`);
+  await page.reload(); await page.waitForSelector('#lvl-seg');
+  assert(await page.isChecked('input[name="lvl"][value="2"]'), '단계 기억 실패');
+  await page.click('#lvl-seg label:has-text("3 심화")');
+  assert(await page.isVisible('#prose section.lv[data-level="3"] h2'), '3단계에서 심화 절 안 보임');
 });
 
 await check('설명집을 열어도 학습 상태를 자동 변경하지 않음', async () => {

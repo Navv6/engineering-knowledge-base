@@ -15,7 +15,13 @@ export const RELATION_TYPES = ['prerequisite', 'related', 'application'];
 export const VIZ_NAMES = ['bigo', 'vector3d', 'ci', 'btree3d', 'embed3d'];
 export const READING_RANGE = { foundations: [15, 30], engineering: [5, 15] };
 // 명세 4장의 구조 중 반드시 있어야 하는 핵심 절(나머지는 해당 시 작성)
-export const REQUIRED_SECTIONS = ['핵심 요약', '개념과 등장 배경', '가정·한계', '이해 확인', '선행·후속'];
+export const REQUIRED_SECTIONS = ['한눈에 보기', '핵심 요약', '개념과 등장 배경', '가정·한계', '이해 확인', '선행·후속'];
+// 절 제목 → 학습 단계. 1 입문(한눈에 보기·선행/후속), 2 기본, 3 심화(그 외)
+export function sectionLevel(title) {
+  if (/한눈에 보기|선행·후속/.test(title)) return 1;
+  if (/핵심 요약|등장 배경|직관|단계별|계산|동작 예제|시각화|실무 사례|프로젝트와의 연결|가정·한계|흔한 오해|관계/.test(title)) return 2;
+  return 3;
+}
 
 /** ---json ... --- 프론트매터를 분리한다. */
 export function parseArticleSource(src, file = '') {
@@ -58,7 +64,8 @@ function makeRenderer(toc) {
   renderer.heading = (text, level, raw) => {
     if (level === 2) {
       const id = `s-${toc.length + 1}`;
-      toc.push({ id, text: raw.replace(/KXMATH\d+X/g, '').replace(/^\d+\.\s*/, '') });
+      const t = raw.replace(/KXMATH\d+X/g, '').replace(/^\d+\.\s*/, '');
+      toc.push({ id, text: t, level: sectionLevel(t) });
       return `<h2 id="${id}" tabindex="-1">${text}</h2>\n`;
     }
     return `<h${level}>${text}</h${level}>\n`;
@@ -94,13 +101,24 @@ export function renderArticleBody(body, articleId) {
   html = html.replace(/KXMATH(\d+)X/g, (_, i) => rendered[+i]);
   if (/KXMATH|KXCODE/.test(html)) throw new Error(`${articleId}: 치환되지 않은 수식 자리표시자가 남았습니다`);
 
+  // 문항에 고정 ID 부여: 일반 문항은 #0, #1…, 쉬운 문항(data-type="easy")은 #e0, #e1…
+  let nq = 0, ne = 0;
+  html = html.replace(/<details class="qa" data-type="(\w+)">/g, (_, t) => `<details class="qa" data-type="${t}" data-qid="${articleId}#${t === 'easy' ? `e${ne++}` : nq++}">`);
   const questions = [];
-  const qaRe = /<details class="qa" data-type="(\w+)"><summary>([\s\S]*?)<\/summary>([\s\S]*?)<\/details>/g;
+  const qaRe = /<details class="qa" data-type="(\w+)" data-qid="([^"]+)"><summary>([\s\S]*?)<\/summary>([\s\S]*?)<\/details>/g;
   let m;
   while ((m = qaRe.exec(html))) {
-    questions.push({ qid: `${articleId}#${questions.length}`, article_id: articleId, type: m[1], question: m[2].trim(), answer: m[3].trim() });
+    questions.push({ qid: m[2], article_id: articleId, type: m[1], question: m[3].trim(), answer: m[4].trim() });
   }
-  const sec1 = html.match(/<h2 id="s-1"[^>]*>[\s\S]*?<\/h2>([\s\S]*?)(?=<h2 )/);
+  // 절마다 단계 표시를 감싼다(화면에서 단계별로 보이기)
+  const parts = html.split(/(?=<h2 id="s-\d+")/);
+  html = parts.map((p, i) => {
+    const mm = p.match(/^<h2 id="(s-\d+)"/);
+    if (!mm) return p;
+    const lv = toc.find((t) => t.id === mm[1])?.level || 3;
+    return `<section class="lv" data-level="${lv}">${p}</section>`;
+  }).join('');
+  const sec1 = html.match(/<h2 id="s-\d+"[^>]*>(?:0\. )?[^<]*핵심 요약[\s\S]*?<\/h2>([\s\S]*?)(?=<\/section>)/) || html.match(/<h2 id="s-1"[^>]*>[\s\S]*?<\/h2>([\s\S]*?)(?=<\/section>)/);
   const vizUsed = [...body.matchAll(/data-viz="([\w-]+)"/g)].map((x) => x[1]);
   return { html, toc, questions, summaryHtml: sec1 ? sec1[1].trim() : '', plain: stripTags(html), vizUsed, mathCount: maths.length };
 }
@@ -243,7 +261,8 @@ export function validateAll({ graph, roles, articles, profile = { projects: [] }
     try {
       const r = renderArticleBody(body, meta.id);
       rendered.set(meta.id, r);
-      if (r.questions.length < 3) errors.push(`${tag}: 이해 확인 문항이 3개 미만 (${r.questions.length})`);
+      if (r.questions.filter((q) => q.type !== 'easy').length < 3) errors.push(`${tag}: 이해 확인 문항이 3개 미만`);
+      if (r.questions.filter((q) => q.type === 'easy').length < 2) errors.push(`${tag}: 한눈에 보기의 쉬운 확인 질문(data-type="easy")이 2개 미만`);
       for (const q of r.questions) if (!/정답/.test(q.answer) || !/해설/.test(q.answer)) errors.push(`${tag}: 정답·해설이 없는 문항 — ${stripTags(q.question).slice(0, 30)}`);
       for (const v of r.vizUsed) if (!VIZ_NAMES.includes(v)) errors.push(`${tag}: 알 수 없는 시각화 ${v}`);
       if (/TODO|TBD|lorem/i.test(body)) errors.push(`${tag}: 미완성 표시(TODO/TBD) 포함`);

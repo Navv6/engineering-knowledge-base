@@ -403,13 +403,13 @@ export function dueCards(cards, now = new Date()) {
     .map(([qid]) => qid);
 }
 /** 설명집 하나의 문항 통계 */
-export function quizStats(articleId, nQuestions, cards) {
+export function quizStats(qids, cards) {
   let graded = 0, mastered = 0;
-  for (let i = 0; i < nQuestions; i++) {
-    const c = cards?.[`${articleId}#${i}`];
+  for (const q of qids) {
+    const c = cards?.[q];
     if (!c) continue;
     graded++;
     if (c.last === 'good') mastered++;
   }
-  return { total: nQuestions, graded, mastered };
+  return { total: qids.length, graded, mastered };
 }

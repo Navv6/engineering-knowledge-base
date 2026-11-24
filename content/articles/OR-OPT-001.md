@@ -6,7 +6,11 @@
   "title": "목적함수와 제약조건",
   "title_en": "Objective Functions and Constraints",
   "difficulty": "입문",
-  "depth": ["L1", "L2", "L3"],
+  "depth": [
+    "L1",
+    "L2",
+    "L3"
+  ],
   "reading_minutes": 25,
   "objectives": [
     "현실의 의사결정 문제를 결정변수·목적함수·제약조건 세 요소로 나눠 수식으로 쓸 수 있다.",
@@ -15,23 +19,91 @@
     "잠재가격(shadow price)을 '제약을 한 단위 늘렸을 때 목적함수 변화'로 계산하고 해석할 수 있다.",
     "하드 제약과 소프트 제약(벌점), 다목적 최적화의 가중합 방식이 갖는 트레이드오프를 말할 수 있다."
   ],
-  "prerequisites": ["일차방정식과 연립방정식", "좌표평면에서 직선과 부등식 영역", "시그마(Σ) 표기"],
-  "roles": ["FDE", "AI Application Engineer"],
-  "tags": ["최적화", "선형계획법", "운영과학", "의사결정"],
+  "prerequisites": [
+    "일차방정식과 연립방정식",
+    "좌표평면에서 직선과 부등식 영역",
+    "시그마(Σ) 표기"
+  ],
+  "roles": [
+    "FDE",
+    "AI Application Engineer"
+  ],
+  "tags": [
+    "최적화",
+    "선형계획법",
+    "운영과학",
+    "의사결정"
+  ],
   "status": "published",
-  "version": 1,
+  "version": 2,
   "created_at": "2026-11-24",
   "updated_at": "2026-11-24",
   "verified_at": "2026-11-24",
   "sources": [
-    { "title": "Bertsimas, D., Tsitsiklis, J. N. Introduction to Linear Optimization. Athena Scientific, 1997. 1장(선형계획 문제), 4장(쌍대성)", "source_type": "textbook" },
-    { "title": "Boyd, S., Vandenberghe, L. Convex Optimization. Cambridge University Press, 2004. 4장(볼록 최적화 문제), 5장(쌍대성)", "url": "https://web.stanford.edu/~boyd/cvxbook/", "source_type": "textbook" },
-    { "title": "Dantzig, G. B. Linear Programming and Extensions. Princeton University Press, 1963", "source_type": "textbook" },
-    { "title": "Hillier, F. S., Lieberman, G. J. Introduction to Operations Research. McGraw-Hill (선형계획 입문 장)", "source_type": "textbook" },
-    { "title": "Google OR-Tools 공식 문서 (선형 최적화·정수 최적화 안내)", "url": "https://developers.google.com/optimization", "source_type": "official-doc" }
+    {
+      "title": "Bertsimas, D., Tsitsiklis, J. N. Introduction to Linear Optimization. Athena Scientific, 1997. 1장(선형계획 문제), 4장(쌍대성)",
+      "source_type": "textbook"
+    },
+    {
+      "title": "Boyd, S., Vandenberghe, L. Convex Optimization. Cambridge University Press, 2004. 4장(볼록 최적화 문제), 5장(쌍대성)",
+      "url": "https://web.stanford.edu/~boyd/cvxbook/",
+      "source_type": "textbook"
+    },
+    {
+      "title": "Dantzig, G. B. Linear Programming and Extensions. Princeton University Press, 1963",
+      "source_type": "textbook"
+    },
+    {
+      "title": "Hillier, F. S., Lieberman, G. J. Introduction to Operations Research. McGraw-Hill (선형계획 입문 장)",
+      "source_type": "textbook"
+    },
+    {
+      "title": "Google OR-Tools 공식 문서 (선형 최적화·정수 최적화 안내)",
+      "url": "https://developers.google.com/optimization",
+      "source_type": "official-doc"
+    }
   ]
 }
 ---
+
+## 0. 한눈에 보기 (입문)
+
+### 한 줄 요약
+최적화는 **"무엇을 가장 좋게 할지(목적)"**와 **"넘으면 안 되는 한계(제약)"**를 정리한 뒤, 그 안에서 가장 좋은 선택을 찾는 방법이다.
+
+### 쉬운 설명
+예산 3만 원으로 장을 본다고 해 보자. "배부르게 먹기"가 목적이고, "3만 원 이하"와 "냉장고에 들어갈 만큼"이 제약이다.
+
+공장도 같다. 제품 A와 B를 만드는데 기계 시간과 사람 시간에 한도가 있다. "이익 최대"가 목적, "기계 100시간·인력 80시간 이하"가 제약이다.
+
+- **답은 대개 한계선이 만나는 모서리에 있다.** 한도를 꽉 채워 쓸 때 이익이 가장 커지기 때문이다.
+- **병목:** 다 써 버린 자원이다. 이 자원을 1시간 늘리면 이익이 얼마나 느는지가 그 자원의 실제 가치(잠재가격)다.
+- **남은 자원은 더 사도 소용없다.** 이미 남아도는 자원에 돈을 쓰면 이익이 늘지 않는다.
+
+### 내 프로젝트에서는
+- 포트폴리오에는 최적화 기법(선형계획, 솔버)을 쓴 기록이 **없다.** 그래서 아래는 실제 사실이 아니라 **적용해 볼 수 있는 곳**이다.
+- **Preflight:** 샘플조달·시사출·CT 일정과 담당자 데이터가 이미 시스템에 모여 있다. "정해진 인원과 장비 시간 안에서 지연을 가장 줄이는 일정 배정"을 목적과 제약으로 적어 보는 연습 대상으로 좋다. 면접에서 "다음에 무엇을 더하겠는가"라는 질문에 연결할 수 있다.
+
+### 먼저 알면 좋은 것
+- 함수와 그래프 읽기(MATH-BASE-001, 준비 중): 제약을 직선으로 그리고 모서리를 찾는 법
+
+### 쉬운 확인 질문
+
+<details class="qa" data-type="easy"><summary>Q1. '주당 기계 사용 100시간 이하'는 목적일까 제약일까?</summary>
+
+**정답.** 제약.
+
+**해설.** 넘으면 안 되는 한계라서 제약이다. 목적은 '이익 최대'처럼 가장 좋게 만들고 싶은 값이다.
+
+</details>
+
+<details class="qa" data-type="easy"><summary>Q2. 기계 시간을 다 쓰지 않고 20시간 남겼다면, 기계 시간 1시간을 더 사는 것의 가치는?</summary>
+
+**정답.** 0이다.
+
+**해설.** 이미 남는 자원을 더 늘려도 지금의 최적 생산량은 바뀌지 않는다. 가치가 있는 건 다 써 버린 병목 자원뿐이다.
+
+</details>
 
 ## 1. 핵심 요약
 

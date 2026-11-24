@@ -62,6 +62,8 @@ test('수식 보호: 코드 블록·인라인 코드의 $는 건드리지 않음
 test('렌더링: 문항 추출과 잘못된 LaTeX 검출', () => {
   const r = renderArticleBody('## 1. 핵심 요약\n\n- $a$\n\n## 2. 문제\n\n<details class="qa" data-type="concept"><summary>Q</summary>\n\n**정답.** x\n\n**해설.** y\n\n</details>\n', 'T');
   assert.equal(r.questions.length, 1);
+  assert.equal(r.questions[0].qid, 'T#0');
+  assert.ok(r.html.includes('data-level="2"'), '단계 표시');
   assert.equal(r.toc.length, 2);
   assert.throws(() => renderArticleBody('$\\frac{1}{$', 'T'));
 });
@@ -153,7 +155,7 @@ test('간격 복습: 맞힘은 상자 상승, 틀림은 0으로, 기한 지난 �
   assert.equal(c.box, 4);
   const cards = { 'A-B-001#0': { due: '2026-11-23T00:00:00Z', last: 'good' }, 'A-B-001#1': { due: '2026-12-30T00:00:00Z', last: 'good' } };
   assert.deepEqual(core.dueCards(cards, t0), ['A-B-001#0']);
-  assert.deepEqual(core.quizStats('A-B-001', 3, cards), { total: 3, graded: 2, mastered: 2 });
+  assert.deepEqual(core.quizStats(['A-B-001#0', 'A-B-001#1', 'A-B-001#2'], cards), { total: 3, graded: 2, mastered: 2 });
   assert.throws(() => core.gradeCard(null, 'maybe'));
 });
 

@@ -43,6 +43,95 @@
   },
   "concepts": [
     {
+      "id": "stat-descriptive",
+      "title_ko": "평균·분산·표준편차",
+      "title_en": "Mean, Variance and Standard Deviation",
+      "aliases": [
+        "평균",
+        "분산",
+        "표준편차",
+        "기술통계",
+        "descriptive statistics"
+      ],
+      "discipline": "STAT",
+      "tags": [
+        "foundation",
+        "bridge"
+      ],
+      "planned_article": "STAT-BASE-001"
+    },
+    {
+      "id": "math-coordinates-distance",
+      "title_ko": "좌표와 거리(피타고라스)",
+      "title_en": "Coordinates and Distance",
+      "aliases": [
+        "좌표",
+        "피타고라스",
+        "거리 공식",
+        "coordinate"
+      ],
+      "discipline": "MATH",
+      "tags": [
+        "foundation",
+        "bridge"
+      ],
+      "planned_article": "MATH-BASE-004"
+    },
+    {
+      "id": "math-sigma-notation",
+      "title_ko": "합 기호(Σ)와 수식 읽기",
+      "title_en": "Summation Notation and Reading Formulas",
+      "aliases": [
+        "시그마",
+        "Σ",
+        "합 기호",
+        "수식 읽기",
+        "summation"
+      ],
+      "discipline": "MATH",
+      "tags": [
+        "foundation",
+        "bridge"
+      ],
+      "planned_article": "MATH-BASE-003"
+    },
+    {
+      "id": "math-exp-log",
+      "title_ko": "지수와 로그",
+      "title_en": "Exponents and Logarithms",
+      "aliases": [
+        "지수",
+        "로그",
+        "logarithm",
+        "exponential",
+        "거듭제곱"
+      ],
+      "discipline": "MATH",
+      "tags": [
+        "foundation",
+        "bridge"
+      ],
+      "planned_article": "MATH-BASE-002"
+    },
+    {
+      "id": "math-functions-graphs",
+      "title_ko": "함수와 그래프 읽기",
+      "title_en": "Functions and Graphs",
+      "aliases": [
+        "함수",
+        "그래프 읽기",
+        "기울기",
+        "일차함수",
+        "function"
+      ],
+      "discipline": "MATH",
+      "tags": [
+        "foundation",
+        "bridge"
+      ],
+      "planned_article": "MATH-BASE-001"
+    },
+    {
       "id": "algorithms-data-structures",
       "title_ko": "알고리즘과 자료구조",
       "title_en": "Algorithms and Data Structures",
@@ -716,6 +805,51 @@
       "from": "context-harness-engineering",
       "to": "fde-solution-design",
       "type": "related"
+    },
+    {
+      "from": "math-functions-graphs",
+      "to": "math-exp-log",
+      "type": "prerequisite"
+    },
+    {
+      "from": "math-functions-graphs",
+      "to": "asymptotic-complexity",
+      "type": "prerequisite"
+    },
+    {
+      "from": "math-functions-graphs",
+      "to": "objective-constraints",
+      "type": "prerequisite"
+    },
+    {
+      "from": "math-exp-log",
+      "to": "asymptotic-complexity",
+      "type": "prerequisite"
+    },
+    {
+      "from": "math-sigma-notation",
+      "to": "vectors-dot-product",
+      "type": "prerequisite"
+    },
+    {
+      "from": "math-sigma-notation",
+      "to": "stat-descriptive",
+      "type": "prerequisite"
+    },
+    {
+      "from": "math-coordinates-distance",
+      "to": "vectors-dot-product",
+      "type": "prerequisite"
+    },
+    {
+      "from": "stat-descriptive",
+      "to": "probability-basics",
+      "type": "prerequisite"
+    },
+    {
+      "from": "stat-descriptive",
+      "to": "statistical-estimation",
+      "type": "prerequisite"
     }
   ]
 }
