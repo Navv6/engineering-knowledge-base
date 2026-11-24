@@ -112,6 +112,13 @@ npm run test:e2e   → 35/35 통과 (Chromium, 데스크톱 1360px + 모바일 3
 - 미확인 상태로 남은 버전 의존 서술: DE-DB-001의 "PostgreSQL 18 skip scan"(본문에 "링크 재확인 못 함" 명시), Lehman–Yao 기반·중복 제거(dedup) 서술은 PostgreSQL 문서 기준이나 이번 세션에서 재확인 못 함.
 - **다음 작업:** 위 호스트를 허용한 환경에서 링크를 확인하고 `content/source-checks.json`에 `{ "ok": true, "date": ..., "note": ... }`를 추가 → 재빌드하면 배지가 "링크 확인"으로 바뀐다.
 
+### 5-1. 출처 일괄 확인 (2026-11-24, 네트워크 허용 후)
+- 사용자 승인으로 Default 환경에 문서 사이트 10곳(arxiv.org, www.postgresql.org, ocw.mit.edu, nlp.stanford.edu, www.itl.nist.gov, wiki.python.org, use-the-index-luke.com, web.stanford.edu, developers.google.com, www.sbert.net)을 허용함.
+- URL 출처 20개 중 **19개 링크 확인**(`content/source-checks.json`). nlp.stanford.edu/IR-book/ 1건만 응답 시간 초과로 미확인.
+- Python Wiki가 새 주소로 이전되어 CS-ALG-002의 URL을 갱신함.
+- PostgreSQL 서술 확인: 복합 인덱스 "선행 컬럼 조건에서 가장 효율적"(문서 일치), PostgreSQL 18 skip scan(18.0 릴리스 노트 일치 → DE-DB-001의 "확인 못 함" 표기 제거), B-Tree 중복 제거(문서 일치). **Lehman–Yao 기반이라는 서술은 공식 문서 페이지에서 찾지 못함**(근거는 소스 트리의 nbtree README인데 이번에 열람 못 함). 본문은 유지하되 미확인으로 남김.
+- 참고: PostgreSQL 공식 문서의 current가 이제 19 버전임.
+
 ## 6. 자동화(명세 8장) — 연결됨
 
 **구성 (2026-11-24 연결, 같은 날 Git 기반으로 전환)**

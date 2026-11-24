@@ -26,7 +26,7 @@
     { "title": "Cormen, Leiserson, Rivest, Stein. Introduction to Algorithms, 4th ed. MIT Press, 2022. 3장(점근 표기), 4장(분할정복 점화식), 16장(분할상환 분석)", "source_type": "textbook" },
     { "title": "Knuth, D. E. Big Omicron and big Omega and big Theta. ACM SIGACT News 8(2), 18–24, 1976", "source_type": "paper" },
     { "title": "MIT OpenCourseWare 6.006 Introduction to Algorithms (Spring 2020)", "url": "https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-spring-2020/", "source_type": "lecture" },
-    { "title": "Python Wiki: TimeComplexity (CPython 자료구조 연산 비용)", "url": "https://wiki.python.org/moin/TimeComplexity", "source_type": "official-doc" }
+    { "title": "Python Wiki: TimeComplexity (CPython 자료구조 연산 비용)", "url": "https://wiki.python.org/python/language/TimeComplexity.html", "source_type": "official-doc" }
   ]
 }
 ---
