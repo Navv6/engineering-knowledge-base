@@ -152,7 +152,7 @@ npm run test:e2e   → 35/35 통과 (Chromium, 데스크톱 1360px + 모바일 3
 
 **프로젝트 프로필 채움 (2026-11-24, 사용자 지시)**
 - 사용자 지시("깃 저장소나 포트폴리오를 보면 된다")에 따라 공개 저장소 `Navv6/portfolio`의 케이스 스터디 원문에서 사실 33개를 옮김: Preflight 18, DeepVi 7, STT 평가(MarkCloud 인턴) 8. 사실마다 근거 파일 경로를 달고, 성과 수치는 "포트폴리오 기재"로 표시. 고용주명 같은 개인 정보와 추정은 넣지 않음.
-- 정정(사용자 확인, 같은 날): DeepVi RAG는 **하이브리드**였음. 매일 수집한 뉴스는 Pinecone 벡터 검색(multilingual-e5-large, k=5), 재무 수치는 API 응답 데이터. 처음에는 포트폴리오에 Pinecone 기재가 없어 "벡터 검색 없음"으로 잘못 적었고, 사용자 정정 후 비공개 저장소 `Navv6/deepvi`(README·pages/stream.py)로 세부를 확인해 프로필과 AI-RAG-001·MATH-LA-001·AI-EMB-001의 10절을 다시 씀(각 version 3).
+- 정정(사용자 확인, 같은 날): DeepVi RAG는 **하이브리드**였음. 매일 수집한 뉴스는 Pinecone 벡터 검색(multilingual-e5-large, k=5), 재무 수치는 API 응답 데이터. 처음에는 포트폴리오에 Pinecone 기재가 없어 "벡터 검색 없음"으로 잘못 적었고, 사용자 정정 후 비공개 저장소 `Navv6/deepvi`(README·pages/stream.py)로 세부를 확인해 프로필과 AI-RAG-001·MATH-LA-001·AI-EMB-001의 10절을 다시 씀(각 version 3). 추가 확인: 질문은 기업별 분석 화면 안에서만 가능해 기업 필터가 따로 필요 없었음(사용자 확인). 기업 조건 없는 벡터 검색은 거시·종합 질문 경로에만 해당.
 - 기존 설명집 6편(CS-ALG-002, MATH-LA-001, STAT-INF-001, DE-DB-001, AI-RAG-001, AI-EMB-001)의 "기존 프로젝트와의 연결" 절을 이 사실 기반으로 다시 씀(각 version 2). 포트폴리오에 없는 내용은 점검 질문으로 유지. OR-OPT-001은 관련 프로젝트 사실이 없어 그대로 둠.
 - 비공개 저장소(Deepvi, STT 등)는 열지 않음. 포트폴리오로 충분했고, 필요하면 추가 확인 가능.
 
