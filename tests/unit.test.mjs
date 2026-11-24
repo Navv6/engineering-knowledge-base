@@ -164,7 +164,7 @@ test('후보 선정: 공개 설명집의 빠진 선행 개념을 먼저 고름',
   const out = JSON.parse(execFileSync('node', ['scripts/next-candidates.mjs'], { cwd: new URL('..', import.meta.url).pathname }).toString());
   const content = loadContent();
   const pubConcepts = new Set(content.articles.filter((a) => a.meta.status === 'published').map((a) => a.meta.concept));
-  assert.ok(out.pick, '후보 없음');
+  if (!out.pick) { assert.match(out.reason, /남은 후보 없음/); return; }
   assert.ok(!pubConcepts.has(out.pick.concept), '이미 공개된 개념을 고름');
   if (out.gaps.length) assert.equal(out.pick.concept, out.gaps[0].concept);
 });

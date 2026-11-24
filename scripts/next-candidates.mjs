@@ -60,7 +60,8 @@ const foundations = graph.concepts
 const pr = core.computePriorities({ concepts: graph.concepts, relations: graph.relations, roles: roles.roles, selectedRoles: roles.roles.map((r) => r.id), statusByConcept: {}, evidence: [], manual: {} });
 const engineering = pr
   .filter((r) => !FOUND.includes(byId[r.concept_id].discipline) && !covered.has(r.concept_id))
-  .map((r) => describe(byId[r.concept_id], { priority: r.score }));
+  .map((r) => describe(byId[r.concept_id], { priority: r.score }))
+  .sort((a, b) => (b.prerequisites_covered - a.prerequisites_covered)); // 선행이 갖춰진 후보 먼저(안정 정렬이라 우선순위 순서는 유지)
 
 let pick = null, reason = '';
 if (gaps.length) {
@@ -70,7 +71,10 @@ if (gaps.length) {
   const nF = pub.filter((a) => a.meta.track === 'foundations').length;
   const nE = pub.filter((a) => a.meta.track === 'engineering').length;
   const track = nF <= nE ? 'foundations' : 'engineering';
-  pick = (track === 'foundations' ? foundations : engineering)[0] || (track === 'foundations' ? engineering : foundations)[0] || null;
+  const mine = track === 'foundations' ? foundations : engineering;
+  const other = track === 'foundations' ? engineering : foundations;
+  // 선행이 갖춰진 후보를 먼저: 이 트랙 → 다른 트랙 → (없으면) 아무거나
+  pick = mine.find((c) => c.prerequisites_covered) || other.find((c) => c.prerequisites_covered) || mine[0] || other[0] || null;
   reason = pick ? `선행 구멍 없음 → 공개 편수가 적은 ${track} 트랙(F ${nF} : E ${nE})` : '남은 후보 없음: 명세 3.2절 분류에서 새 개념을 추가해야 함';
 }
 

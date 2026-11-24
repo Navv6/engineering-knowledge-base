@@ -332,7 +332,7 @@ SELECT ?x WHERE { :엔진 :부품+ ?x }
 
 - 선행: 온톨로지와 Knowledge Graph(KE-ONT-001)
 - 함께 보기: 집합과 명제논리(MATH-DM-001), 그래프 이론 기초(MATH-GRAPH-001), 관계형 데이터 모델링(DE-MODEL-001)
-- 후속: FDE와 솔루션 설계(PE-FDE-001, 준비 중), RAG(AI-RAG-001)와 지식 그래프의 결합(Graph RAG)
+- 후속: FDE와 솔루션 설계(PE-FDE-001), RAG(AI-RAG-001)와 지식 그래프의 결합(Graph RAG)
 - 더 나아가기: 기술 논리(description logic), OWL 2 프로필별 추론기, SHACL-SPARQL 고급 제약
 
 ## 14. 참고 자료

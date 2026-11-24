@@ -273,7 +273,7 @@ Preflight가 "파일에서 빠진 행 = 삭제"로 보지 않고 "끝났다는 �
 ## 13. 선행·후속 학습
 
 - 선행: 관계형 데이터 모델링(DE-MODEL-001), 집합과 명제논리(MATH-DM-001), 그래프 이론 기초(MATH-GRAPH-001)
-- 후속: RDF·OWL·SPARQL(KE-RDF-001), RAG 검색 및 평가(AI-RAG-001)와의 결합(Graph RAG), FDE와 솔루션 설계(PE-FDE-001, 준비 중)
+- 후속: RDF·OWL·SPARQL(KE-RDF-001), RAG 검색 및 평가(AI-RAG-001)와의 결합(Graph RAG), FDE와 솔루션 설계(PE-FDE-001)
 - 더 나아가기: 기술 논리(description logic), 개체 해소, SHACL(그래프 데이터 검증)
 
 ## 14. 참고 자료

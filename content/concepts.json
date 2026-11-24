@@ -642,6 +642,205 @@
         "role"
       ],
       "planned_article": "PE-FDE-001"
+    },
+    {
+      "id": "calculus-gradient",
+      "title_ko": "미분과 경사하강법",
+      "title_en": "Derivatives and Gradient Descent",
+      "aliases": [
+        "미분",
+        "도함수",
+        "경사하강법",
+        "gradient descent",
+        "derivative"
+      ],
+      "discipline": "MATH",
+      "tags": [
+        "foundation",
+        "bridge"
+      ],
+      "planned_article": "MATH-CALC-001"
+    },
+    {
+      "id": "matrices-linear-maps",
+      "title_ko": "행렬과 선형변환",
+      "title_en": "Matrices and Linear Maps",
+      "aliases": [
+        "행렬",
+        "행렬 곱",
+        "선형변환",
+        "matrix",
+        "matrix multiplication"
+      ],
+      "discipline": "MATH",
+      "tags": [
+        "linear-algebra"
+      ],
+      "planned_article": "MATH-LA-002"
+    },
+    {
+      "id": "linear-regression",
+      "title_ko": "회귀분석 기초",
+      "title_en": "Linear Regression Basics",
+      "aliases": [
+        "회귀",
+        "선형회귀",
+        "최소제곱",
+        "linear regression",
+        "least squares",
+        "결정계수"
+      ],
+      "discipline": "STAT",
+      "tags": [
+        "statistics"
+      ],
+      "planned_article": "STAT-REG-001"
+    },
+    {
+      "id": "edit-distance",
+      "title_ko": "편집 거리와 동적계획법",
+      "title_en": "Edit Distance and Dynamic Programming",
+      "aliases": [
+        "편집 거리",
+        "레벤슈타인",
+        "edit distance",
+        "Levenshtein",
+        "동적계획법",
+        "dynamic programming"
+      ],
+      "discipline": "CS",
+      "tags": [
+        "algorithm"
+      ],
+      "planned_article": "CS-ALG-003"
+    },
+    {
+      "id": "networking-http",
+      "title_ko": "네트워크와 HTTP 기초",
+      "title_en": "Networking and HTTP Basics",
+      "aliases": [
+        "HTTP",
+        "TCP/IP",
+        "DNS",
+        "HTTPS",
+        "네트워크 기초"
+      ],
+      "discipline": "CS",
+      "tags": [
+        "network"
+      ],
+      "planned_article": "CS-NET-001"
+    },
+    {
+      "id": "classification-metrics",
+      "title_ko": "분류 평가 지표",
+      "title_en": "Classification Metrics",
+      "aliases": [
+        "정밀도",
+        "재현율",
+        "F1",
+        "precision",
+        "recall",
+        "혼동행렬",
+        "confusion matrix",
+        "ROC"
+      ],
+      "discipline": "AI",
+      "tags": [
+        "evaluation"
+      ],
+      "planned_article": "AI-EVAL-001"
+    },
+    {
+      "id": "asr-metrics",
+      "title_ko": "음성 인식과 평가 지표",
+      "title_en": "Speech Recognition and Its Metrics",
+      "aliases": [
+        "음성 인식",
+        "ASR",
+        "STT",
+        "WER",
+        "CER",
+        "RTF",
+        "단어 오류율"
+      ],
+      "discipline": "AI",
+      "tags": [
+        "speech",
+        "evaluation"
+      ],
+      "planned_article": "AI-ASR-001"
+    },
+    {
+      "id": "llm-transformer",
+      "title_ko": "LLM과 트랜스포머 작동 원리",
+      "title_en": "How LLMs and Transformers Work",
+      "aliases": [
+        "LLM",
+        "트랜스포머",
+        "transformer",
+        "어텐션",
+        "attention",
+        "토큰화",
+        "tokenization"
+      ],
+      "discipline": "AI",
+      "tags": [
+        "llm"
+      ],
+      "planned_article": "AI-LLM-001"
+    },
+    {
+      "id": "data-pipeline-etl",
+      "title_ko": "데이터 파이프라인과 ETL",
+      "title_en": "Data Pipelines and ETL",
+      "aliases": [
+        "ETL",
+        "ELT",
+        "데이터 파이프라인",
+        "data pipeline",
+        "배치 적재"
+      ],
+      "discipline": "DE",
+      "tags": [
+        "pipeline"
+      ],
+      "planned_article": "DE-PIPE-001"
+    },
+    {
+      "id": "rest-api-design",
+      "title_ko": "REST API 설계",
+      "title_en": "REST API Design",
+      "aliases": [
+        "REST",
+        "REST API",
+        "API 설계",
+        "FastAPI",
+        "엔드포인트"
+      ],
+      "discipline": "SE",
+      "tags": [
+        "api"
+      ],
+      "planned_article": "SE-API-001"
+    },
+    {
+      "id": "deployment-environments",
+      "title_ko": "배포와 환경 분리",
+      "title_en": "Deployment and Environment Separation",
+      "aliases": [
+        "배포",
+        "개발 서버",
+        "운영 서버",
+        "컨테이너",
+        "Docker",
+        "CI/CD"
+      ],
+      "discipline": "OPS",
+      "tags": [
+        "devops"
+      ],
+      "planned_article": "OPS-DEPLOY-001"
     }
   ],
   "relations": [
@@ -853,6 +1052,91 @@
     {
       "from": "stat-descriptive",
       "to": "statistical-estimation",
+      "type": "prerequisite"
+    },
+    {
+      "from": "math-functions-graphs",
+      "to": "calculus-gradient",
+      "type": "prerequisite"
+    },
+    {
+      "from": "vectors-dot-product",
+      "to": "matrices-linear-maps",
+      "type": "prerequisite"
+    },
+    {
+      "from": "stat-descriptive",
+      "to": "linear-regression",
+      "type": "prerequisite"
+    },
+    {
+      "from": "math-functions-graphs",
+      "to": "linear-regression",
+      "type": "prerequisite"
+    },
+    {
+      "from": "calculus-gradient",
+      "to": "linear-regression",
+      "type": "prerequisite"
+    },
+    {
+      "from": "algorithms-data-structures",
+      "to": "edit-distance",
+      "type": "prerequisite"
+    },
+    {
+      "from": "probability-basics",
+      "to": "classification-metrics",
+      "type": "prerequisite"
+    },
+    {
+      "from": "edit-distance",
+      "to": "asr-metrics",
+      "type": "prerequisite"
+    },
+    {
+      "from": "statistical-estimation",
+      "to": "asr-metrics",
+      "type": "prerequisite"
+    },
+    {
+      "from": "embeddings",
+      "to": "llm-transformer",
+      "type": "prerequisite"
+    },
+    {
+      "from": "matrices-linear-maps",
+      "to": "llm-transformer",
+      "type": "prerequisite"
+    },
+    {
+      "from": "calculus-gradient",
+      "to": "llm-transformer",
+      "type": "prerequisite"
+    },
+    {
+      "from": "relational-modeling",
+      "to": "data-pipeline-etl",
+      "type": "prerequisite"
+    },
+    {
+      "from": "transactions-acid",
+      "to": "data-pipeline-etl",
+      "type": "prerequisite"
+    },
+    {
+      "from": "networking-http",
+      "to": "rest-api-design",
+      "type": "prerequisite"
+    },
+    {
+      "from": "process-thread-concurrency",
+      "to": "deployment-environments",
+      "type": "prerequisite"
+    },
+    {
+      "from": "software-testing",
+      "to": "deployment-environments",
       "type": "prerequisite"
     }
   ]
