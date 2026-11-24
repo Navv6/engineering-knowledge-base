@@ -7,7 +7,7 @@
   "title_en": "Software Testing and Maintenance",
   "difficulty": "입문",
   "depth": ["L1", "L2", "L3"],
-  "reading_minutes": 22,
+  "reading_minutes": 15,
   "objectives": [
     "단위·통합·E2E 테스트의 차이와 각자의 비용·속도·신뢰를 설명할 수 있다.",
     "경계값·반례·회귀 테스트가 무엇을 지키는지 예로 말할 수 있다.",
