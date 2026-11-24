@@ -75,6 +75,20 @@ function articleCard(a, { reason = '', snippet = '', query = '' } = {}) {
   </article>`;
 }
 
+/* ---------- 자동화 상태(content/automation.json, content/runs/*.json) ---------- */
+const AUTO = KB.automation || { status: 'not_connected' };
+const RUNS = KB.runs || [];
+const RUN_KO = { success: '성공', partial: '부분 성공', failed: '실패', skipped: '건너뜀' };
+const autoPill = () => (AUTO.status === 'connected' ? '<span class="pill ok">연동됨</span>' : '<span class="pill warn">미연동</span>');
+const autoText = () => AUTO.status === 'connected'
+  ? `<p class="small">예약 실행: <b>${esc(AUTO.schedule_text)}</b> · 회당 기초 ${AUTO.per_run?.foundations ?? 1}편, 실무 ${AUTO.per_run?.engineering ?? 1}편. 실행마다 다음 개념을 골라 설명집을 쓰고, 검증 게이트와 테스트를 통과한 것만 이 페이지에 추가합니다. 실패한 초안은 공개하지 않고 기록만 남깁니다. 시각·분량·중지 변경은 Claude에게 요청하세요(예약 작업 설정을 바꿉니다).</p>`
+  : '<p class="muted small">새 설명집을 작성·검증·배포하는 예약 실행이 연결되어 있지 않습니다. Claude에게 다음 설명집 작성을 요청하면 검증을 통과한 문서만 배포합니다.</p>';
+function runsTable(n) {
+  if (!RUNS.length) return '<p class="muted small">실행 기록(RefreshRun): 아직 없음</p>';
+  const name = (id) => (ART[id] ? `<a href="#a-${id}">${esc(ART[id].title)}</a>` : esc(id));
+  return `<div class="table-wrap"><table class="data"><caption>최근 실행 기록</caption><thead><tr><th>시작(UTC)</th><th>결과</th><th>공개</th><th>초안·건너뜀</th></tr></thead><tbody>${RUNS.slice(0, n).map((r) => `<tr><td class="mono small">${esc(String(r.started_at || '').slice(0, 16).replace('T', ' '))}</td><td><span class="pill ${r.status === 'success' ? 'ok' : r.status === 'failed' ? 'warn' : 'ghost'}">${RUN_KO[r.status] || esc(r.status)}</span></td><td>${(r.created || []).map(name).join(', ') || '—'}</td><td class="small">${[...(r.drafts || []).map((d) => `${esc(d)}(초안)`), ...(r.skipped || []).map((x) => `${esc(x.concept || '')}: ${esc(x.reason || '')}`), ...(r.errors || []).map((e) => `오류: ${esc(e)}`)].join('<br>') || '—'}</td></tr>`).join('')}</tbody></table></div>`;
+}
+
 /* ---------- 화면: 오늘의 읽기 ---------- */
 function viewToday() {
   const st = store.state.settings;
@@ -96,6 +110,7 @@ function viewToday() {
     <h1>오늘의 읽기</h1>
     <p class="lede">기초 학문 ${st.daily_foundation_count}편과 실무 기술 ${st.daily_engineering_count}편을 각자의 순서로 고릅니다. 공개 설명집 ${ARTICLES.length}편 중 ${done}편을 이해 완료로 표시했습니다.</p>
   </header>
+  ${(() => { const last = RUNS.find((r) => (r.created || []).length); return last ? `<p class="new-banner">최근 추가 <span class="mono">${esc(String(last.started_at).slice(0, 10))}</span> · ${last.created.filter((id) => ART[id]).map((id) => `<a href="#a-${id}">${esc(ART[id].title)}</a>`).join(', ')}</p>` : ''; })()}
   <section class="today-grid" aria-label="오늘의 추천">
     <div class="lane"><h2 class="lane-h">Foundations <small>선행 관계 순서</small></h2>${pick.foundations.map((x) => articleCard(x.article, { reason: x.reason })).join('')}${emptyF}</div>
     <div class="lane"><h2 class="lane-h">Engineering <small>직무·공고 우선순위</small></h2>${pick.engineering.map((x) => articleCard(x.article, { reason: x.reason })).join('')}${emptyE}</div>
@@ -107,7 +122,7 @@ function viewToday() {
   </section>
   <section class="queue">
     <h2>다음 설명집 후보 <small>아직 작성되지 않음</small></h2>
-    <p class="muted">새 설명집 자동 생성 스케줄러는 연결되어 있지 않습니다. 아래 후보는 선행 관계와 우선순위로 계산한 다음 작성 순서이며, 작성·검증을 거쳐 배포되면 위 추천에 포함됩니다.</p>
+    <p class="muted">${AUTO.status === 'connected' ? `예약 실행(${esc(AUTO.schedule_text)})이 이 순서를 참고해 다음 설명집을 쓰고, 검증을 통과하면 위 추천에 포함됩니다.` : '자동 생성은 연결되어 있지 않습니다. 아래는 선행 관계와 우선순위로 계산한 다음 작성 순서입니다.'}</p>
     <div class="queue-cols"><ol>${plannedF.map((c) => `<li>${esc(c.title_ko)} <span class="mono muted">${c.planned_article || ''}</span></li>`).join('')}</ol><ol>${plannedE.map((r) => `<li>${esc(CON[r.concept_id].title_ko)} <span class="mono muted">${CON[r.concept_id].planned_article || ''} · ${r.final}점</span></li>`).join('')}</ol></div>
   </section>`;
 }
@@ -371,12 +386,10 @@ function viewPrefs() {
       <label for="pf-e">실무 설명집 / 일<input id="pf-e" type="number" min="0" max="3" value="${s.daily_engineering_count}"></label>
       <label for="pf-rd">주간 복습 요일<select id="pf-rd">${DAYS.map((d, i) => `<option value="${i}" ${s.weekly_review_day === i ? 'selected' : ''}>${d}요일</option>`).join('')}</select></label>
     </fieldset>
-    <fieldset><legend>콘텐츠 자동 생성 <span class="pill warn">미연동</span></legend>
-      <p class="muted small">새 설명집을 매일 작성·검증·배포하는 스케줄러는 연결되어 있지 않습니다. 아래 값은 연결 시 사용할 제안값으로만 저장됩니다. 현재는 Claude에게 다음 설명집 작성을 요청하면 검증 스크립트를 통과한 문서만 배포하는 수동 절차로 갱신합니다(HANDOFF.md 참고).</p>
-      <label class="inline" for="pf-en"><input id="pf-en" type="checkbox" ${s.enabled ? 'checked' : ''}> 자동 생성 사용(제안값)</label>
-      <label for="pf-cad">주기<select id="pf-cad">${[['daily', '매일'], ['weekdays', '평일'], ['weekly', '매주']].map(([v, t]) => `<option value="${v}" ${s.cadence === v ? 'selected' : ''}>${t}</option>`).join('')}</select></label>
-      <label for="pf-nt">알림<select id="pf-nt">${[['none', '없음'], ['digest', '변경 요약'], ['errors', '오류만']].map(([v, t]) => `<option value="${v}" ${s.notification_mode === v ? 'selected' : ''}>${t}</option>`).join('')}</select></label>
-      <p class="muted small">실행 기록(RefreshRun): 없음. 콘텐츠 빌드 ${esc(KB.generatedAt.slice(0, 16).replace('T', ' '))} UTC · 공개 ${ARTICLES.length}편 · 비공개 초안 ${drafts}편</p>
+    <fieldset><legend>콘텐츠 자동 생성 ${autoPill()}</legend>
+      ${autoText()}
+      <div class="full">${runsTable(10)}</div>
+      <p class="muted small">콘텐츠 빌드 ${esc(KB.generatedAt.slice(0, 16).replace('T', ' '))} UTC · 공개 ${ARTICLES.length}편 · 비공개 초안 ${drafts}편</p>
     </fieldset>
     <p class="muted small" id="pf-msg" aria-live="polite"></p>
   </form>
@@ -400,7 +413,6 @@ function wirePrefs() {
       s.settings.daily_foundation_count = Math.max(0, Math.min(3, Number($('#pf-f').value) || 0));
       s.settings.daily_engineering_count = Math.max(0, Math.min(3, Number($('#pf-e').value) || 0));
       s.settings.weekly_review_day = Number($('#pf-rd').value);
-      s.settings.enabled = $('#pf-en').checked; s.settings.cadence = $('#pf-cad').value; s.settings.notification_mode = $('#pf-nt').value;
     });
     $('#pf-msg').textContent = '설정을 저장했습니다.';
   });

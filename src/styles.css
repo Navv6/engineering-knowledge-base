@@ -284,3 +284,6 @@ table.rank tr.in-k td { background: var(--accent-soft); }
 .prefs label:not(.inline) { display: grid; gap: 4px; font-size: .86rem; color: var(--muted); }
 
 @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; transition: none !important; animation: none !important; } }
+
+.new-banner { margin: 0 0 14px; padding: 8px 12px; border: 1px solid var(--line); border-left: 3px solid var(--pencil); border-radius: var(--r); background: var(--surface); font-size: .9rem; }
+.prefs fieldset > div.full { grid-column: 1 / -1; }

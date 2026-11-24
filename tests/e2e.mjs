@@ -187,7 +187,8 @@ await check('검색: 한글·영문·별칭·띄어쓰기 무시', async () => {
   assert((await q('Big-O'))[0] === 'CS-ALG-002', 'Big-O');
   assert((await q('없는주제xyz')).length === 0, '무관 검색 결과');
   await page.fill('#lib-q', ''); await page.selectOption('#lib-track', 'engineering');
-  assert((await page.$$('#lib-results .card')).length === 2, '트랙 필터');
+  const engN = await page.evaluate(() => window.__ekb.KB.articles.filter((a) => a.track === 'engineering' && a.status === 'published').length);
+  assert((await page.$$('#lib-results .card')).length === engN, '트랙 필터');
   await page.selectOption('#lib-track', ''); await page.check('#lib-bm');
   const bm = await page.$$eval('#lib-results .card .id', (e) => e.map((x) => x.textContent));
   assert(bm.length === 1 && bm[0] === 'CS-ALG-002', `북마크 필터 ${bm}`);
@@ -198,7 +199,8 @@ await check('Knowledge Map: 3D 렌더링, 목록 대체 화면, 노드 정보', 
   await page.waitForSelector('#map3d[data-ready]', { timeout: 15000 });
   assert((await page.getAttribute('#map3d', 'data-ready')) === '1', '3D 지도 실패(대체 화면 표시됨)');
   assert((await page.$$('#map3d canvas')).length === 1, '캔버스 없음');
-  assert((await page.$$('table.data tbody tr')).length === 25, '목록 행 수');
+  const nC = await page.evaluate(() => window.__ekb.KB.concepts.length);
+  assert((await page.$$('table.data tbody tr')).length === nC, '목록 행 수');
   await page.uncheck('[data-rel="related"]');
   await page.waitForTimeout(400);
   await shot(page, '07-map');
@@ -230,12 +232,13 @@ await check('Skill Gap: 공고 분석→저장→중복 방지→빈도 반영',
   await shot(page, '08-gap');
 });
 
-await check('Interview: 문항 23개, 유형 필터, 답 접힘', async () => {
+await check('Interview: 전체 문항 표시, 유형 필터, 답 접힘', async () => {
   await page.goto(`${BASE}#interview`);
-  assert((await page.$$('#iv-list details')).length === 23, '문항 수');
+  const nQ = await page.evaluate(() => window.__ekb.KB.questions.length);
+  assert((await page.$$('#iv-list details')).length === nQ, '문항 수');
   await page.selectOption('#iv-type', 'applied');
   const n = (await page.$$('#iv-list details')).length;
-  assert(n > 0 && n < 23, `필터 ${n}`);
+  assert(n > 0 && n < nQ, `필터 ${n}`);
   await page.click('#iv-rand');
   assert((await page.$$('#iv-list details.picked')).length === 1, '무작위 선택');
 });
@@ -298,7 +301,7 @@ await check('three.js CDN 실패 시 대체 문구(본문은 정상)', async () 
   await b.page.goto(`${BASE}#map`);
   await b.page.waitForSelector('#map3d[data-ready]', { timeout: 15000 });
   assert((await b.page.getAttribute('#map3d', 'data-ready')) === 'fallback', '대체 화면 아님');
-  assert((await b.page.$$('table.data tbody tr')).length === 25, '목록 대체 화면 없음');
+  assert((await b.page.$$('table.data tbody tr')).length === (await b.page.evaluate(() => window.__ekb.KB.concepts.length)), '목록 대체 화면 없음');
   await b.ctx.close();
 });
 

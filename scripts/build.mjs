@@ -14,6 +14,9 @@ const sourceChecks = fs.existsSync(checksPath) ? JSON.parse(fs.readFileSync(chec
 
 const pub = content.articles.filter(({ meta }) => meta.status === 'published');
 const draftCount = content.articles.length - pub.length;
+const runsDir = path.join(CONTENT, 'runs');
+const runs = fs.existsSync(runsDir) ? fs.readdirSync(runsDir).filter((f) => f.endsWith('.json')).sort().reverse().slice(0, 30).map((f) => JSON.parse(fs.readFileSync(path.join(runsDir, f), 'utf8'))) : [];
+const automation = JSON.parse(fs.readFileSync(path.join(CONTENT, 'automation.json'), 'utf8'));
 const articles = pub.map(({ meta }) => {
   const r = rendered.get(meta.id);
   return { ...meta, html: r.html, toc: r.toc, summaryHtml: r.summaryHtml, plain: r.plain };
@@ -22,7 +25,7 @@ const questions = pub.flatMap(({ meta }) => rendered.get(meta.id).questions);
 const KB = {
   generatedAt: new Date().toISOString(),
   disciplines: content.graph.disciplines, concepts: content.graph.concepts, relations: content.graph.relations,
-  roles: content.roles.roles, articles, questions, sourceChecks, draftCount,
+  roles: content.roles.roles, articles, questions, sourceChecks, draftCount, runs, automation,
 };
 const json = JSON.stringify(KB).replace(/</g, '\\u003c');
 
