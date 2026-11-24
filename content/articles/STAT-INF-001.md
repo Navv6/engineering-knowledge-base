@@ -6,7 +6,11 @@
   "title": "모집단, 표본, 추정, 신뢰구간",
   "title_en": "Population, Sample, Estimation and Confidence Intervals",
   "difficulty": "중급",
-  "depth": ["L1", "L2", "L3"],
+  "depth": [
+    "L1",
+    "L2",
+    "L3"
+  ],
   "reading_minutes": 30,
   "objectives": [
     "모수와 통계량, 추정량과 추정값, 표준편차와 표준오차를 구분해 설명할 수 있다.",
@@ -14,21 +18,52 @@
     "t 분포를 이용해 평균의 95% 신뢰구간을 손으로 계산하고 올바르게 해석할 수 있다.",
     "신뢰구간에 대한 흔한 오해와, 표본 크기를 늘려도 해결되지 않는 오차(편향)를 구분할 수 있다."
   ],
-  "prerequisites": ["평균, 분산, 표준편차", "확률과 확률분포의 기초(STAT-PROB-001, 준비 중)", "정규분포의 모양"],
-  "roles": ["AI Application Engineer", "FDE"],
-  "tags": ["추론통계", "제조 품질", "모델 평가", "A/B 테스트"],
+  "prerequisites": [
+    "평균, 분산, 표준편차",
+    "확률과 확률분포의 기초(STAT-PROB-001, 준비 중)",
+    "정규분포의 모양"
+  ],
+  "roles": [
+    "AI Application Engineer",
+    "FDE"
+  ],
+  "tags": [
+    "추론통계",
+    "제조 품질",
+    "모델 평가",
+    "A/B 테스트"
+  ],
   "status": "published",
-  "version": 1,
+  "version": 2,
   "created_at": "2026-11-23",
-  "updated_at": "2026-11-23",
+  "updated_at": "2026-11-24",
   "verified_at": "2026-11-23",
   "sources": [
-    { "title": "Wasserman, L. All of Statistics. Springer, 2004. 6장(추정의 기초), 5장(수렴과 중심극한정리)", "source_type": "textbook" },
-    { "title": "Casella, G., Berger, R. L. Statistical Inference, 2nd ed. Duxbury, 2002. 9장(구간 추정)", "source_type": "textbook" },
-    { "title": "Neyman, J. Outline of a Theory of Statistical Estimation Based on the Classical Theory of Probability. Philosophical Transactions of the Royal Society A 236, 333–380, 1937", "source_type": "paper" },
-    { "title": "NIST/SEMATECH e-Handbook of Statistical Methods", "url": "https://www.itl.nist.gov/div898/handbook/", "source_type": "official-doc" },
-    { "title": "Wasserstein, R. L., Lazar, N. A. The ASA Statement on p-Values: Context, Process, and Purpose. The American Statistician 70(2), 129–133, 2016", "source_type": "paper" },
-    { "title": "Efron, B. Bootstrap Methods: Another Look at the Jackknife. Annals of Statistics 7(1), 1–26, 1979", "source_type": "paper" }
+    {
+      "title": "Wasserman, L. All of Statistics. Springer, 2004. 6장(추정의 기초), 5장(수렴과 중심극한정리)",
+      "source_type": "textbook"
+    },
+    {
+      "title": "Casella, G., Berger, R. L. Statistical Inference, 2nd ed. Duxbury, 2002. 9장(구간 추정)",
+      "source_type": "textbook"
+    },
+    {
+      "title": "Neyman, J. Outline of a Theory of Statistical Estimation Based on the Classical Theory of Probability. Philosophical Transactions of the Royal Society A 236, 333–380, 1937",
+      "source_type": "paper"
+    },
+    {
+      "title": "NIST/SEMATECH e-Handbook of Statistical Methods",
+      "url": "https://www.itl.nist.gov/div898/handbook/",
+      "source_type": "official-doc"
+    },
+    {
+      "title": "Wasserstein, R. L., Lazar, N. A. The ASA Statement on p-Values: Context, Process, and Purpose. The American Statistician 70(2), 129–133, 2016",
+      "source_type": "paper"
+    },
+    {
+      "title": "Efron, B. Bootstrap Methods: Another Look at the Jackknife. Annals of Statistics 7(1), 1–26, 1979",
+      "source_type": "paper"
+    }
   ]
 }
 ---
@@ -187,10 +222,13 @@ $$
 
 ## 10. 기존 프로젝트와의 연결
 
-적용 가능성 점검 질문이며, 실제 수행 여부는 기록되어 있지 않다.
+아래의 사실은 포트폴리오(Navv6/portfolio) 케이스 스터디 원문에서 옮긴 것이고(`content/profile.json`), 포트폴리오에 없는 내용은 점검 질문으로 남겼다.
 
-- **제조 현장 데이터(Preflight 맥락):** 현장 측정값을 요약할 때 평균만 보고했는지, 표본 크기와 불확실성(표준오차·구간)을 함께 표시할 수 있었는지 생각해 본다.
-- **DeepVi·STT 품질 평가:** "정확도가 좋아졌다"는 판단을 평가 샘플 몇 개로 했는지, 개선 폭이 신뢰구간 폭보다 컸는지 다시 볼 수 있다.
+**STT 평가 — 0.013 차이는 의미 있는 차이인가.** 포트폴리오에서 WER은 NeMo Conformer CTC 0.226, Whisper-small-ko Fine-tuned 0.239로 차이가 0.013이다. 평가 데이터는 KsponSpeech eval_clean 3,000개와 eval_other 3,000개다.
+- 이 차이가 표본 변동보다 큰지 말하려면 불확실성이 필요하다. WER은 발화마다 단어 수가 달라 단순 비율의 신뢰구간 공식을 그대로 쓰기 어렵다. **같은 발화 집합을 두 모델에 돌렸으므로** 발화 단위로 복원추출하는 대응(paired) 부트스트랩으로 차이의 신뢰구간을 구하는 방법이 적절하다.
+- 점검 질문: 포트폴리오에 신뢰구간이나 검정 결과는 기재되어 있지 않다. clean과 other 분할별로 순위가 같았는지도 기록하면 판단 근거가 강해진다(분할별 집계 방식 미확인으로 기재되어 있음).
+
+**Preflight — 전수 집계에는 표본오차가 없지만 편향은 있다.** Preflight의 KPI는 ERP 원본에서 해당 업무 기록을 모두 세는 전수 집계라, 표본에서 모집단을 추정하는 상황이 아니다. 대신 이 설명집 §11의 **편향** 문제가 그대로 나타났다. 일부 실적 집계가 "지금 목록"만 세어서 행이 빠지면 지난 주 숫자까지 바뀌던 문제가 있었고, 모든 산출식에 세는 범위(지금 목록·지난 기록·원본 누적)를 적게 해 고쳤다. 표본을 늘려도 해결되지 않는 오차, 즉 측정 정의의 문제다.
 
 ## 11. 가정·한계·흔한 오해
 

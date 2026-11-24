@@ -1,32 +1,81 @@
 {
-  "_note": "사용자가 직접 확인한 사실만 적는다. verified_by_user가 true인 프로젝트의 facts만 설명집의 '기존 프로젝트와의 연결' 절에 사실로 쓰이고, false면 점검 질문 형태로만 쓰인다. 예: \"PostgreSQL 15에 설비·작업지시 테이블을 두고 FastAPI로 조회 API를 제공\".",
+  "_note": "사용자 지시(2026-11-24: '내 깃저장소나 포트폴리오를 보면 된다')에 따라 Navv6/portfolio 저장소의 케이스 스터디 원문에서 옮긴 사실만 적었다. 각 사실 끝의 [근거]는 그 저장소 안의 파일이다. 추정·해석은 넣지 않았다. 성과 수치는 포트폴리오에 본인이 적은 값이며 '포트폴리오 기재'로 표시한다. 설명집은 verified_by_user가 true인 프로젝트의 facts·stack·problems만 사실로 인용한다.",
+  "verified_via": "Navv6/portfolio 저장소(main, 2026-11-24 clone) 원문 대조",
   "projects": [
     {
       "id": "preflight",
       "name": "Preflight",
-      "summary": "제조 현장 업무 자동화",
-      "facts": [],
-      "stack": [],
-      "problems": [],
-      "verified_by_user": false
+      "summary": "제조 현장(샘플조달·시사출·CT 테스트·샘플 출고) 현황을 ERP 엑셀에서 모아 공통 화면·KPI로 보여 주는 사내 업무 시스템. 기획·개발·운영 1인, 2026.08.12 착수, 2026.11 기준 운영 중.",
+      "stack": ["Next.js", "React", "TypeScript", "PostgreSQL", "SheetJS", "Express", "Vitest", "PowerShell"],
+      "facts": [
+        "클라우드 없이 사내 서버에서 운영하고, 설치·백업·복원을 PowerShell 스크립트로 정리했다. [근거: app/projects/preflight/content.ts constraints]",
+        "엑셀 원본 파일은 브라우저에서 파싱하고 파싱한 값만 서버에 저장한다(원본 파일을 밖으로 보내지 않음). [근거: content.ts constraints]",
+        "ExcelJS·SheetJS가 모두 읽지 못한 비표준 xlsx(ERP 파일)를 보정하는 정규화 모듈을 만들었다. [근거: content.ts constraints]",
+        "처음에는 화면에 필요한 12개 필드만 저장했으나, 미결 업무 목록·준수율 집계에 빠진 정보가 필요해 ERP 원본 전체를 보존하고 필요한 값을 가공하는 방식으로 바꿨다(ADR-01). [근거: content.ts decisionRows]",
+        "엑셀 행 번호로 행을 식별하다가, 팀 엑셀에 줄 하나가 끼면 사람이 고친 값이 옆 행으로 밀리는 문제가 생겨 원본 값으로 행을 식별하도록 바꿨다. 못 이으면 엉뚱한 행에 붙이지 않고 제자리에 남긴다(ADR-03). [근거: content.ts decisionRows]",
+        "품목 기준 중복 제거가 두 사출처에 나눠 맡긴 정상 데이터를 지워, 판정 키에 워크센터를 포함하고 반례 테스트를 추가했다(ADR-02). [근거: content.ts decisionRows]",
+        "파일에서 빠진 행은 지우지 않고 업무 단계(완료·취소·드롭)로 관리하며, 위험한 변경만 검토 대기열로 보내고 업로드 단위로 되돌릴 수 있다(ADR-05). [근거: content.ts decisionRows, integrityPipeline]",
+        "동기화 파이프라인: 파일 지문 확인(같은 파일·더 오래된 파일은 반영 전에 멈춤) → 원본 값으로 행 식별 → 지난번 ERP 값 기준 칸 비교 → 위험도 판정 → 행의 전후 모습을 남겨 반영·되돌리기. [근거: content.ts integrityPipeline]",
+        "같은 파일을 두 번 올려도 행·검토 건이 늘지 않도록 했다(재업로드 멱등성). [근거: content.ts integrityRules, integrityScenarios]",
+        "완료일이 여러 곳에서 오면 출처 우선순위를 사람 > 파일 > 시스템으로 두어 덜 확실한 값이 더 확실한 값을 덮지 않게 했다. [근거: content.ts integrityRules]",
+        "엑셀 업로드를 전체 교체에서 누적 병합으로 전환했고(08.16), 전 모듈을 PostgreSQL로 이전했다(08.15). [근거: content.ts timeline]",
+        "개발/운영 서버를 분리하고, 개발을 거치지 않은 변경은 배포 스크립트가 거부하며, DB 변경은 더하기만 해서 되돌려도 데이터가 남게 했다(11.10). [근거: content.ts validation, timeline]",
+        "업무 규칙 단위 시험 704개(판정 규칙을 DB·브라우저 없이 순수 함수로 시험)와 실제 DB 점검 64개를 둔다(2026-11-20 저장소 기준, 포트폴리오 기재). [근거: content.ts integrityStats]",
+        "샘플조달·시사출·CT 세 업무가 같은 판정 엔진을 쓰고, 업무마다 다른 것은 어댑터와 정책뿐이다. [근거: content.ts integrityStats]",
+        "표·칸·계산식 대장을 코드에서 자동 생성해 실제 DB와 칸 단위로 대조한다. 스키마 파서가 일부 문법을 못 읽어 한 달간 18개 칸이 대장에서 빠져 있던 사고 뒤에 이 대조 검사를 추가했다. [근거: content.ts validation, integrityIncidents]",
+        "일부 실적 집계가 '지금 목록'만 세서 행이 빠지면 지난 주 숫자도 바뀔 수 있음을 발견하고, 모든 산출식에 세는 범위(지금 목록·지난 기록·원본 누적)를 적게 했다. [근거: content.ts integrityIncidents]",
+        "샘플창고 노트북의 반출 화면에서 누르는 순간 재고 차감·KPI 집계가 되도록 바꿔, 종이 기록을 팀원이 엑셀로 옮겨 적던 일이 없어졌다(정성 비교, 포트폴리오 기재). [근거: content.ts changes, decisionRows ADR-07, outflowShifts]",
+        "화면 기준으로 글자 11px 이상·대비 4.5:1 이상·누르는 곳 28px 이상을 전 화면에 적용했다. [근거: content.ts deliveryBasics]"
+      ],
+      "problems": [
+        "행 식별을 행 번호에 의존해 줄 삽입 시 수정값이 밀림 → 원본 값 기반 식별",
+        "품목 기준 중복 제거가 정상 데이터를 지움 → 판정 키 확장과 반례 테스트",
+        "파일에서 빠진 행의 의미(완료/취소)를 알 수 없음 → 논리 삭제·업무 단계·검토 대기열",
+        "사람 수정과 ERP 변경의 충돌 → 덮지 않고 검토, 출처 우선순위",
+        "운영 첫 업로드에서 검토 건이 몰림 → 일괄 처리와 변경 상세를 다음 개선으로 정함"
+      ],
+      "verified_by_user": true
     },
     {
       "id": "deepvi",
       "name": "DeepVi",
-      "summary": "LLM/RAG 서비스",
-      "facts": [],
-      "stack": [],
-      "problems": [],
-      "verified_by_user": false
+      "summary": "재무제표와 시장 맥락을 해석해 기업을 이해하도록 돕는 LLM 기반 기업 분석 서비스. 부트캠프 팀 프로젝트, 2025.05.28 ~ 2025.07.02.",
+      "stack": ["Python", "FastAPI", "PostgreSQL", "LangChain", "LLM", "RAG"],
+      "facts": [
+        "KOSPI·KOSDAQ 444개 기업의 재무·주가·뉴스·거시경제 데이터를 연결했다. [근거: app/projects/deepvi/portfolio.tsx]",
+        "담당: 기획·데이터 수집·백엔드/DB·LLM·대시보드·배포 흐름을 주도했고, 뉴스 분석과 재무건전성 평가는 팀원이 맡았다. [근거: portfolio.tsx 담당 범위]",
+        "RAG 구성: 기업을 검색하면 받아오는 백엔드 API 응답에 RAG용 기업 데이터를 함께 담고, 대화할 때 LLM이 이 데이터를 참고해 답하게 했다. 포트폴리오에 벡터 DB·임베딩 검색 사용은 기재되어 있지 않다. [근거: portfolio.tsx '기업 데이터를 대화 맥락으로']",
+        "테스트용 프롬프트를 만들어 실제 답변이 보유한 기업 데이터를 근거로 나오는지 확인했다(정량 평가 지표는 기재 없음). [근거: portfolio.tsx '테스트 프롬프트로 근거 확인']",
+        "흐름: 데이터 수집 → ML 지표·유형 분류 → PostgreSQL·FastAPI(정형 데이터 보관·조회) → RAG Context → LLM. [근거: portfolio.tsx flow]",
+        "워렌 버핏·피터 린치 관점 점수로 기업을 5가지 유형으로 분류했다(예: 버핏 ≥ 4 & 린치 ≤ 1). [근거: portfolio.tsx TypeAnalysisVisual]",
+        "시연과 주변 사용자 테스트까지 진행했고, 상시 운영할 배포 서버 여건이 되지 않아 공개 서비스로는 열지 않았다. [근거: portfolio.tsx 운영 범위]"
+      ],
+      "problems": [
+        "답변이 보유 데이터에 근거하는지 확인 필요 → 테스트 프롬프트로 근거 확인(정량 평가는 미기재)"
+      ],
+      "verified_by_user": true
     },
     {
       "id": "stt-report",
-      "name": "STT·보고서 자동화",
-      "summary": "음성 인식 기반 보고서 자동화",
-      "facts": [],
-      "stack": [],
-      "problems": [],
-      "verified_by_user": false
+      "name": "STT 모델 평가·로컬 LLM 검토 (MarkCloud 인턴)",
+      "summary": "고령 응답자 리서치의 AI 전환을 위해 한국어 STT 후보를 같은 기준으로 비교하고 로컬 LLM 타당성을 검토한 데이터/AI 인턴 업무. 2025.11 ~ 2025.12.",
+      "stack": ["NeMo Conformer CTC", "Whisper", "Faster-Whisper", "NVIDIA Riva", "KR-SBERT", "Qwen2.5-7B-Instruct", "vLLM", "Sentence Transformers"],
+      "facts": [
+        "평가 데이터: KsponSpeech eval_clean 3,000개 + eval_other 3,000개. 정답은 특수 태그·불필요한 구두점 제거와 텍스트 정규화로 전처리했다. [근거: app/projects/markcloud/content.ts evaluationConditions]",
+        "지표: WER(단어 오류율)·CER(문자 오류율)·RTF(음성 길이 대비 처리 시간)에 의미 기반 지표(Semantic Similarity, SemWER@0.85)를 추가했다. [근거: markcloud/content.ts]",
+        "STT 4종 결과(포트폴리오 기재): Faster-Whisper Medium WER 0.5001·CER 0.2937·RTF 0.2493 / NVIDIA Riva Streaming v2 WER 0.3116·CER 0.1515·RTF 0.0566 / Whisper-small-ko Fine-tuned WER 0.239·CER 0.1246·RTF 0.0623 / NeMo Conformer CTC WER 0.226·CER 0.114·RTF 0.0216. [근거: markcloud/content.ts sttModels]",
+        "의미 평가(포트폴리오 기재): Semantic Similarity Whisper 0.917 vs NeMo 0.934, SemWER@0.85 Whisper 0.0776 vs NeMo 0.0664. 0.85 임계값을 고른 이유는 기재되어 있지 않다. [근거: markcloud/content.ts semanticResults, app/content-confirmations.ts]",
+        "판단: 정확도 중심 후보는 NeMo Conformer CTC, 실시간 입력 후보는 Riva Streaming으로 구분했다. RTF와 별개로 스트리밍 응답 지연은 추가 검증이 필요하다고 남겼다. [근거: content-confirmations.ts modelDecision]",
+        "Riva Offline 평가에서 출력이 중간에 잘리는 문제를 확인해 Streaming 방식으로 평가 파이프라인을 바꿨다. [근거: markcloud/content.ts failures]",
+        "LLM 후처리가 원문의 말투·의미를 바꾸는 과교정이 있어, 문체와 의미를 유지하고 필요한 부분만 고치도록 후처리 정책을 제한했다. [근거: markcloud/content.ts failures]",
+        "로컬 LLM은 정해진 JSON 스키마(refusal_law, reject_reason_summary, citation_evidence[], final_summary) 유지·요약 품질·처리 시간·실패 대응 기준으로 타당성 검토까지 진행했다(운영 전환 아님). [근거: markcloud/content.ts localCriteria, outputFields; content-confirmations.ts localLlmOutcome]"
+      ],
+      "problems": [
+        "WER·CER만으로는 의미 보존을 판단하기 어려움 → 의미 유사도·SemWER 추가",
+        "Riva Offline 출력 잘림 → Streaming 평가로 변경",
+        "LLM 후처리 과교정 → 수정 범위를 제한한 후처리 정책"
+      ],
+      "verified_by_user": true
     }
   ]
 }

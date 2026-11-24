@@ -6,7 +6,11 @@
   "title": "Big-O와 시간·공간복잡도",
   "title_en": "Asymptotic Complexity: Big-O, Big-Ω, Big-Θ",
   "difficulty": "입문",
-  "depth": ["L1", "L2", "L3"],
+  "depth": [
+    "L1",
+    "L2",
+    "L3"
+  ],
   "reading_minutes": 25,
   "objectives": [
     "O, Ω, Θ를 상수 c와 n₀를 이용한 정의로 설명하고, 간단한 함수에 대해 직접 증명할 수 있다.",
@@ -14,19 +18,44 @@
     "최악/평균/분할상환(amortized) 분석과 점근 표기법이 서로 다른 축이라는 점을 구분한다.",
     "점근 복잡도가 숨기는 것(상수, 캐시, 입력 분포)을 근거로 실무 판단을 내릴 수 있다."
   ],
-  "prerequisites": ["함수와 그래프(일차·이차·로그·지수 함수)", "반복문과 재귀 호출을 읽을 수 있는 정도의 코드 이해"],
-  "roles": ["AI Application Engineer", "FDE", "AI Native Developer"],
-  "tags": ["알고리즘", "성능", "면접 기본"],
+  "prerequisites": [
+    "함수와 그래프(일차·이차·로그·지수 함수)",
+    "반복문과 재귀 호출을 읽을 수 있는 정도의 코드 이해"
+  ],
+  "roles": [
+    "AI Application Engineer",
+    "FDE",
+    "AI Native Developer"
+  ],
+  "tags": [
+    "알고리즘",
+    "성능",
+    "면접 기본"
+  ],
   "status": "published",
-  "version": 1,
+  "version": 2,
   "created_at": "2026-11-23",
-  "updated_at": "2026-11-23",
+  "updated_at": "2026-11-24",
   "verified_at": "2026-11-23",
   "sources": [
-    { "title": "Cormen, Leiserson, Rivest, Stein. Introduction to Algorithms, 4th ed. MIT Press, 2022. 3장(점근 표기), 4장(분할정복 점화식), 16장(분할상환 분석)", "source_type": "textbook" },
-    { "title": "Knuth, D. E. Big Omicron and big Omega and big Theta. ACM SIGACT News 8(2), 18–24, 1976", "source_type": "paper" },
-    { "title": "MIT OpenCourseWare 6.006 Introduction to Algorithms (Spring 2020)", "url": "https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-spring-2020/", "source_type": "lecture" },
-    { "title": "Python Wiki: TimeComplexity (CPython 자료구조 연산 비용)", "url": "https://wiki.python.org/python/language/TimeComplexity.html", "source_type": "official-doc" }
+    {
+      "title": "Cormen, Leiserson, Rivest, Stein. Introduction to Algorithms, 4th ed. MIT Press, 2022. 3장(점근 표기), 4장(분할정복 점화식), 16장(분할상환 분석)",
+      "source_type": "textbook"
+    },
+    {
+      "title": "Knuth, D. E. Big Omicron and big Omega and big Theta. ACM SIGACT News 8(2), 18–24, 1976",
+      "source_type": "paper"
+    },
+    {
+      "title": "MIT OpenCourseWare 6.006 Introduction to Algorithms (Spring 2020)",
+      "url": "https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-spring-2020/",
+      "source_type": "lecture"
+    },
+    {
+      "title": "Python Wiki: TimeComplexity (CPython 자료구조 연산 비용)",
+      "url": "https://wiki.python.org/python/language/TimeComplexity.html",
+      "source_type": "official-doc"
+    }
   ]
 }
 ---
@@ -224,11 +253,18 @@ $$
 
 ## 10. 기존 프로젝트와의 연결
 
-아래는 **적용 가능성 점검 질문**이다. 실제 구현 여부나 성능 수치는 기록되어 있지 않으므로 사실로 간주하지 않는다.
+아래의 사실은 포트폴리오(Navv6/portfolio) 케이스 스터디 원문에서 옮긴 것이고(`content/profile.json`), 포트폴리오에 없는 내용은 점검 질문으로 남겼다.
 
-- **Preflight(제조 현장 업무 자동화):** 데이터 갱신 로직에 "목록을 돌며 매번 DB를 조회"하는 패턴이 있는지 점검해 볼 수 있다. 있다면 N+1 문제의 후보다.
-- **DeepVi(LLM/RAG 서비스):** 문서 수가 늘 때 검색 지연이 어떻게 증가하는지(선형인가, 로그에 가까운가)를 설명할 수 있으면 벡터 인덱스 선택 근거를 면접에서 말할 수 있다.
-- **STT·보고서 자동화:** 긴 녹취를 처리할 때 비용이 녹취 길이에 선형인지, 문장 쌍 비교처럼 이차로 늘어나는 단계가 있는지 구분해 본다.
+**Preflight — 재업로드 판정과 중복 제거는 복잡도 문제다.**
+- Preflight는 같은 ERP 파일을 다시 올려도 행·검토 건이 늘지 않도록 하고, 행 번호 대신 **원본 값으로 행을 식별**한다. 새 파일의 행 $n$개가 기존 행 $m$개 중 무엇과 같은지 매번 처음부터 비교하면 $O(nm)$이다. 원본 값으로 만든 식별 키를 해시맵이나 DB 유니크 인덱스로 찾으면 평균 $O(n)$(인덱스면 $O(n \log m)$)으로 줄어든다.
+- 품목 기준 중복 제거가 두 사출처에 나눠 맡긴 정상 데이터를 지운 사례(ADR-02)는, 해시 기반 그룹핑에서 **키를 무엇으로 잡느냐가 정확성을 정한다**는 것을 보여 준다. 키에 워크센터를 더해 해결했다.
+- 점검 질문: 포트폴리오에는 식별 키를 어떤 자료구조나 인덱스로 조회하는지 적혀 있지 않다. 면접에서 "업로드 한 번에 행이 몇 개이고, 판정이 어떤 복잡도로 도는가"에 답할 수 있게 정리해 둔다.
+
+**STT 평가(MarkCloud 인턴) — RTF는 선형 시간 지표다.**
+- RTF는 처리 시간을 음성 길이로 나눈 값이라, 처리 시간이 음성 길이에 비례한다는 가정 위의 지표다. 포트폴리오의 NeMo Conformer CTC RTF 0.0216은 1시간(3,600초) 음성을 약 $3600 \times 0.0216 \approx 78$초에 처리한다는 뜻이고, Faster-Whisper Medium의 0.2493은 약 15분이다.
+- 점검 질문: 긴 음성에서도 RTF가 일정했는지(구간 분할, 배치 크기의 영향)는 기재되어 있지 않다.
+
+**DeepVi — $n$이 얼마인지부터 본다.** 대상이 KOSPI·KOSDAQ 444개 기업이었다. 이 규모에서는 전체를 훑어도 비용이 작아서, 점근 복잡도보다 데이터 갱신 주기나 외부 API 호출 횟수가 병목일 가능성이 크다. 복잡도 논의는 $n$의 크기를 확인한 뒤에 하는 것이 맞다.
 
 ## 11. 가정·한계·흔한 오해
 

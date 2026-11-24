@@ -6,7 +6,12 @@
   "title": "벡터, 내적, 코사인 유사도",
   "title_en": "Vectors, Dot Product and Cosine Similarity",
   "difficulty": "입문",
-  "depth": ["L1", "L2", "L3", "L4"],
+  "depth": [
+    "L1",
+    "L2",
+    "L3",
+    "L4"
+  ],
   "reading_minutes": 25,
   "objectives": [
     "벡터의 노름과 내적을 대수적 정의와 기하적 정의로 각각 설명하고, 두 정의가 같다는 것을 코사인 법칙으로 유도할 수 있다.",
@@ -14,20 +19,51 @@
     "손으로 3차원 벡터의 내적·각도·사영을 계산할 수 있다.",
     "임베딩 검색에서 유사도 지표를 고를 때의 조건과 한계를 말할 수 있다."
   ],
-  "prerequisites": ["좌표평면과 피타고라스 정리", "삼각함수 cos의 의미", "시그마(Σ) 표기"],
-  "roles": ["AI Application Engineer", "FDE", "Ontology Developer"],
-  "tags": ["선형대수", "임베딩", "RAG", "검색"],
+  "prerequisites": [
+    "좌표평면과 피타고라스 정리",
+    "삼각함수 cos의 의미",
+    "시그마(Σ) 표기"
+  ],
+  "roles": [
+    "AI Application Engineer",
+    "FDE",
+    "Ontology Developer"
+  ],
+  "tags": [
+    "선형대수",
+    "임베딩",
+    "RAG",
+    "검색"
+  ],
   "status": "published",
-  "version": 1,
+  "version": 2,
   "created_at": "2026-11-23",
-  "updated_at": "2026-11-23",
+  "updated_at": "2026-11-24",
   "verified_at": "2026-11-23",
   "sources": [
-    { "title": "Strang, G. Introduction to Linear Algebra, 6th ed. Wellesley-Cambridge Press, 2023. 1장(벡터와 내적)", "source_type": "textbook" },
-    { "title": "MIT OpenCourseWare 18.06 Linear Algebra (Spring 2010, Gilbert Strang)", "url": "https://ocw.mit.edu/courses/18-06-linear-algebra-spring-2010/", "source_type": "lecture" },
-    { "title": "Manning, Raghavan, Schütze. Introduction to Information Retrieval. Cambridge University Press, 2008. 6장 벡터 공간 모델", "url": "https://nlp.stanford.edu/IR-book/", "source_type": "textbook" },
-    { "title": "pgvector README (거리 연산자 <->, <#>, <=>)", "url": "https://github.com/pgvector/pgvector", "source_type": "official-doc" },
-    { "title": "Ethayarajh, K. How Contextual are Contextualized Word Representations? EMNLP-IJCNLP 2019 (임베딩 비등방성)", "source_type": "paper" }
+    {
+      "title": "Strang, G. Introduction to Linear Algebra, 6th ed. Wellesley-Cambridge Press, 2023. 1장(벡터와 내적)",
+      "source_type": "textbook"
+    },
+    {
+      "title": "MIT OpenCourseWare 18.06 Linear Algebra (Spring 2010, Gilbert Strang)",
+      "url": "https://ocw.mit.edu/courses/18-06-linear-algebra-spring-2010/",
+      "source_type": "lecture"
+    },
+    {
+      "title": "Manning, Raghavan, Schütze. Introduction to Information Retrieval. Cambridge University Press, 2008. 6장 벡터 공간 모델",
+      "url": "https://nlp.stanford.edu/IR-book/",
+      "source_type": "textbook"
+    },
+    {
+      "title": "pgvector README (거리 연산자 <->, <#>, <=>)",
+      "url": "https://github.com/pgvector/pgvector",
+      "source_type": "official-doc"
+    },
+    {
+      "title": "Ethayarajh, K. How Contextual are Contextualized Word Representations? EMNLP-IJCNLP 2019 (임베딩 비등방성)",
+      "source_type": "paper"
+    }
   ]
 }
 ---
@@ -173,8 +209,14 @@ pgvector는 이 세 가지를 각각 `<=>`(코사인 거리), `<#>`(음의 내�
 
 ## 10. 기존 프로젝트와의 연결
 
-- **DeepVi(LLM/RAG 서비스):** 사용한 임베딩 모델의 출력이 정규화되어 있었는지, 벡터 저장소의 거리 지표가 모델 권장 지표와 일치했는지 점검 질문으로 삼을 수 있다. 실제 설정은 이 문서에 기록되어 있지 않으므로 확인 후 정리한다.
-- **온톨로지·지식 그래프:** 개념 이름의 임베딩 유사도로 동의어·별칭 후보를 찾고, 최종 판단은 사람이나 규칙으로 하는 방식이 가능하다(적용 가능성).
+아래의 사실은 포트폴리오(Navv6/portfolio) 케이스 스터디 원문에서 옮긴 것이고(`content/profile.json`), 포트폴리오에 없는 내용은 점검 질문으로 남겼다.
+
+**DeepVi — 이 설명집의 코사인 검색은 DeepVi에서 쓰지 않았다.** 포트폴리오에 따르면 DeepVi의 RAG는 기업을 검색하면 받아오는 백엔드 API 응답에 기업 데이터를 함께 담아 LLM 컨텍스트로 넘기는 방식이고, 벡터 DB나 임베딩 검색은 기재되어 있지 않다. 그래서 이 설명집은 DeepVi의 "다음 단계"에 해당한다. 예를 들어 근거를 정형 지표가 아니라 뉴스 본문 같은 비정형 문서에서 찾아야 하면, 질의와 문서를 임베딩해 코사인으로 찾는 구조가 필요해진다.
+- 면접 대비: "왜 벡터 검색을 쓰지 않았나"라는 질문에 답할 수 있게 정리해 둔다. 답변 구성 예시는 "대상이 444개 기업으로 정해져 있고 기업명으로 근거 데이터를 정확히 특정할 수 있어, 유사도 검색보다 정확 조회가 맞았다"이다. 이건 구성 예시이며, 실제 판단 근거는 본인이 확인해서 말한다.
+
+**STT 평가 — 의미 유사도 지표는 이 설명집의 응용이다.** 포트폴리오에는 글자 오류율(WER·CER)에 더해 의미 기반 지표를 추가한 기록이 있다: Semantic Similarity(Whisper 0.917, NeMo 0.934), SemWER@0.85(Whisper 0.0776, NeMo 0.0664). 모델 목록에 문장 임베딩 모델 KR-SBERT도 있다.
+- 점검 질문 ①: 의미 유사도를 어떤 계산(문장 임베딩의 코사인 등)으로 구했는가?
+- 점검 질문 ②: 0.85 임계값을 고른 근거는? 포트폴리오에 이유가 기재되어 있지 않다. §11의 비등방성 때문에 무관한 문장끼리도 코사인이 높게 나올 수 있으므로, 임계값은 라벨 데이터로 정하는 것이 원칙이다.
 
 ## 11. 가정·한계·흔한 오해
 

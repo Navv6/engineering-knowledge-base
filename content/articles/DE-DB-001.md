@@ -6,7 +6,11 @@
   "title": "B-Tree와 데이터베이스 인덱스",
   "title_en": "B-Tree and Database Indexes",
   "difficulty": "중급",
-  "depth": ["L2", "L3", "L4"],
+  "depth": [
+    "L2",
+    "L3",
+    "L4"
+  ],
   "reading_minutes": 15,
   "objectives": [
     "디스크 페이지 I/O 관점에서 B-Tree가 이진 탐색 트리보다 데이터베이스에 적합한 이유를 설명할 수 있다.",
@@ -14,24 +18,69 @@
     "복합 인덱스, 선택도, 인덱스 전용 스캔을 근거로 인덱스 설계를 판단할 수 있다.",
     "인덱스의 비용(쓰기 증폭, 저장 공간)과 대안(Hash, GIN, BRIN, LSM-Tree)을 비교할 수 있다."
   ],
-  "prerequisites": ["Big-O와 시간·공간복잡도(CS-ALG-002)", "SQL SELECT/WHERE/ORDER BY", "이진 탐색"],
-  "roles": ["FDE", "AI Application Engineer", "Solution Engineer"],
-  "tags": ["PostgreSQL", "인덱스", "쿼리 최적화", "자료구조"],
+  "prerequisites": [
+    "Big-O와 시간·공간복잡도(CS-ALG-002)",
+    "SQL SELECT/WHERE/ORDER BY",
+    "이진 탐색"
+  ],
+  "roles": [
+    "FDE",
+    "AI Application Engineer",
+    "Solution Engineer"
+  ],
+  "tags": [
+    "PostgreSQL",
+    "인덱스",
+    "쿼리 최적화",
+    "자료구조"
+  ],
   "status": "published",
-  "version": 1,
+  "version": 2,
   "created_at": "2026-11-23",
-  "updated_at": "2026-11-23",
+  "updated_at": "2026-11-24",
   "verified_at": "2026-11-23",
   "sources": [
-    { "title": "PostgreSQL Documentation: Index Types", "url": "https://www.postgresql.org/docs/current/indexes-types.html", "source_type": "official-doc" },
-    { "title": "PostgreSQL Documentation: B-Tree Indexes (구현 개요, 중복 제거)", "url": "https://www.postgresql.org/docs/current/btree.html", "source_type": "official-doc" },
-    { "title": "PostgreSQL Documentation: Multicolumn Indexes", "url": "https://www.postgresql.org/docs/current/indexes-multicolumn.html", "source_type": "official-doc" },
-    { "title": "PostgreSQL Documentation: Index-Only Scans and Covering Indexes", "url": "https://www.postgresql.org/docs/current/indexes-index-only-scans.html", "source_type": "official-doc" },
-    { "title": "Bayer, R., McCreight, E. Organization and Maintenance of Large Ordered Indices. Acta Informatica 1, 173–189, 1972", "source_type": "paper" },
-    { "title": "Comer, D. The Ubiquitous B-Tree. ACM Computing Surveys 11(2), 121–137, 1979", "source_type": "paper" },
-    { "title": "Lehman, P. L., Yao, S. B. Efficient Locking for Concurrent Operations on B-Trees. ACM TODS 6(4), 650–670, 1981", "source_type": "paper" },
-    { "title": "Cormen et al. Introduction to Algorithms, 4th ed. 18장 B-Trees", "source_type": "textbook" },
-    { "title": "Winand, M. Use The Index, Luke (SQL 인덱싱 해설)", "url": "https://use-the-index-luke.com/", "source_type": "book-web" }
+    {
+      "title": "PostgreSQL Documentation: Index Types",
+      "url": "https://www.postgresql.org/docs/current/indexes-types.html",
+      "source_type": "official-doc"
+    },
+    {
+      "title": "PostgreSQL Documentation: B-Tree Indexes (구현 개요, 중복 제거)",
+      "url": "https://www.postgresql.org/docs/current/btree.html",
+      "source_type": "official-doc"
+    },
+    {
+      "title": "PostgreSQL Documentation: Multicolumn Indexes",
+      "url": "https://www.postgresql.org/docs/current/indexes-multicolumn.html",
+      "source_type": "official-doc"
+    },
+    {
+      "title": "PostgreSQL Documentation: Index-Only Scans and Covering Indexes",
+      "url": "https://www.postgresql.org/docs/current/indexes-index-only-scans.html",
+      "source_type": "official-doc"
+    },
+    {
+      "title": "Bayer, R., McCreight, E. Organization and Maintenance of Large Ordered Indices. Acta Informatica 1, 173–189, 1972",
+      "source_type": "paper"
+    },
+    {
+      "title": "Comer, D. The Ubiquitous B-Tree. ACM Computing Surveys 11(2), 121–137, 1979",
+      "source_type": "paper"
+    },
+    {
+      "title": "Lehman, P. L., Yao, S. B. Efficient Locking for Concurrent Operations on B-Trees. ACM TODS 6(4), 650–670, 1981",
+      "source_type": "paper"
+    },
+    {
+      "title": "Cormen et al. Introduction to Algorithms, 4th ed. 18장 B-Trees",
+      "source_type": "textbook"
+    },
+    {
+      "title": "Winand, M. Use The Index, Luke (SQL 인덱싱 해설)",
+      "url": "https://use-the-index-luke.com/",
+      "source_type": "book-web"
+    }
   ]
 }
 ---
@@ -188,10 +237,15 @@ Index Scan using idx_orders_customer_date on orders
 
 ## 10. 기존 프로젝트와의 연결
 
-적용 가능성 점검 질문이며 실제 스키마는 확인되지 않았다.
+아래의 사실은 포트폴리오(Navv6/portfolio) 케이스 스터디 원문에서 옮긴 것이고(`content/profile.json`), 포트폴리오에 없는 내용은 점검 질문으로 남겼다.
 
-- **Preflight(PostgreSQL 사용 경험):** 자주 쓰는 화면 조회의 WHERE·ORDER BY 조합을 적어 보고, 각 조합을 지원하는 인덱스가 있는지, `EXPLAIN ANALYZE`로 확인한 적이 있는지 정리해 두면 면접에서 구체적인 근거가 된다.
-- **DeepVi:** 메타데이터 필터(문서 종류, 날짜)와 벡터 검색을 함께 쓴다면 B-Tree 필터와 벡터 인덱스가 어떤 순서로 적용되는지가 성능과 재현율에 영향을 준다.
+**Preflight (PostgreSQL)** — 2026.08.15에 전 모듈을 PostgreSQL로 옮겼고, 다음 설계 판단이 이 설명집의 인덱스 주제와 바로 연결된다.
+- **원본 값으로 행 식별(ADR-03)**: 업로드 때마다 "이 행이 기존의 어느 행인가"를 찾는다. 식별에 쓰는 컬럼 조합에 유니크(B-Tree) 인덱스가 있으면 행마다 $O(\log n)$ 조회로 끝난다.
+- **판정 키에 워크센터 포함(ADR-02)**: 키가 여러 컬럼이 되면 §6 예제 2의 복합 인덱스 컬럼 순서 문제가 된다. 등호로 찾는 컬럼을 앞에 둔다.
+- **DB는 더하기만, 업로드 단위 되돌리기(ADR-05)**: 행의 전후 모습을 남기는 이력 데이터는 시간순으로 계속 쌓인다. 최근 업로드 위주로 조회한다면 시간 컬럼 인덱스나 BRIN, 파티셔닝이 후보다(§8).
+- 점검 질문: 포트폴리오에는 어떤 인덱스를 만들었는지, `EXPLAIN ANALYZE`로 확인했는지가 기재되어 있지 않다. 식별 키 조회와 KPI 집계 쿼리의 실행 계획을 한 번 확인해 두면 면접에서 구체적인 근거가 된다.
+
+**DeepVi (PostgreSQL·FastAPI)** — 정형 데이터를 PostgreSQL에 보관하고 FastAPI로 조회했다. 기업을 검색해 해당 기업 데이터를 가져오는 패턴은 기업 식별자에 대한 등호 조회로, B-Tree가 가장 잘하는 일이다.
 
 ## 11. 가정·한계·흔한 오해
 

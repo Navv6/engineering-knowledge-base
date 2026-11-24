@@ -6,7 +6,10 @@
   "title": "임베딩",
   "title_en": "Embeddings",
   "difficulty": "중급",
-  "depth": ["L2", "L3"],
+  "depth": [
+    "L2",
+    "L3"
+  ],
   "reading_minutes": 15,
   "objectives": [
     "임베딩을 '의미가 비슷한 입력을 가까운 벡터로 보내는 학습된 함수'로 정의하고, 분포 가설과 연결해 설명할 수 있다.",
@@ -14,23 +17,61 @@
     "정규화 여부에 따라 내적과 코사인 순위가 달라지는 예, 대조 손실과 온도의 효과, 벡터 저장 용량을 손으로 계산할 수 있다.",
     "임베딩 모델 선택·교체·운영 시 확인할 점(차원, 최대 입력 길이, 질의/문서 비대칭, 재색인)을 말할 수 있다."
   ],
-  "prerequisites": ["벡터, 내적, 코사인 유사도(MATH-LA-001)", "신경망이 손실을 줄이도록 학습된다는 기본 개념", "softmax 함수"],
-  "roles": ["AI Application Engineer", "FDE"],
-  "tags": ["LLM", "임베딩", "검색", "RAG", "대조 학습"],
+  "prerequisites": [
+    "벡터, 내적, 코사인 유사도(MATH-LA-001)",
+    "신경망이 손실을 줄이도록 학습된다는 기본 개념",
+    "softmax 함수"
+  ],
+  "roles": [
+    "AI Application Engineer",
+    "FDE"
+  ],
+  "tags": [
+    "LLM",
+    "임베딩",
+    "검색",
+    "RAG",
+    "대조 학습"
+  ],
   "status": "published",
-  "version": 1,
+  "version": 2,
   "created_at": "2026-11-24",
   "updated_at": "2026-11-24",
   "verified_at": "2026-11-24",
   "sources": [
-    { "title": "Mikolov, T., Chen, K., Corrado, G., Dean, J. Efficient Estimation of Word Representations in Vector Space. ICLR Workshop, 2013", "source_type": "paper" },
-    { "title": "Devlin, J., Chang, M.-W., Lee, K., Toutanova, K. BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding. NAACL-HLT 2019", "source_type": "paper" },
-    { "title": "Reimers, N., Gurevych, I. Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks. EMNLP-IJCNLP 2019", "source_type": "paper" },
-    { "title": "van den Oord, A., Li, Y., Vinyals, O. Representation Learning with Contrastive Predictive Coding. arXiv preprint, 2018 (InfoNCE 손실)", "source_type": "paper" },
-    { "title": "Muennighoff, N., Tazi, N., Magne, L., Reimers, N. MTEB: Massive Text Embedding Benchmark. EACL 2023", "source_type": "paper" },
-    { "title": "Kusupati, A. et al. Matryoshka Representation Learning. NeurIPS 2022", "source_type": "paper" },
-    { "title": "Ethayarajh, K. How Contextual are Contextualized Word Representations? EMNLP-IJCNLP 2019", "source_type": "paper" },
-    { "title": "Sentence Transformers 공식 문서", "url": "https://www.sbert.net/", "source_type": "official-doc" }
+    {
+      "title": "Mikolov, T., Chen, K., Corrado, G., Dean, J. Efficient Estimation of Word Representations in Vector Space. ICLR Workshop, 2013",
+      "source_type": "paper"
+    },
+    {
+      "title": "Devlin, J., Chang, M.-W., Lee, K., Toutanova, K. BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding. NAACL-HLT 2019",
+      "source_type": "paper"
+    },
+    {
+      "title": "Reimers, N., Gurevych, I. Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks. EMNLP-IJCNLP 2019",
+      "source_type": "paper"
+    },
+    {
+      "title": "van den Oord, A., Li, Y., Vinyals, O. Representation Learning with Contrastive Predictive Coding. arXiv preprint, 2018 (InfoNCE 손실)",
+      "source_type": "paper"
+    },
+    {
+      "title": "Muennighoff, N., Tazi, N., Magne, L., Reimers, N. MTEB: Massive Text Embedding Benchmark. EACL 2023",
+      "source_type": "paper"
+    },
+    {
+      "title": "Kusupati, A. et al. Matryoshka Representation Learning. NeurIPS 2022",
+      "source_type": "paper"
+    },
+    {
+      "title": "Ethayarajh, K. How Contextual are Contextualized Word Representations? EMNLP-IJCNLP 2019",
+      "source_type": "paper"
+    },
+    {
+      "title": "Sentence Transformers 공식 문서",
+      "url": "https://www.sbert.net/",
+      "source_type": "official-doc"
+    }
   ]
 }
 ---
@@ -180,13 +221,16 @@ $$
 
 ## 10. 기존 프로젝트와의 연결
 
-아래는 점검 질문이다. 실제로 어떤 모델과 설정을 썼는지는 기록되어 있지 않다.
+아래의 사실은 포트폴리오(Navv6/portfolio) 케이스 스터디 원문에서 옮긴 것이고(`content/profile.json`), 포트폴리오에 없는 내용은 점검 질문으로 남겼다.
 
-- **DeepVi의 LLM/RAG 서비스:** 어떤 임베딩 모델을 어떤 기준으로 골랐는가? 한국어·도메인 용어 성능을 직접 비교해 본 적이 있는가?
-- 모델 권장 유사도 지표와 벡터 저장소의 거리 설정, 정규화 여부가 일치했는지 설명할 수 있는가?
-- 청크 길이가 모델의 최대 입력 길이를 넘어 잘리는 경우가 있었는가? 있었다면 어떻게 확인할 수 있었을까?
-- **STT·보고서 자동화:** 음성 인식 결과(구어체, 인식 오류 포함)를 임베딩할 때 문어체 문서와 같은 검색 품질이 나올지 어떻게 검증하겠는가?
-- **Preflight 맥락:** 현장 용어나 약어가 많은 텍스트에서 유사 사례 검색이 필요했다면, 임베딩만으로 충분했을지 키워드 검색이 필요했을지 판단 근거를 말할 수 있는가?
+**STT 평가(MarkCloud 인턴) — 임베딩을 "평가 도구"로 썼다.** 글자 오류율(WER·CER)만으로는 의미가 보존됐는지 판단하기 어려워 의미 기반 지표를 추가했다. Semantic Similarity는 Whisper 0.917, NeMo 0.934였고, SemWER@0.85는 Whisper 0.0776, NeMo 0.0664였다(포트폴리오 기재). 모델 목록에는 문장 임베딩 모델 KR-SBERT와 Sentence Transformers가 있다.
+- 이 설명집과의 연결: 의미 유사도로 "같은 뜻인가"를 판정하는 것은 §4 문장 임베딩의 대표 용도다. 다만 §11의 비등방성 때문에 무관한 문장끼리도 유사도가 높게 나올 수 있어, **0.85 같은 임계값은 모델마다 의미가 다르다.**
+- 점검 질문 ①: 포트폴리오에 0.85를 고른 이유는 기재되어 있지 않다. 사람이 "같은 뜻 / 다른 뜻"으로 라벨링한 소규모 세트로 임계값별 일치율을 보면 근거를 만들 수 있다.
+- 점검 질문 ②: 구어체 인식 결과와 정답 문장을 같은 임베딩 모델로 비교했을 때, 말투 차이(존댓말, 군말)만으로 유사도가 떨어지는 경우는 없었는가?
+
+**DeepVi — 임베딩 검색은 쓰지 않았다.** 포트폴리오상 DeepVi의 RAG는 API 응답에 기업 데이터를 담아 LLM 컨텍스트로 넘기는 방식이고, 벡터 DB·임베딩 검색은 기재되어 있지 않다. 뉴스 본문 같은 비정형 근거를 질문에 맞춰 골라야 할 때가 이 설명집의 임베딩 검색이 필요해지는 지점이다. 그때는 §8의 모델 선택 기준(한국어·도메인 성능, 최대 입력 길이, 차원과 저장 용량)으로 후보를 비교한다.
+
+**Preflight** — 포트폴리오에 임베딩이나 텍스트 유사도 검색을 쓴 기록은 없다. Preflight는 정형 데이터의 정확한 식별(원본 값 기반 행 식별)이 핵심이라, 유사도 기반 매칭을 섞으면 오히려 엉뚱한 행에 값이 붙는 위험이 생긴다. "정확 일치가 필요한 곳에는 임베딩을 쓰지 않는다"는 판단의 실제 예로 말할 수 있다.
 
 ## 11. 가정·한계·흔한 오해·트레이드오프
 

@@ -6,7 +6,11 @@
   "title": "RAG 검색 및 평가",
   "title_en": "RAG Retrieval and Evaluation",
   "difficulty": "중급",
-  "depth": ["L2", "L3", "L4"],
+  "depth": [
+    "L2",
+    "L3",
+    "L4"
+  ],
   "reading_minutes": 15,
   "objectives": [
     "RAG 파이프라인의 단계(청킹·임베딩·인덱싱·검색·재정렬·생성)와 각 단계의 실패 유형을 설명할 수 있다.",
@@ -14,25 +18,76 @@
     "검색 품질과 생성 품질(근거 충실도)을 분리해 평가해야 하는 이유를 말할 수 있다.",
     "평가 세트 크기와 신뢰구간을 고려해 개선 효과를 보고할 수 있다."
   ],
-  "prerequisites": ["벡터, 내적, 코사인 유사도(MATH-LA-001)", "모집단, 표본, 신뢰구간(STAT-INF-001)", "LLM 프롬프트의 기본 개념"],
-  "roles": ["AI Application Engineer", "FDE", "AI Native Developer"],
-  "tags": ["LLM", "RAG", "검색", "평가", "임베딩"],
+  "prerequisites": [
+    "벡터, 내적, 코사인 유사도(MATH-LA-001)",
+    "모집단, 표본, 신뢰구간(STAT-INF-001)",
+    "LLM 프롬프트의 기본 개념"
+  ],
+  "roles": [
+    "AI Application Engineer",
+    "FDE",
+    "AI Native Developer"
+  ],
+  "tags": [
+    "LLM",
+    "RAG",
+    "검색",
+    "평가",
+    "임베딩"
+  ],
   "status": "published",
-  "version": 1,
+  "version": 2,
   "created_at": "2026-11-23",
-  "updated_at": "2026-11-23",
+  "updated_at": "2026-11-24",
   "verified_at": "2026-11-23",
   "sources": [
-    { "title": "Lewis, P. et al. Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks. NeurIPS 2020", "url": "https://arxiv.org/abs/2005.11401", "source_type": "paper" },
-    { "title": "Karpukhin, V. et al. Dense Passage Retrieval for Open-Domain Question Answering. EMNLP 2020", "url": "https://arxiv.org/abs/2004.04906", "source_type": "paper" },
-    { "title": "Robertson, S., Zaragoza, H. The Probabilistic Relevance Framework: BM25 and Beyond. Foundations and Trends in Information Retrieval 3(4), 2009", "source_type": "paper" },
-    { "title": "Cormack, G. V., Clarke, C. L. A., Büttcher, S. Reciprocal Rank Fusion Outperforms Condorcet and Individual Rank Learning Methods. SIGIR 2009", "source_type": "paper" },
-    { "title": "Järvelin, K., Kekäläinen, J. Cumulated Gain-Based Evaluation of IR Techniques. ACM TOIS 20(4), 422–446, 2002", "source_type": "paper" },
-    { "title": "Malkov, Y. A., Yashunin, D. A. Efficient and Robust Approximate Nearest Neighbor Search Using Hierarchical Navigable Small World Graphs", "url": "https://arxiv.org/abs/1603.09320", "source_type": "paper" },
-    { "title": "Es, S. et al. RAGAS: Automated Evaluation of Retrieval Augmented Generation", "url": "https://arxiv.org/abs/2309.15217", "source_type": "paper" },
-    { "title": "Liu, N. F. et al. Lost in the Middle: How Language Models Use Long Contexts. TACL 2024", "url": "https://arxiv.org/abs/2307.03172", "source_type": "paper" },
-    { "title": "Zheng, L. et al. Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena. NeurIPS 2023 Datasets and Benchmarks", "url": "https://arxiv.org/abs/2306.05685", "source_type": "paper" },
-    { "title": "Manning, Raghavan, Schütze. Introduction to Information Retrieval. 8장 검색 평가", "url": "https://nlp.stanford.edu/IR-book/", "source_type": "textbook" }
+    {
+      "title": "Lewis, P. et al. Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks. NeurIPS 2020",
+      "url": "https://arxiv.org/abs/2005.11401",
+      "source_type": "paper"
+    },
+    {
+      "title": "Karpukhin, V. et al. Dense Passage Retrieval for Open-Domain Question Answering. EMNLP 2020",
+      "url": "https://arxiv.org/abs/2004.04906",
+      "source_type": "paper"
+    },
+    {
+      "title": "Robertson, S., Zaragoza, H. The Probabilistic Relevance Framework: BM25 and Beyond. Foundations and Trends in Information Retrieval 3(4), 2009",
+      "source_type": "paper"
+    },
+    {
+      "title": "Cormack, G. V., Clarke, C. L. A., Büttcher, S. Reciprocal Rank Fusion Outperforms Condorcet and Individual Rank Learning Methods. SIGIR 2009",
+      "source_type": "paper"
+    },
+    {
+      "title": "Järvelin, K., Kekäläinen, J. Cumulated Gain-Based Evaluation of IR Techniques. ACM TOIS 20(4), 422–446, 2002",
+      "source_type": "paper"
+    },
+    {
+      "title": "Malkov, Y. A., Yashunin, D. A. Efficient and Robust Approximate Nearest Neighbor Search Using Hierarchical Navigable Small World Graphs",
+      "url": "https://arxiv.org/abs/1603.09320",
+      "source_type": "paper"
+    },
+    {
+      "title": "Es, S. et al. RAGAS: Automated Evaluation of Retrieval Augmented Generation",
+      "url": "https://arxiv.org/abs/2309.15217",
+      "source_type": "paper"
+    },
+    {
+      "title": "Liu, N. F. et al. Lost in the Middle: How Language Models Use Long Contexts. TACL 2024",
+      "url": "https://arxiv.org/abs/2307.03172",
+      "source_type": "paper"
+    },
+    {
+      "title": "Zheng, L. et al. Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena. NeurIPS 2023 Datasets and Benchmarks",
+      "url": "https://arxiv.org/abs/2306.05685",
+      "source_type": "paper"
+    },
+    {
+      "title": "Manning, Raghavan, Schütze. Introduction to Information Retrieval. 8장 검색 평가",
+      "url": "https://nlp.stanford.edu/IR-book/",
+      "source_type": "textbook"
+    }
   ]
 }
 ---
@@ -179,14 +234,15 @@ RAGAS(Es 외, 2023) 같은 프레임워크는 이런 판정을 **LLM-as-a-judge*
 
 ## 10. 기존 프로젝트와의 연결
 
-명세서에 따르면 사용자는 **DeepVi에서 LLM/RAG 서비스를 구현한 경험**이 있다. 구체적인 설정이나 성과 수치는 기록되어 있지 않으므로 아래는 면접 대비 점검 질문이다.
+아래의 사실은 포트폴리오(Navv6/portfolio) 케이스 스터디 원문에서 옮긴 것이고(`content/profile.json`), 포트폴리오에 없는 내용은 점검 질문으로 남겼다.
 
-- 청킹 기준(고정 길이, 문단, 제목 구조)을 무엇으로 정했고 그 근거는 무엇이었는가?
-- 검색 품질을 어떻게 확인했는가? 정답 근거가 라벨링된 질문 세트가 있었는가, 사람이 결과를 눈으로 확인했는가?
-- 답이 틀린 사례를 검색 실패와 생성 실패로 나눠 본 적이 있는가?
-- 지금 다시 만든다면 어떤 지표를 먼저 측정하겠는가?
+**DeepVi — 검색이 아니라 "컨텍스트 주입"형 RAG였다.** 포트폴리오에 따르면 기업을 검색하면 받아오는 백엔드 API 응답에 기업 데이터를 함께 담고, 대화할 때 LLM이 그 데이터를 참고해 답하게 했다. 벡터 검색은 기재되어 있지 않다. 이 설명집의 틀로 다시 보면 다음과 같다.
+- **검색 단계**: Recall@k 문제가 "사용자가 묻는 기업을 정확히 특정했는가"로 바뀐다. 기업명이 정확하면 근거 누락이 거의 없는 구조다.
+- **생성 단계가 평가의 중심**: 근거 충실도, 즉 답이 실제로 넘긴 데이터에 근거했는가가 핵심이다. DeepVi는 테스트용 프롬프트를 만들어 이를 확인했지만, 정량 지표는 기재되어 있지 않다.
+- 개선 서술 예: "근거 데이터에 있는 수치를 묻는 질문 세트를 만들어, 답의 수치가 근거와 일치하는 비율(충실도)을 측정하겠다."
 
-이 질문에 대한 사실 답변을 정리해 두면, 위의 지표와 연결해 "무엇을 했고, 지금은 어떻게 개선하겠다"를 근거 있게 말할 수 있다.
+**STT 평가(MarkCloud 인턴) — 평가 설계 경험이 그대로 옮겨 온다.** 데이터를 고정하고(KsponSpeech 6,000개), 정답 전처리 규칙을 정하고, 4개 모델을 같은 조건으로 비교했다. WER·CER만으로 부족해 의미 기반 지표를 추가했고, 평가 중 발견한 실패(Riva Offline 출력 잘림)로 파이프라인을 바꿨다. "지표 정의 → 데이터 고정 → 같은 조건 비교 → 실패 사례로 개선"은 이 설명집의 RAG 평가 원칙과 같은 구조다.
+- 로컬 LLM 검토의 JSON 스키마에 `citation_evidence[]`(인용 근거) 필드가 있었다. 이는 §4 생성 평가의 **인용 정확성**을 구조적으로 강제하려는 설계와 같은 방향이다.
 
 ## 11. 가정·한계·흔한 오해
 
