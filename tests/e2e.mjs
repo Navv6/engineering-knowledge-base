@@ -262,6 +262,7 @@ await check('Knowledge Map: 3D 렌더링, 목록 대체 화면, 노드 정보', 
   await shot(page, '07-map');
 });
 
+const EXPECTED_JD = ['B-Tree', 'RAG', '온톨로지'];
 await check('Skill Gap: 공고 분석→저장→중복 방지→빈도 반영', async () => {
   await page.goto(`${BASE}#gap`);
   const before = await page.textContent('#gap-table tbody');
@@ -273,16 +274,19 @@ await check('Skill Gap: 공고 분석→저장→중복 방지→빈도 반영',
   };
   await fillJD();
   await page.waitForSelector('#jd-save');
-  assert((await page.$$('#jd-preview tbody tr')).length === 3, '매칭 3개 아님');
+  // 개념이 늘면 매칭도 늘 수 있으므로 개수를 고정하지 않고, 기대한 개념 포함 + 저장 건수 일치를 본다
+  const previewText = await page.textContent('#jd-preview tbody');
+  const nMatch = (await page.$$('#jd-preview tbody tr')).length;
+  for (const k of EXPECTED_JD) assert(previewText.includes(k), `매칭 누락: ${k} / ${previewText}`);
   await page.click('#jd-save');
   await page.waitForSelector('h2:has-text("수집한 근거")');
   let ev = await page.evaluate(() => window.__ekb.store.state.evidence.length);
-  assert(ev === 3, `근거 ${ev}`);
+  assert(ev === nMatch, `근거 ${ev} ≠ 매칭 ${nMatch}`);
   await fillJD();
   assert((await page.textContent('#jd-msg')).includes('이미 있습니다'), '중복 경고 없음');
   await page.click('#jd-save');
   ev = await page.evaluate(() => window.__ekb.store.state.evidence.length);
-  assert(ev === 3, `재저장 시 중복 집계: ${ev}`);
+  assert(ev === nMatch, `재저장 시 중복 집계: ${ev}`);
   const ragRow = await page.$eval('#gap-table', (t) => [...t.querySelectorAll('tr')].find((r) => r.textContent.includes('RAG 검색'))?.textContent || '');
   assert(/100\s*\(1건\)/.test(ragRow), `빈도 반영 실패: ${ragRow}`);
   await shot(page, '08-gap');
