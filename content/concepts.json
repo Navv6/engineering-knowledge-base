@@ -326,7 +326,8 @@
       "tags": [
         "foundation",
         "experiment"
-      ]
+      ],
+      "planned_article": "STAT-INF-002"
     },
     {
       "id": "spc",
@@ -345,7 +346,8 @@
       "discipline": "STAT",
       "tags": [
         "manufacturing"
-      ]
+      ],
+      "planned_article": "STAT-SPC-001"
     },
     {
       "id": "objective-constraints",
