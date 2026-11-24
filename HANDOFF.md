@@ -171,6 +171,8 @@ npm run test:e2e   → 35/35 통과 (Chromium, 데스크톱 1360px + 모바일 3
 - 2차(같은 날 이어서): KE-ONT-001, MATH-DM-001 집합과 명제논리, MATH-GRAPH-001 그래프 이론, CS-GEN-001 상태 머신, SE-TEST-001 소프트웨어 테스트, AI-AGENT-001 AI Agent 설계, AI-NATIVE-001 Context·Harness Engineering, DE-DB-002 트랜잭션과 ACID, STAT-INF-002 가설검정, STAT-SPC-001 통계적 공정관리, OR-OPT-002 휴리스틱과 솔버, CS-OS-001 프로세스·스레드·동시성, KE-RDF-001 RDF·OWL·SPARQL, PE-FDE-001 FDE와 솔루션 설계. **계획 개념 30개 전부 공개(설명집 30편)**. 공개된 ID에 남아 있던 "준비 중" 표기 정리.
   - 계산값은 python으로 재계산(가설검정 p값, 관리 한계, 분기한정법 등). W3C·FDE 관련 사이트는 이 환경에서 접속 불가라 서지 정보만 넣고 본문에 "확인 필요" 표시.
   - 프로젝트 연결은 profile.json 사실만 인용. 기록 없는 구현(Preflight의 관리도·트랜잭션 범위·워커 사용 등)은 "점검 질문/적용 아이디어"로만 씀.
+- 3차(2차 커리큘럼 착수): CS-ALG-003 편집 거리, AI-ASR-001 음성 인식 평가(STT 결과 표·RTF·집계 방식), AI-EVAL-001 분류 평가 지표(Preflight 검토 대기열을 분류기로 해석), DE-PIPE-001 데이터 파이프라인과 ETL, MATH-CALC-001 미분과 경사하강법, STAT-REG-001 회귀분석, CS-NET-001 네트워크와 HTTP. **공개 설명집 37편.** 남은 2차 후보: SE-API-001, OPS-DEPLOY-001, MATH-LA-002, AI-LLM-001(예약 실행이 이어서 작성).
+  - E2E 1건(공고 매칭 개수 3 고정)이 새 개념 별칭 'LLM' 때문에 실패 → 개수 대신 기대 개념 포함 + 저장 건수 = 매칭 수로 검사하도록 수정.
 - 후보가 0개가 되어 단위 테스트 1건 실패(후보 존재를 가정) → 커밋 전 게이트에서 막힘. 조치: ① AUTOMATION.md 절차대로 다음 커리큘럼 11개 개념 추가(MATH-CALC-001 미분과 경사하강법, MATH-LA-002 행렬, STAT-REG-001 회귀, CS-ALG-003 편집 거리, CS-NET-001 네트워크·HTTP, AI-EVAL-001 분류 평가 지표, AI-ASR-001 음성 인식 평가(STT 프로젝트 연결), AI-LLM-001 트랜스포머, DE-PIPE-001 ETL, SE-API-001 REST API, OPS-DEPLOY-001 배포·환경 분리), 선행 관계 17개. ② next-candidates가 트랙 안에서 선행이 갖춰진 후보를 먼저 고르게 수정(선행 없는 AI-ASR-001을 먼저 고르던 문제). ③ 테스트가 후보 0개 상황도 처리.
 
 **변경 방법**: 시각·분량·중지는 Claude에게 요청 → 예약 작업 설정(update_trigger) 변경. 페이지에서 직접 바꾸는 기능은 없음(페이지가 예약 작업 설정 권한을 갖지 않도록 의도적으로 제외).
