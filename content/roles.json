@@ -1,0 +1,9 @@
+{
+  "_note": "직무관련성(relevance)은 사용자가 명세서에 적은 목표 직무를 기준으로 한 수동 가중치다. 실제 채용공고 근거가 아니며, 공고 근거는 Skill Gap 화면에서 공고 본문을 붙여넣어 따로 수집한다.",
+  "roles": [
+    { "id": "fde", "name": "FDE · Solution Engineer", "concepts": { "rag-retrieval-eval": 90, "fde-solution-design": 95, "relational-modeling": 70, "btree-index": 60, "ontology-kg": 70, "ai-agent-state": 80, "software-testing": 65, "statistical-estimation": 55, "heuristics-solvers": 50 } },
+    { "id": "ai-app", "name": "AI Application Engineer", "concepts": { "rag-retrieval-eval": 100, "embeddings": 90, "ann-hnsw": 80, "vectors-dot-product": 75, "ai-agent-state": 90, "context-harness-engineering": 85, "statistical-estimation": 60, "software-testing": 70, "btree-index": 55 } },
+    { "id": "ontology", "name": "Ontology Developer", "concepts": { "ontology-kg": 100, "rdf-owl-sparql": 95, "sets-logic": 85, "graph-theory": 80, "relational-modeling": 65, "rag-retrieval-eval": 60 } },
+    { "id": "ai-native", "name": "AI Native Developer · AX", "concepts": { "context-harness-engineering": 100, "ai-agent-state": 90, "software-testing": 80, "rag-retrieval-eval": 75, "asymptotic-complexity": 50, "process-thread-concurrency": 55 } }
+  ]
+}

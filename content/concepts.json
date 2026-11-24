@@ -1,0 +1,721 @@
+{
+  "disciplines": {
+    "CS": {
+      "ko": "컴퓨터과학",
+      "en": "Computer Science"
+    },
+    "MATH": {
+      "ko": "수학",
+      "en": "Mathematics"
+    },
+    "STAT": {
+      "ko": "통계학",
+      "en": "Statistics"
+    },
+    "SE": {
+      "ko": "소프트웨어공학",
+      "en": "Software Engineering"
+    },
+    "DE": {
+      "ko": "데이터공학",
+      "en": "Data Engineering"
+    },
+    "AI": {
+      "ko": "인공지능",
+      "en": "Artificial Intelligence"
+    },
+    "KE": {
+      "ko": "지식공학",
+      "en": "Knowledge Engineering"
+    },
+    "OR": {
+      "ko": "경영과학·최적화",
+      "en": "Operations Research"
+    },
+    "OPS": {
+      "ko": "인프라·DevOps",
+      "en": "Infrastructure & DevOps"
+    },
+    "PE": {
+      "ko": "전문 엔지니어링",
+      "en": "Professional Engineering"
+    }
+  },
+  "concepts": [
+    {
+      "id": "algorithms-data-structures",
+      "title_ko": "알고리즘과 자료구조",
+      "title_en": "Algorithms and Data Structures",
+      "aliases": [
+        "자료구조",
+        "알고리즘",
+        "data structure",
+        "algorithm",
+        "배열",
+        "해시 테이블",
+        "hash table"
+      ],
+      "discipline": "CS",
+      "tags": [
+        "foundation"
+      ],
+      "planned_article": "CS-ALG-001"
+    },
+    {
+      "id": "asymptotic-complexity",
+      "title_ko": "Big-O와 시간·공간복잡도",
+      "title_en": "Asymptotic Complexity",
+      "aliases": [
+        "Big-O",
+        "빅오",
+        "시간복잡도",
+        "공간복잡도",
+        "time complexity",
+        "space complexity",
+        "점근 표기법",
+        "asymptotic notation",
+        "복잡도"
+      ],
+      "discipline": "CS",
+      "tags": [
+        "foundation",
+        "performance"
+      ]
+    },
+    {
+      "id": "process-thread-concurrency",
+      "title_ko": "프로세스·스레드·동시성",
+      "title_en": "Processes, Threads and Concurrency",
+      "aliases": [
+        "프로세스",
+        "스레드",
+        "동시성",
+        "concurrency",
+        "thread",
+        "multithreading",
+        "async",
+        "비동기"
+      ],
+      "discipline": "CS",
+      "tags": [
+        "os"
+      ],
+      "planned_article": "CS-OS-001"
+    },
+    {
+      "id": "state-machine",
+      "title_ko": "상태 머신",
+      "title_en": "Finite State Machine",
+      "aliases": [
+        "상태 머신",
+        "state machine",
+        "FSM",
+        "유한 상태 기계"
+      ],
+      "discipline": "CS",
+      "tags": [
+        "theory"
+      ]
+    },
+    {
+      "id": "vectors-dot-product",
+      "title_ko": "벡터, 내적, 코사인 유사도",
+      "title_en": "Vectors, Dot Product and Cosine Similarity",
+      "aliases": [
+        "벡터",
+        "내적",
+        "코사인 유사도",
+        "cosine similarity",
+        "dot product",
+        "inner product",
+        "선형대수",
+        "linear algebra",
+        "노름",
+        "norm"
+      ],
+      "discipline": "MATH",
+      "tags": [
+        "foundation",
+        "embedding"
+      ]
+    },
+    {
+      "id": "sets-logic",
+      "title_ko": "집합과 명제논리",
+      "title_en": "Sets and Propositional Logic",
+      "aliases": [
+        "집합",
+        "명제논리",
+        "논리학",
+        "set theory",
+        "propositional logic",
+        "이산수학",
+        "discrete math"
+      ],
+      "discipline": "MATH",
+      "tags": [
+        "foundation"
+      ],
+      "planned_article": "MATH-DM-001"
+    },
+    {
+      "id": "graph-theory",
+      "title_ko": "그래프 이론 기초",
+      "title_en": "Graph Theory Basics",
+      "aliases": [
+        "그래프 이론",
+        "graph theory",
+        "최단 경로",
+        "shortest path",
+        "그래프 알고리즘",
+        "graph algorithm"
+      ],
+      "discipline": "MATH",
+      "tags": [
+        "foundation"
+      ],
+      "planned_article": "MATH-GRAPH-001"
+    },
+    {
+      "id": "probability-basics",
+      "title_ko": "확률, 조건부확률, 확률분포",
+      "title_en": "Probability and Distributions",
+      "aliases": [
+        "확률",
+        "조건부확률",
+        "확률분포",
+        "probability",
+        "conditional probability",
+        "distribution",
+        "베이즈",
+        "Bayes"
+      ],
+      "discipline": "STAT",
+      "tags": [
+        "foundation"
+      ],
+      "planned_article": "STAT-PROB-001"
+    },
+    {
+      "id": "statistical-estimation",
+      "title_ko": "모집단, 표본, 추정, 신뢰구간",
+      "title_en": "Sampling, Estimation and Confidence Intervals",
+      "aliases": [
+        "모집단",
+        "표본",
+        "추정",
+        "신뢰구간",
+        "confidence interval",
+        "표준오차",
+        "standard error",
+        "중심극한정리",
+        "central limit theorem",
+        "통계",
+        "statistics",
+        "추론통계"
+      ],
+      "discipline": "STAT",
+      "tags": [
+        "foundation",
+        "evaluation"
+      ]
+    },
+    {
+      "id": "hypothesis-testing",
+      "title_ko": "가설검정과 p-value",
+      "title_en": "Hypothesis Testing",
+      "aliases": [
+        "가설검정",
+        "p-value",
+        "유의확률",
+        "hypothesis test",
+        "A/B 테스트",
+        "A/B test",
+        "AB test"
+      ],
+      "discipline": "STAT",
+      "tags": [
+        "foundation",
+        "experiment"
+      ]
+    },
+    {
+      "id": "spc",
+      "title_ko": "통계적 공정관리",
+      "title_en": "Statistical Process Control",
+      "aliases": [
+        "통계적 공정관리",
+        "SPC",
+        "관리도",
+        "control chart",
+        "품질관리",
+        "quality control",
+        "공정능력",
+        "Cpk"
+      ],
+      "discipline": "STAT",
+      "tags": [
+        "manufacturing"
+      ]
+    },
+    {
+      "id": "objective-constraints",
+      "title_ko": "목적함수와 제약조건",
+      "title_en": "Objective Functions and Constraints",
+      "aliases": [
+        "목적함수",
+        "제약조건",
+        "objective function",
+        "constraint",
+        "선형계획법",
+        "linear programming",
+        "수리최적화",
+        "최적화 문제",
+        "mathematical optimization"
+      ],
+      "discipline": "OR",
+      "tags": [
+        "optimization"
+      ],
+      "planned_article": "OR-OPT-001"
+    },
+    {
+      "id": "heuristics-solvers",
+      "title_ko": "휴리스틱과 솔버",
+      "title_en": "Heuristics and Solvers",
+      "aliases": [
+        "휴리스틱",
+        "메타휴리스틱",
+        "솔버",
+        "heuristic",
+        "solver",
+        "OR-Tools",
+        "MILP",
+        "스케줄링",
+        "scheduling",
+        "경로 최적화",
+        "VRP"
+      ],
+      "discipline": "OR",
+      "tags": [
+        "optimization"
+      ],
+      "planned_article": "OR-OPT-002"
+    },
+    {
+      "id": "relational-modeling",
+      "title_ko": "관계형 데이터 모델링",
+      "title_en": "Relational Data Modeling",
+      "aliases": [
+        "데이터 모델링",
+        "정규화",
+        "normalization",
+        "data modeling",
+        "ERD",
+        "관계형",
+        "SQL",
+        "RDBMS"
+      ],
+      "discipline": "DE",
+      "tags": [
+        "database"
+      ]
+    },
+    {
+      "id": "btree-index",
+      "title_ko": "B-Tree와 데이터베이스 인덱스",
+      "title_en": "B-Tree and Database Indexes",
+      "aliases": [
+        "B-Tree",
+        "B+Tree",
+        "B트리",
+        "인덱스",
+        "index",
+        "database index",
+        "PostgreSQL",
+        "Postgres",
+        "쿼리 최적화",
+        "query optimization",
+        "실행 계획",
+        "EXPLAIN"
+      ],
+      "discipline": "DE",
+      "tags": [
+        "database",
+        "performance"
+      ]
+    },
+    {
+      "id": "transactions-acid",
+      "title_ko": "트랜잭션과 ACID",
+      "title_en": "Transactions and ACID",
+      "aliases": [
+        "트랜잭션",
+        "ACID",
+        "transaction",
+        "격리 수준",
+        "isolation level",
+        "동시성 제어",
+        "MVCC"
+      ],
+      "discipline": "DE",
+      "tags": [
+        "database"
+      ],
+      "planned_article": "DE-DB-002"
+    },
+    {
+      "id": "embeddings",
+      "title_ko": "임베딩",
+      "title_en": "Embeddings",
+      "aliases": [
+        "임베딩",
+        "embedding",
+        "벡터 임베딩",
+        "sentence embedding",
+        "text embedding"
+      ],
+      "discipline": "AI",
+      "tags": [
+        "llm"
+      ]
+    },
+    {
+      "id": "ann-hnsw",
+      "title_ko": "근사 최근접 이웃 탐색(ANN·HNSW)",
+      "title_en": "Approximate Nearest Neighbor Search",
+      "aliases": [
+        "ANN",
+        "HNSW",
+        "벡터 검색",
+        "vector search",
+        "vector database",
+        "벡터 DB",
+        "pgvector",
+        "FAISS",
+        "근사 최근접"
+      ],
+      "discipline": "AI",
+      "tags": [
+        "retrieval"
+      ]
+    },
+    {
+      "id": "rag-retrieval-eval",
+      "title_ko": "RAG 검색 및 평가",
+      "title_en": "RAG Retrieval and Evaluation",
+      "aliases": [
+        "RAG",
+        "Retrieval-Augmented Generation",
+        "검색 증강 생성",
+        "retrieval",
+        "검색 평가",
+        "reranking",
+        "리랭킹",
+        "hybrid search",
+        "하이브리드 검색",
+        "LLM 평가",
+        "LLM evaluation",
+        "BM25"
+      ],
+      "discipline": "AI",
+      "tags": [
+        "llm",
+        "retrieval",
+        "evaluation"
+      ]
+    },
+    {
+      "id": "ai-agent-state",
+      "title_ko": "AI Agent 설계와 상태 관리",
+      "title_en": "AI Agent Design and State",
+      "aliases": [
+        "AI Agent",
+        "에이전트",
+        "agent",
+        "LLM agent",
+        "tool use",
+        "툴 호출",
+        "function calling",
+        "MCP",
+        "워크플로"
+      ],
+      "discipline": "AI",
+      "tags": [
+        "llm",
+        "agent"
+      ],
+      "planned_article": "AI-AGENT-001"
+    },
+    {
+      "id": "ontology-kg",
+      "title_ko": "온톨로지와 Knowledge Graph",
+      "title_en": "Ontology and Knowledge Graph",
+      "aliases": [
+        "온톨로지",
+        "ontology",
+        "knowledge graph",
+        "지식 그래프",
+        "KG",
+        "Graph RAG",
+        "GraphRAG",
+        "Palantir",
+        "Foundry"
+      ],
+      "discipline": "KE",
+      "tags": [
+        "knowledge"
+      ],
+      "planned_article": "KE-ONT-001"
+    },
+    {
+      "id": "rdf-owl-sparql",
+      "title_ko": "RDF·OWL·SPARQL",
+      "title_en": "RDF, OWL and SPARQL",
+      "aliases": [
+        "RDF",
+        "OWL",
+        "SPARQL",
+        "시맨틱 웹",
+        "semantic web",
+        "triple",
+        "트리플"
+      ],
+      "discipline": "KE",
+      "tags": [
+        "knowledge"
+      ]
+    },
+    {
+      "id": "software-testing",
+      "title_ko": "소프트웨어 테스트와 유지보수",
+      "title_en": "Software Testing and Maintenance",
+      "aliases": [
+        "테스트",
+        "testing",
+        "단위 테스트",
+        "unit test",
+        "통합 테스트",
+        "e2e",
+        "회귀 테스트",
+        "유지보수",
+        "리팩토링",
+        "refactoring"
+      ],
+      "discipline": "SE",
+      "tags": [
+        "quality"
+      ],
+      "planned_article": "SE-TEST-001"
+    },
+    {
+      "id": "context-harness-engineering",
+      "title_ko": "Context Engineering과 Harness Engineering",
+      "title_en": "Context and Harness Engineering",
+      "aliases": [
+        "Context Engineering",
+        "컨텍스트 엔지니어링",
+        "Harness Engineering",
+        "하네스",
+        "프롬프트 엔지니어링",
+        "prompt engineering",
+        "AI Native",
+        "에이전트 검증",
+        "eval"
+      ],
+      "discipline": "PE",
+      "tags": [
+        "agent",
+        "ai-native"
+      ],
+      "planned_article": "AI-NATIVE-001"
+    },
+    {
+      "id": "fde-solution-design",
+      "title_ko": "FDE와 솔루션 설계",
+      "title_en": "Forward Deployed Engineering",
+      "aliases": [
+        "FDE",
+        "Forward Deployed",
+        "Solution Engineer",
+        "솔루션 엔지니어",
+        "PoC",
+        "요구사항 분석",
+        "고객 대응",
+        "기술 커뮤니케이션",
+        "AX"
+      ],
+      "discipline": "PE",
+      "tags": [
+        "role"
+      ]
+    }
+  ],
+  "relations": [
+    {
+      "from": "algorithms-data-structures",
+      "to": "asymptotic-complexity",
+      "type": "prerequisite"
+    },
+    {
+      "from": "algorithms-data-structures",
+      "to": "btree-index",
+      "type": "prerequisite"
+    },
+    {
+      "from": "asymptotic-complexity",
+      "to": "btree-index",
+      "type": "prerequisite"
+    },
+    {
+      "from": "asymptotic-complexity",
+      "to": "ann-hnsw",
+      "type": "prerequisite"
+    },
+    {
+      "from": "relational-modeling",
+      "to": "btree-index",
+      "type": "prerequisite"
+    },
+    {
+      "from": "relational-modeling",
+      "to": "transactions-acid",
+      "type": "prerequisite"
+    },
+    {
+      "from": "process-thread-concurrency",
+      "to": "transactions-acid",
+      "type": "related"
+    },
+    {
+      "from": "btree-index",
+      "to": "transactions-acid",
+      "type": "related"
+    },
+    {
+      "from": "vectors-dot-product",
+      "to": "embeddings",
+      "type": "prerequisite"
+    },
+    {
+      "from": "embeddings",
+      "to": "ann-hnsw",
+      "type": "prerequisite"
+    },
+    {
+      "from": "embeddings",
+      "to": "rag-retrieval-eval",
+      "type": "prerequisite"
+    },
+    {
+      "from": "ann-hnsw",
+      "to": "rag-retrieval-eval",
+      "type": "prerequisite"
+    },
+    {
+      "from": "vectors-dot-product",
+      "to": "rag-retrieval-eval",
+      "type": "application"
+    },
+    {
+      "from": "statistical-estimation",
+      "to": "rag-retrieval-eval",
+      "type": "application"
+    },
+    {
+      "from": "probability-basics",
+      "to": "statistical-estimation",
+      "type": "prerequisite"
+    },
+    {
+      "from": "statistical-estimation",
+      "to": "hypothesis-testing",
+      "type": "prerequisite"
+    },
+    {
+      "from": "hypothesis-testing",
+      "to": "spc",
+      "type": "prerequisite"
+    },
+    {
+      "from": "statistical-estimation",
+      "to": "spc",
+      "type": "prerequisite"
+    },
+    {
+      "from": "sets-logic",
+      "to": "graph-theory",
+      "type": "prerequisite"
+    },
+    {
+      "from": "sets-logic",
+      "to": "ontology-kg",
+      "type": "prerequisite"
+    },
+    {
+      "from": "graph-theory",
+      "to": "ontology-kg",
+      "type": "prerequisite"
+    },
+    {
+      "from": "ontology-kg",
+      "to": "rdf-owl-sparql",
+      "type": "prerequisite"
+    },
+    {
+      "from": "objective-constraints",
+      "to": "heuristics-solvers",
+      "type": "prerequisite"
+    },
+    {
+      "from": "graph-theory",
+      "to": "heuristics-solvers",
+      "type": "application"
+    },
+    {
+      "from": "asymptotic-complexity",
+      "to": "heuristics-solvers",
+      "type": "related"
+    },
+    {
+      "from": "state-machine",
+      "to": "ai-agent-state",
+      "type": "prerequisite"
+    },
+    {
+      "from": "rag-retrieval-eval",
+      "to": "ai-agent-state",
+      "type": "related"
+    },
+    {
+      "from": "ai-agent-state",
+      "to": "context-harness-engineering",
+      "type": "prerequisite"
+    },
+    {
+      "from": "software-testing",
+      "to": "context-harness-engineering",
+      "type": "prerequisite"
+    },
+    {
+      "from": "rag-retrieval-eval",
+      "to": "ontology-kg",
+      "type": "related"
+    },
+    {
+      "from": "rag-retrieval-eval",
+      "to": "fde-solution-design",
+      "type": "application"
+    },
+    {
+      "from": "ontology-kg",
+      "to": "fde-solution-design",
+      "type": "application"
+    },
+    {
+      "from": "context-harness-engineering",
+      "to": "fde-solution-design",
+      "type": "related"
+    }
+  ]
+}

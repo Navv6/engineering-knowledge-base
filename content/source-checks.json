@@ -1,0 +1,6 @@
+{
+  "_note": "출처 링크 확인 기록. ok=true는 해당 날짜에 페이지가 열리고 제목·내용이 본문 서술과 일치함을 확인했다는 뜻. 목록에 없는 URL은 '링크 미확인'으로 표시된다. 2026-11-24 확인 시 이 세션의 네트워크 정책으로 github.com 외 호스트(ocw.mit.edu, wiki.python.org, nlp.stanford.edu, www.itl.nist.gov, www.postgresql.org, use-the-index-luke.com, arxiv.org)는 접근 불가였다.",
+  "checks": {
+    "https://github.com/pgvector/pgvector": { "ok": true, "date": "2026-11-24", "note": "README에서 <-> L2, <#> (negative) inner product, <=> cosine distance 및 '<#> returns the negative inner product' 문장 확인" }
+  }
+}
