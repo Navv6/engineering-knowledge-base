@@ -25,7 +25,7 @@
   "sources": [
     { "title": "Chacon, S., Straub, B. Pro Git, 2nd ed. Apress, 2014. 2장(Git 기초), 3장(브랜치), 10장(Git 내부)", "source_type": "textbook" },
     { "title": "Loeliger, J., McCullough, M. Version Control with Git, 2nd ed. O'Reilly, 2012", "source_type": "textbook" },
-    { "title": "Git 매뉴얼 페이지: git-revert(1), git-reset(1), git-push(1) (git help 명령으로 확인)", "source_type": "official-doc" }
+    { "title": "Git 공식 매뉴얼: git-revert, git-reset, git-push (Git 배포판에 포함된 참조 문서)", "source_type": "official-doc" }
   ]
 }
 ---
