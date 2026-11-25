@@ -178,6 +178,7 @@ npm run test:e2e   → 35/35 통과 (Chromium, 데스크톱 1360px + 모바일 3
 - 5차: AI-PROMPT-001 프롬프트 설계와 구조화 출력(STT JSON 스키마 필드·과교정 통제·재시도 확률), MATH-INFO-001 정보 이론과 엔트로피(교차 엔트로피 손실·퍼플렉서티·temperature와 엔트로피). **공개 설명집 43편.** 남은 3차 후보 5개(SE-GIT-001, STAT-TS-001, CS-CACHE-001, SE-SEC-001, OPS-OBS-001)는 예약 실행이 하루 1편씩 작성.
 - 6차(2026-11-25 낮, 사용자 "이어서 작업해"): SE-GIT-001 Git, CS-CACHE-001 캐시, OPS-OBS-001 관측성, SE-SEC-001 웹 보안, STAT-TS-001 시계열 → 3차 후보 모두 작성. **공개 설명집 48편.**
 - 4차 커리큘럼 개념 6개 추가: DE-DQ-001 데이터 품질, AI-LLMEVAL-001 LLM 응용 평가, STAT-BAYES-001 베이즈 추론, SE-QUEUE-001 메시지 큐, MATH-LA-003 차원 축소, STAT-VIZ-001 데이터 시각화. 'Graph RAG'는 온톨로지 설명집 별칭과 겹쳐 제외. 다음 후보: DE-DQ-001.
+- 7차: AI-LLMEVAL-001 LLM 응용 평가(카파·맥니마·평가 세트), DE-DQ-001 데이터 품질 관리(Preflight 품질 사고를 차원별로 정리, 3의 규칙). **공개 설명집 50편.** 남은 4차 후보 4개(SE-QUEUE-001, STAT-BAYES-001, MATH-LA-003, STAT-VIZ-001)는 예약 실행이 하루 1편씩 작성.
 - 후보가 0개가 되어 단위 테스트 1건 실패(후보 존재를 가정) → 커밋 전 게이트에서 막힘. 조치: ① AUTOMATION.md 절차대로 다음 커리큘럼 11개 개념 추가(MATH-CALC-001 미분과 경사하강법, MATH-LA-002 행렬, STAT-REG-001 회귀, CS-ALG-003 편집 거리, CS-NET-001 네트워크·HTTP, AI-EVAL-001 분류 평가 지표, AI-ASR-001 음성 인식 평가(STT 프로젝트 연결), AI-LLM-001 트랜스포머, DE-PIPE-001 ETL, SE-API-001 REST API, OPS-DEPLOY-001 배포·환경 분리), 선행 관계 17개. ② next-candidates가 트랙 안에서 선행이 갖춰진 후보를 먼저 고르게 수정(선행 없는 AI-ASR-001을 먼저 고르던 문제). ③ 테스트가 후보 0개 상황도 처리.
 
 **변경 방법**: 시각·분량·중지는 Claude에게 요청 → 예약 작업 설정(update_trigger) 변경. 페이지에서 직접 바꾸는 기능은 없음(페이지가 예약 작업 설정 권한을 갖지 않도록 의도적으로 제외).
