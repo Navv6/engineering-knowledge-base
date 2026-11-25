@@ -965,6 +965,108 @@
         "tooling"
       ],
       "planned_article": "SE-GIT-001"
+    },
+    {
+      "id": "llm-evaluation",
+      "title_ko": "LLM 응용 평가와 LLM-as-a-judge",
+      "title_en": "Evaluating LLM Applications",
+      "aliases": [
+        "LLM-as-a-judge",
+        "LLM 판정자",
+        "평가 하네스",
+        "eval set"
+      ],
+      "discipline": "AI",
+      "tags": [
+        "evaluation",
+        "llm"
+      ],
+      "planned_article": "AI-LLMEVAL-001"
+    },
+    {
+      "id": "data-quality",
+      "title_ko": "데이터 품질 관리",
+      "title_en": "Data Quality Management",
+      "aliases": [
+        "데이터 품질",
+        "data quality",
+        "데이터 검증",
+        "대사",
+        "reconciliation"
+      ],
+      "discipline": "DE",
+      "tags": [
+        "pipeline"
+      ],
+      "planned_article": "DE-DQ-001"
+    },
+    {
+      "id": "bayesian-inference",
+      "title_ko": "베이즈 추론",
+      "title_en": "Bayesian Inference",
+      "aliases": [
+        "베이즈 추론",
+        "베이지안",
+        "Bayesian",
+        "사전분포",
+        "사후분포"
+      ],
+      "discipline": "STAT",
+      "tags": [
+        "statistics"
+      ],
+      "planned_article": "STAT-BAYES-001"
+    },
+    {
+      "id": "message-queue",
+      "title_ko": "메시지 큐와 비동기 작업",
+      "title_en": "Message Queues and Async Jobs",
+      "aliases": [
+        "메시지 큐",
+        "message queue",
+        "작업 대기열",
+        "job queue",
+        "Kafka",
+        "RabbitMQ"
+      ],
+      "discipline": "SE",
+      "tags": [
+        "architecture"
+      ],
+      "planned_article": "SE-QUEUE-001"
+    },
+    {
+      "id": "dimensionality-reduction",
+      "title_ko": "차원 축소와 PCA",
+      "title_en": "Dimensionality Reduction and PCA",
+      "aliases": [
+        "차원 축소",
+        "PCA",
+        "주성분 분석",
+        "t-SNE",
+        "UMAP"
+      ],
+      "discipline": "MATH",
+      "tags": [
+        "linear-algebra"
+      ],
+      "planned_article": "MATH-LA-003"
+    },
+    {
+      "id": "data-visualization",
+      "title_ko": "데이터 시각화 원칙",
+      "title_en": "Data Visualization Principles",
+      "aliases": [
+        "데이터 시각화",
+        "data visualization",
+        "차트 선택",
+        "대시보드 설계"
+      ],
+      "discipline": "STAT",
+      "tags": [
+        "statistics"
+      ],
+      "planned_article": "STAT-VIZ-001"
     }
   ],
   "relations": [
@@ -1316,6 +1418,71 @@
     {
       "from": "software-testing",
       "to": "git-version-control",
+      "type": "prerequisite"
+    },
+    {
+      "from": "classification-metrics",
+      "to": "llm-evaluation",
+      "type": "prerequisite"
+    },
+    {
+      "from": "hypothesis-testing",
+      "to": "llm-evaluation",
+      "type": "prerequisite"
+    },
+    {
+      "from": "llm-transformer",
+      "to": "llm-evaluation",
+      "type": "prerequisite"
+    },
+    {
+      "from": "data-pipeline-etl",
+      "to": "data-quality",
+      "type": "prerequisite"
+    },
+    {
+      "from": "spc",
+      "to": "data-quality",
+      "type": "prerequisite"
+    },
+    {
+      "from": "probability-basics",
+      "to": "bayesian-inference",
+      "type": "prerequisite"
+    },
+    {
+      "from": "hypothesis-testing",
+      "to": "bayesian-inference",
+      "type": "prerequisite"
+    },
+    {
+      "from": "process-thread-concurrency",
+      "to": "message-queue",
+      "type": "prerequisite"
+    },
+    {
+      "from": "rest-api-design",
+      "to": "message-queue",
+      "type": "prerequisite"
+    },
+    {
+      "from": "matrices-linear-maps",
+      "to": "dimensionality-reduction",
+      "type": "prerequisite"
+    },
+    {
+      "from": "stat-descriptive",
+      "to": "dimensionality-reduction",
+      "type": "prerequisite"
+    },
+    {
+      "from": "stat-descriptive",
+      "to": "data-visualization",
+      "type": "prerequisite"
+    },
+    {
+      "from": "time-series",
+      "to": "data-visualization",
       "type": "prerequisite"
     }
   ]
