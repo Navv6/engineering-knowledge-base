@@ -1192,6 +1192,111 @@
         "llm"
       ],
       "planned_article": "AI-FT-001"
+    },
+    {
+      "id": "markov-chain",
+      "title_ko": "마르코프 연쇄",
+      "title_en": "Markov Chains",
+      "aliases": [
+        "마르코프 연쇄",
+        "Markov chain",
+        "전이 확률",
+        "정상 분포",
+        "PageRank"
+      ],
+      "discipline": "MATH",
+      "tags": [
+        "probability"
+      ],
+      "planned_article": "MATH-MARKOV-001"
+    },
+    {
+      "id": "recursion-divide-conquer",
+      "title_ko": "재귀와 분할 정복",
+      "title_en": "Recursion and Divide and Conquer",
+      "aliases": [
+        "재귀",
+        "recursion",
+        "분할 정복",
+        "divide and conquer",
+        "병합 정렬",
+        "merge sort"
+      ],
+      "discipline": "CS",
+      "tags": [
+        "algorithm"
+      ],
+      "planned_article": "CS-ALG-004"
+    },
+    {
+      "id": "clustering",
+      "title_ko": "군집 분석과 k-평균",
+      "title_en": "Clustering and k-means",
+      "aliases": [
+        "군집 분석",
+        "클러스터링",
+        "clustering",
+        "k-means",
+        "k-평균"
+      ],
+      "discipline": "AI",
+      "tags": [
+        "ml"
+      ],
+      "planned_article": "AI-CLUST-001"
+    },
+    {
+      "id": "decision-trees",
+      "title_ko": "의사결정나무와 앙상블",
+      "title_en": "Decision Trees and Ensembles",
+      "aliases": [
+        "의사결정나무",
+        "decision tree",
+        "랜덤 포레스트",
+        "random forest",
+        "그래디언트 부스팅",
+        "gradient boosting"
+      ],
+      "discipline": "AI",
+      "tags": [
+        "ml"
+      ],
+      "planned_article": "AI-TREE-001"
+    },
+    {
+      "id": "auth-oauth",
+      "title_ko": "인증과 OAuth",
+      "title_en": "Authentication and OAuth",
+      "aliases": [
+        "OAuth",
+        "OpenID Connect",
+        "JWT",
+        "세션 인증",
+        "SSO"
+      ],
+      "discipline": "SE",
+      "tags": [
+        "security"
+      ],
+      "planned_article": "SE-AUTH-001"
+    },
+    {
+      "id": "data-warehouse",
+      "title_ko": "데이터 웨어하우스와 차원 모델링",
+      "title_en": "Data Warehousing and Dimensional Modeling",
+      "aliases": [
+        "데이터 웨어하우스",
+        "data warehouse",
+        "차원 모델링",
+        "스타 스키마",
+        "star schema",
+        "팩트 테이블"
+      ],
+      "discipline": "DE",
+      "tags": [
+        "analytics"
+      ],
+      "planned_article": "DE-DW-001"
     }
   ],
   "relations": [
@@ -1668,6 +1773,61 @@
     {
       "from": "calculus-gradient",
       "to": "fine-tuning",
+      "type": "prerequisite"
+    },
+    {
+      "from": "probability-basics",
+      "to": "markov-chain",
+      "type": "prerequisite"
+    },
+    {
+      "from": "matrices-linear-maps",
+      "to": "markov-chain",
+      "type": "prerequisite"
+    },
+    {
+      "from": "algorithms-data-structures",
+      "to": "recursion-divide-conquer",
+      "type": "prerequisite"
+    },
+    {
+      "from": "asymptotic-complexity",
+      "to": "recursion-divide-conquer",
+      "type": "prerequisite"
+    },
+    {
+      "from": "math-coordinates-distance",
+      "to": "clustering",
+      "type": "prerequisite"
+    },
+    {
+      "from": "dimensionality-reduction",
+      "to": "clustering",
+      "type": "prerequisite"
+    },
+    {
+      "from": "information-entropy",
+      "to": "decision-trees",
+      "type": "prerequisite"
+    },
+    {
+      "from": "classification-metrics",
+      "to": "decision-trees",
+      "type": "prerequisite"
+    },
+    {
+      "from": "web-security",
+      "to": "auth-oauth",
+      "type": "prerequisite"
+    },
+    {
+      "from": "sql-basics",
+      "to": "data-warehouse",
+      "type": "prerequisite"
+    },
+    {
+      "from": "data-pipeline-etl",
+      "to": "data-warehouse",
       "type": "prerequisite"
     }
   ]
