@@ -228,6 +228,7 @@ export function validateAll({ graph, roles, articles, profile = { projects: [] }
     for (const k of req) if (meta[k] === undefined || meta[k] === '' ) errors.push(`${tag}: 필드 누락 ${k}`);
     if (isDraft) { warnings.push(`${tag}: 초안(${meta.status}) — 공개되지 않으며 내용 검사는 공개 시 수행`); ids.add(meta.id); continue; }
     if (file !== `${meta.id}.md`) errors.push(`${tag}: 파일명과 id 불일치 (${file})`);
+    if (body.includes('\uFFFD')) errors.push(`${tag}: 본문에 대체 문자(U+FFFD)가 있음 — 깨진 글자 예시는 다른 기호로 표기(아티팩트 게시가 거부됨)`);
     if (ids.has(meta.id)) errors.push(`${tag}: 문서 id 중복`);
     ids.add(meta.id);
     if (!conceptIds.has(meta.concept)) errors.push(`${tag}: 없는 개념 ${meta.concept}`);
