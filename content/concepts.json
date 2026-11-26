@@ -1067,6 +1067,131 @@
         "statistics"
       ],
       "planned_article": "STAT-VIZ-001"
+    },
+    {
+      "id": "regular-expressions",
+      "title_ko": "정규 표현식",
+      "title_en": "Regular Expressions",
+      "aliases": [
+        "정규 표현식",
+        "정규식",
+        "regex",
+        "regular expression",
+        "패턴 매칭"
+      ],
+      "discipline": "CS",
+      "tags": [
+        "text"
+      ],
+      "planned_article": "CS-REGEX-001"
+    },
+    {
+      "id": "file-formats-encoding",
+      "title_ko": "파일 형식과 문자 인코딩",
+      "title_en": "File Formats and Character Encoding",
+      "aliases": [
+        "문자 인코딩",
+        "UTF-8",
+        "CSV",
+        "XLSX",
+        "유니코드",
+        "Unicode",
+        "인코딩"
+      ],
+      "discipline": "CS",
+      "tags": [
+        "data"
+      ],
+      "planned_article": "CS-DATA-001"
+    },
+    {
+      "id": "sql-basics",
+      "title_ko": "SQL 조회·조인·집계",
+      "title_en": "SQL Querying, Joins and Aggregation",
+      "aliases": [
+        "SQL 기초",
+        "JOIN",
+        "조인",
+        "GROUP BY",
+        "집계 쿼리",
+        "윈도 함수"
+      ],
+      "discipline": "DE",
+      "tags": [
+        "database"
+      ],
+      "planned_article": "DE-SQL-001"
+    },
+    {
+      "id": "kg-construction",
+      "title_ko": "엔터티 추출과 지식 그래프 구축",
+      "title_en": "Entity Extraction and Knowledge Graph Construction",
+      "aliases": [
+        "엔터티 추출",
+        "개체명 인식",
+        "NER",
+        "관계 추출",
+        "엔터티 연결",
+        "entity linking"
+      ],
+      "discipline": "KE",
+      "tags": [
+        "knowledge-graph",
+        "llm"
+      ],
+      "planned_article": "KE-KGB-001"
+    },
+    {
+      "id": "ontology-design",
+      "title_ko": "온톨로지 설계 방법론",
+      "title_en": "Ontology Design Methodology",
+      "aliases": [
+        "온톨로지 설계",
+        "역량 질문",
+        "competency question",
+        "온톨로지 공학",
+        "ontology engineering"
+      ],
+      "discipline": "KE",
+      "tags": [
+        "knowledge-graph"
+      ],
+      "planned_article": "KE-DES-001"
+    },
+    {
+      "id": "causal-inference",
+      "title_ko": "인과 추론과 실험 설계",
+      "title_en": "Causal Inference and Experiment Design",
+      "aliases": [
+        "인과 추론",
+        "causal inference",
+        "교란 변수",
+        "무작위 대조 실험",
+        "차이의 차이"
+      ],
+      "discipline": "STAT",
+      "tags": [
+        "statistics"
+      ],
+      "planned_article": "STAT-CAUSAL-001"
+    },
+    {
+      "id": "fine-tuning",
+      "title_ko": "미세조정과 LoRA",
+      "title_en": "Fine-tuning and LoRA",
+      "aliases": [
+        "미세조정",
+        "fine-tuning",
+        "파인튜닝",
+        "LoRA",
+        "전이 학습",
+        "transfer learning"
+      ],
+      "discipline": "AI",
+      "tags": [
+        "llm"
+      ],
+      "planned_article": "AI-FT-001"
     }
   ],
   "relations": [
@@ -1483,6 +1608,66 @@
     {
       "from": "time-series",
       "to": "data-visualization",
+      "type": "prerequisite"
+    },
+    {
+      "from": "state-machine",
+      "to": "regular-expressions",
+      "type": "prerequisite"
+    },
+    {
+      "from": "sets-logic",
+      "to": "regular-expressions",
+      "type": "prerequisite"
+    },
+    {
+      "from": "relational-modeling",
+      "to": "sql-basics",
+      "type": "prerequisite"
+    },
+    {
+      "from": "sets-logic",
+      "to": "sql-basics",
+      "type": "prerequisite"
+    },
+    {
+      "from": "ontology-kg",
+      "to": "kg-construction",
+      "type": "prerequisite"
+    },
+    {
+      "from": "llm-transformer",
+      "to": "kg-construction",
+      "type": "prerequisite"
+    },
+    {
+      "from": "rdf-owl-sparql",
+      "to": "ontology-design",
+      "type": "prerequisite"
+    },
+    {
+      "from": "fde-solution-design",
+      "to": "ontology-design",
+      "type": "prerequisite"
+    },
+    {
+      "from": "hypothesis-testing",
+      "to": "causal-inference",
+      "type": "prerequisite"
+    },
+    {
+      "from": "linear-regression",
+      "to": "causal-inference",
+      "type": "prerequisite"
+    },
+    {
+      "from": "llm-transformer",
+      "to": "fine-tuning",
+      "type": "prerequisite"
+    },
+    {
+      "from": "calculus-gradient",
+      "to": "fine-tuning",
       "type": "prerequisite"
     }
   ]
