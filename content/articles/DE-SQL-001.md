@@ -217,7 +217,7 @@ df = df.sort_values(by="date", ascending=False)
 latest = df.groupby("indicator").first().reset_index()
 ```
 
-같은 일이다. 다만 pandas의 `first()`는 칸마다 "NULL이 아닌 첫 값"을 고르기 때문에, 최신 행의 어떤 칸이 비어 있으면 그 칸만 더 오래된 행의 값으로 채워질 수 있다(날짜와 값이 다른 행에서 섞일 위험). 행 단위로 정확히 고르려면 `drop_duplicates("indicator")`나 `head(1)`을 쓰는 것이 안전하다. DeepVi 데이터에 실제로 빈 칸이 있었는지는 확인하지 못했으므로 점검 사항으로 남긴다.
+같은 일이다. 다만 pandas의 `first()`는 칸마다 "NULL이 아닌 첫 값"을 고르기 때문에, 최신 행의 어떤 칸이 비어 있으면 그 칸만 더 오래된 행의 값으로 채워질 수 있다(날짜와 값이 다른 행에서 섞일 위험). 행 단위로 정확히 고르려면 `drop_duplicates("indicator")`나 `head(1)`을 쓰는 것이 안전하다. pandas 3.0.5에서 직접 재현해 보면, 금리 지표의 최신 행(2025-11)의 값이 비어 있을 때 결과가 "날짜 2025-11, 값 3.5(2025-10의 값)"로 섞여 나온다. DeepVi 데이터에 실제로 빈 칸이 있었는지는 확인하지 못했으므로 점검 사항으로 남긴다.
 
 ### 예제 5. 일대다 조인 후 합계의 함정
 
@@ -311,4 +311,4 @@ SELECT task_id, status, changed_at FROM (
 
 ## 14. 참고 자료
 
-출처는 아래 패널에 있다. 조인·집계·윈도 함수의 동작은 PostgreSQL 공식 문서를 따랐고, 6절 예제의 결과는 같은 표를 SQLite에서 실행해 확인했다(행 수 3·4·3, 평균 57.5, COUNT 2·1, 최신 행 A 35·B 80·C 120, 조인 5행). DeepVi 코드는 저장소 `pages/stream.py`를 직접 읽었다. pandas `first()`의 동작(칸별 첫 비결측값)은 pandas 문서의 일반적 설명이며 버전별 세부는 확인 필요.
+출처는 아래 패널에 있다. 조인·집계·윈도 함수의 동작은 PostgreSQL 공식 문서를 따랐고, 6절 예제의 결과는 같은 표를 SQLite에서 실행해 확인했다(행 수 3·4·3, 평균 57.5, COUNT 2·1, 최신 행 A 35·B 80·C 120, 조인 5행). DeepVi 코드는 저장소 `pages/stream.py`를 직접 읽었다. pandas `first()`의 동작(칸별 첫 비결측값)은 pandas 3.0.5에서 재현해 확인했다.
