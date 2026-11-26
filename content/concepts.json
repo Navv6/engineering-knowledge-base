@@ -1297,6 +1297,95 @@
         "analytics"
       ],
       "planned_article": "DE-DW-001"
+    },
+    {
+      "id": "hash-functions",
+      "title_ko": "해시 함수와 무결성",
+      "title_en": "Hash Functions and Integrity",
+      "aliases": [
+        "해시 함수",
+        "hash function",
+        "SHA-256",
+        "체크섬",
+        "파일 지문",
+        "fingerprint"
+      ],
+      "discipline": "CS",
+      "tags": [
+        "security",
+        "data"
+      ],
+      "planned_article": "CS-HASH-001"
+    },
+    {
+      "id": "survival-analysis",
+      "title_ko": "생존 분석과 소요 시간",
+      "title_en": "Survival Analysis and Durations",
+      "aliases": [
+        "생존 분석",
+        "survival analysis",
+        "카플란-마이어",
+        "Kaplan-Meier",
+        "중도 절단",
+        "위험률"
+      ],
+      "discipline": "STAT",
+      "tags": [
+        "statistics"
+      ],
+      "planned_article": "STAT-SURV-001"
+    },
+    {
+      "id": "recommender-systems",
+      "title_ko": "추천 시스템 기초",
+      "title_en": "Recommender Systems Basics",
+      "aliases": [
+        "추천 시스템",
+        "recommender system",
+        "협업 필터링",
+        "collaborative filtering",
+        "행렬 분해"
+      ],
+      "discipline": "AI",
+      "tags": [
+        "ml"
+      ],
+      "planned_article": "AI-REC-001"
+    },
+    {
+      "id": "event-driven",
+      "title_ko": "이벤트 기반 설계와 이벤트 소싱",
+      "title_en": "Event-Driven Design and Event Sourcing",
+      "aliases": [
+        "이벤트 소싱",
+        "event sourcing",
+        "이벤트 기반",
+        "CQRS",
+        "도메인 이벤트"
+      ],
+      "discipline": "SE",
+      "tags": [
+        "architecture"
+      ],
+      "planned_article": "SE-EVENT-001"
+    },
+    {
+      "id": "rule-engines",
+      "title_ko": "규칙 엔진과 정책 분리",
+      "title_en": "Rule Engines and Policy Separation",
+      "aliases": [
+        "규칙 엔진",
+        "rule engine",
+        "비즈니스 규칙",
+        "정책 분리",
+        "판정 엔진",
+        "decision table"
+      ],
+      "discipline": "SE",
+      "tags": [
+        "architecture"
+      ],
+      "planned_article": "SE-RULE-001"
     }
   ],
   "relations": [
@@ -1828,6 +1917,61 @@
     {
       "from": "data-pipeline-etl",
       "to": "data-warehouse",
+      "type": "prerequisite"
+    },
+    {
+      "from": "file-formats-encoding",
+      "to": "hash-functions",
+      "type": "prerequisite"
+    },
+    {
+      "from": "transactions-acid",
+      "to": "hash-functions",
+      "type": "prerequisite"
+    },
+    {
+      "from": "probability-basics",
+      "to": "survival-analysis",
+      "type": "prerequisite"
+    },
+    {
+      "from": "time-series",
+      "to": "survival-analysis",
+      "type": "prerequisite"
+    },
+    {
+      "from": "embeddings",
+      "to": "recommender-systems",
+      "type": "prerequisite"
+    },
+    {
+      "from": "matrices-linear-maps",
+      "to": "recommender-systems",
+      "type": "prerequisite"
+    },
+    {
+      "from": "state-machine",
+      "to": "event-driven",
+      "type": "prerequisite"
+    },
+    {
+      "from": "data-pipeline-etl",
+      "to": "event-driven",
+      "type": "prerequisite"
+    },
+    {
+      "from": "sets-logic",
+      "to": "rule-engines",
+      "type": "prerequisite"
+    },
+    {
+      "from": "software-testing",
+      "to": "rule-engines",
+      "type": "prerequisite"
+    },
+    {
+      "from": "decision-trees",
+      "to": "rule-engines",
       "type": "prerequisite"
     }
   ]
