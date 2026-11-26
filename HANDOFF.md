@@ -195,6 +195,7 @@ npm run test:e2e   → 35/35 통과 (Chromium, 데스크톱 1360px + 모바일 3
 - 사고·개선: CS-DATA-001 예시의 대체 문자(U+FFFD) 때문에 아티팩트 게시가 거부됨 → ◆ 표기로 바꾸고 validate에 U+FFFD 검출 추가(예약 실행 재발 방지).
 - 6차 완료: AI-CLUST-001 군집 분석, MATH-MARKOV-001 마르코프 연쇄(이 사이트 gradeCard 상자 규칙 연결), CS-ALG-004 재귀와 분할 정복(detectCycles 재귀 DFS), SE-AUTH-001 인증과 OAuth, DE-DW-001 데이터 웨어하우스. **공개 67편.**
 - 7차 개념 5개 추가(예약 실행용): SE-EVENT-001 이벤트 소싱, SE-RULE-001 규칙 엔진과 정책 분리(Preflight 공통 엔진+정책), CS-HASH-001 해시와 파일 지문, STAT-SURV-001 생존 분석, AI-REC-001 추천 시스템. 'LP 쌍대성·민감도'는 OR-OPT-001과 중복이라 제외.
+- 이어서 SE-RULE-001 규칙 엔진과 정책 분리(Preflight 공통 엔진+정책, 결정표) 작성. **공개 68편**, 아티팩트 Version 32. 남은 7차 후보 4개(SE-EVENT-001, CS-HASH-001, STAT-SURV-001, AI-REC-001)는 예약 실행이 하루 1편씩.
 
 ## 7. 데이터 모델 매핑 (명세 6장)
 
