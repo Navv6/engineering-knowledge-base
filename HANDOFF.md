@@ -191,6 +191,9 @@ npm run test:e2e   → 35/35 통과 (Chromium, 데스크톱 1360px + 모바일 3
 **2026-11-26 예약 실행 확인과 추가 작성**
 - 사용자 "예약 작업이 실행되지 않은 것 같다" → 확인 결과 정상 실행: 05:44 KST 실행, SE-QUEUE-001 작성·커밋(4b279cb), 05:49 아티팩트 게시(기록 content/runs/2026-11-26T0544.json, status success). 이후 수동 게시는 라이브 버전의 설명집 목록이 로컬 빌드에 모두 포함됨을 확인한 뒤 진행.
 - 추가 작성: STAT-BAYES-001 베이즈 추론, MATH-LA-003 차원 축소와 PCA, STAT-VIZ-001 데이터 시각화(4차 완료), 5차 개념 7개 추가 후 CS-REGEX-001 정규 표현식(DeepVi classify_question 실제 패턴 재현: 소문자 변환 뒤 대문자 패턴 ROE·PER·GDP 불일치, '변화' 우선순위로 거시 질문이 meta로 감), CS-DATA-001 파일 형식과 인코딩. 공개 56편.
+- 이어서: DE-SQL-001 SQL(DeepVi pandas pivot·groupby().first()와 대응, first()의 칸별 혼합을 pandas 3.0.5로 재현), KE-KGB-001 지식 그래프 구축, KE-DES-001 온톨로지 설계(Preflight 도메인 설계 연습, 역량 질문), STAT-CAUSAL-001 인과 추론(심슨의 역설, DiD), AI-FT-001 미세조정·LoRA(STT 미세조정 모델 비교 점검), 6차 개념 6개 추가 후 AI-TREE-001 의사결정나무(DeepVi 재무 지표 판정 기준값 50/100/150 등을 사람 나무로). 공개 62편.
+- 사고·개선: CS-DATA-001 예시의 대체 문자(U+FFFD) 때문에 아티팩트 게시가 거부됨 → ◆ 표기로 바꾸고 validate에 U+FFFD 검출 추가(예약 실행 재발 방지).
+- 남은 6차 후보: AI-CLUST-001, MATH-MARKOV-001, CS-ALG-004, SE-AUTH-001, DE-DW-001.
 
 ## 7. 데이터 모델 매핑 (명세 6장)
 
