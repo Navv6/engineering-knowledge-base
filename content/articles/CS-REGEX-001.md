@@ -184,6 +184,51 @@ DeepVi의 단어 추출 패턴 `\b[가-힣A-Za-z0-9]{2,}\b`를 "삼성전자, 3�
 
 "연도 4자리"를 검사하려고 `[0-9]{4}`만 쓰면 "202611"도 통과한다(앞 네 자리가 맞으므로). 전체 일치를 원하면 `^[0-9]{4}$`로 처음과 끝을 고정한다.
 
+
+### 직접 해보기
+
+DeepVi 저장소의 분류 규칙을 그대로 옮겼습니다. `fix`를 0(원래 코드)에서 1(고친 패턴)로 바꿔 틀린 개수가 어떻게 줄어드는지 보세요. 코드를 펼쳐 질문을 추가하거나 패턴을 고쳐 볼 수 있습니다.
+
+```runjs
+// @title DeepVi 질문 분류기를 그대로 돌려 보고 고쳐 보기
+// @label 틀린 질문 수
+// @param fix | 0 = 원래 코드, 1 = 고친 패턴 | 0 | 1 | 0 | 1
+// @expect fix=0 => 3
+// @expect fix=1 => 0
+const original = {   // 저장소 pages/stream.py의 패턴
+  news: /(뉴스|보도|이슈|최근.*소식|기사|언론|근황)/,
+  meta: /(매출|이익|자산|부채|재무비율|현금흐름|ROE|PER|PBR|FCF|EPS|재무|실적|변화)/,
+  macro: /(금리|환율|물가|GDP|경기|종합|분석|평가|전망)/,
+};
+const fixed = {      // 소문자 + 단어 경계, 너무 넓은 '변화' 제거
+  news: /(뉴스|보도|이슈|최근.*?소식|기사|언론|근황)/,
+  meta: /(매출|이익|자산|부채|재무비율|현금흐름|\broe\b|\bper\b|\bpbr\b|\bfcf\b|\beps\b|재무|실적)/,
+  macro: /(금리|환율|물가|\bgdp\b|경기|종합|분석|평가|전망)/,
+};
+const P = fix ? fixed : original;
+function classify(text) {
+  text = text.toLowerCase();   // 원래 코드처럼 먼저 소문자로 바꾼다
+  for (const c of ['meta', 'news', 'macro']) if (P[c].test(text)) return c;   // 우선순위 순서
+  return 'general';
+}
+const tests = [                // [질문, 기대 범주] — 문장을 추가해 보세요
+  ['삼성전자 ROE 알려줘', 'meta'],
+  ['PER이 높은 이유는?', 'meta'],
+  ['GDP 전망은?', 'macro'],
+  ['금리 변화가 영향을 줄까?', 'macro'],
+  ['최근 무슨 소식 있어?', 'news'],
+  ['종합 분석해줘', 'macro'],
+];
+let wrong = 0;
+const rows = tests.map(([q, want]) => {
+  const got = classify(q);
+  if (got !== want) wrong++;
+  return [q, want, got, got === want ? '맞음' : '틀림'];
+});
+table(rows, ['질문', '기대', '결과', '판정']);
+result(wrong);
+```
+
 ## 7. 시각화와 해석
 
 정규식은 상태 기계 그림(동그라미와 화살표, CS-GEN-001)이나 "철도 노선도" 같은 다이어그램으로 그리면 읽기 쉬워진다. `(뉴스|보도|기사)`는 세 갈래로 갈라졌다 다시 합쳐지는 선로이고, `[0-9]+`는 자기 자신으로 돌아오는 고리가 있는 선로다. 분류기의 품질은 예제 3 같은 시험표를 혼동행렬(AI-EVAL-001)로 정리하면, 어느 범주가 어느 범주로 잘못 가는지 보인다.

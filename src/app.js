@@ -2,6 +2,7 @@
 import { gradeCard, dueCards, quizStats, GRADE_KO, SRS_INTERVALS, STATUS, STATUS_KEYS, WEIGHTS, buildSearchIndex, search, prerequisiteDepth, neighbors, curriculumOrder, computePriorities, pickToday, weeklyReview, matchJobText, dedupKey, dateInTZ } from './core.js';
 import { createStore, sanitizeState, emptyState } from './store.js';
 import { mountViz, mountKnowledgeMap, DISCIPLINE_COLOR } from './viz.js';
+import { mountPlay } from './play.js';
 
 const KB = JSON.parse(document.getElementById('kb-data').textContent);
 const ARTICLES = KB.articles.filter((a) => a.status === 'published');
@@ -329,6 +330,8 @@ function wireArticle(id) {
     for (const en of ents) if (en.isIntersecting) { io.unobserve(en.target); const tok = routeToken; mountViz(en.target).then((v) => { if (tok !== routeToken) v.dispose(); else disposers.push(() => v.dispose()); }); }
   }, { rootMargin: '300px' });
   main.querySelectorAll('.viz[data-viz]').forEach((el) => { el.innerHTML = '<p class="viz-loading">시각화를 불러오는 중…</p>'; io.observe(el); });
+  // 직접 해보기: 정적 결과(빌드 시 계산)를 슬라이더·코드 편집 화면으로 바꾼다
+  main.querySelectorAll('.play[data-play]').forEach((el) => { const pl = mountPlay(el); disposers.push(() => pl.dispose()); });
   disposers.push(() => io.disconnect());
 }
 

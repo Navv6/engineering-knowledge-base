@@ -292,6 +292,25 @@ await check('Skill Gap: 공고 분석→저장→중복 방지→빈도 반영',
   await shot(page, '08-gap');
 });
 
+await check('직접 해보기: 기본 결과, 슬라이더 실행, 무한 반복 시간 초과, 원래 코드 복구', async () => {
+  await page.goto(`${BASE}#a-MATH-CALC-001`);
+  const play = page.locator('.play').first();
+  await play.locator('input[type=range]').first().waitFor();
+  assert((await play.locator('.play-result').textContent()).includes('2.01696'), '기본값 결과(2.01696) 없음');
+  await play.locator('input[data-name="lr"]').evaluate((el) => { el.value = '1.1'; el.dispatchEvent(new Event('input', { bubbles: true })); });
+  await page.waitForFunction(() => document.querySelector('.play .play-result')?.textContent.includes('10.46496'), null, { timeout: 5000 });
+  await play.locator('summary').click();
+  await play.locator('textarea').fill('while (true) {}');
+  await play.locator('.play-run').click();
+  await page.waitForFunction(() => document.querySelector('.play .play-out')?.textContent.includes('시간 초과'), null, { timeout: 6000 });
+  await play.locator('.play-code textarea').fill('result(lr * 2)');
+  await play.locator('.play-run').click();
+  await page.waitForFunction(() => document.querySelector('.play .play-result')?.textContent.includes('2.2'), null, { timeout: 5000 });
+  await play.locator('.play-reset').click();
+  await page.waitForFunction(() => document.querySelector('.play .play-result')?.textContent.includes('10.46496'), null, { timeout: 5000 });
+  assert(!errors.length, errors.join(' | '));
+});
+
 await check('Interview: 전체 문항 표시, 유형 필터, 답 접힘', async () => {
   await page.goto(`${BASE}#interview`);
   const nQ = await page.evaluate(() => window.__ekb.KB.questions.length);

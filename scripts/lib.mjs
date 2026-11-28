@@ -3,6 +3,8 @@ import fs from 'node:fs';
 import path from 'node:path';
 import katex from 'katex';
 import { marked } from 'marked';
+import vm from 'node:vm';
+import { parsePlay, buildPlaySource, renderPlayOut, playResultMatches } from '../src/play.js';
 
 export const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..');
 export const CONTENT = path.join(ROOT, 'content');
@@ -58,8 +60,19 @@ export function renderMath({ tex, display }) {
   return katex.renderToString(tex, { displayMode: display, throwOnError: true, strict: 'warn', output: 'htmlAndMathml' });
 }
 
+/** 실행 체험 블록을 Node에서 실행(빌드 시 기본 결과 계산, 검증 시 @expect 확인) */
+export function runPlayNode(play, values = {}) {
+  try {
+    const r = vm.runInNewContext(buildPlaySource(play.code, play.params, values), {}, { timeout: 1000 });
+    return { out: r.out, result: r.result };
+  } catch (e) {
+    return { error: `오류: ${e.message}` };
+  }
+}
+const attrEsc = (s) => String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
 const slugCounter = { n: 0 };
-function makeRenderer(toc) {
+function makeRenderer(toc, plays) {
   const renderer = new marked.Renderer();
   renderer.heading = (text, level, raw) => {
     if (level === 2) {
@@ -73,6 +86,16 @@ function makeRenderer(toc) {
   renderer.table = (header, body) => `<div class="table-wrap" tabindex="0"><table><thead>${header}</thead><tbody>${body}</tbody></table></div>\n`;
   renderer.code = (code, lang) => {
     const esc = code.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    if (lang === 'runjs') {
+      let play;
+      try { play = parsePlay(code); } catch (e) { plays.push({ parseError: e.message }); return `<pre class="code"><code>${esc}</code></pre>\n`; }
+      const r = runPlayNode(play);
+      play.out = r.out || []; play.error = r.error || null; play.defaultResult = r.result;
+      plays.push(play);
+      const cfg = { title: play.title, label: play.label, params: play.params, code: play.code, out: play.out, error: play.error };
+      const codeEsc = play.code.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      return `<div class="play" data-play="${attrEsc(JSON.stringify(cfg))}"><pre class="code" tabindex="0"><code data-lang="js">${codeEsc}</code></pre><div class="play-static">${renderPlayOut(play.out, play.error, play.label)}</div></div>\n`;
+    }
     return `<pre class="code" tabindex="0"><code${lang ? ` data-lang="${lang}"` : ''}>${esc}</code></pre>\n`;
   };
   renderer.link = (href, title, text) => {
@@ -94,8 +117,8 @@ export function stripTags(html) {
 /** 마크다운 본문 → { html, toc, questions, summaryHtml, plain, vizUsed, mathCount } */
 export function renderArticleBody(body, articleId) {
   const { text, maths } = protectMath(body);
-  const toc = [];
-  let html = marked.parse(text, { renderer: makeRenderer(toc), gfm: true, mangle: false, headerIds: false });
+  const toc = []; const plays = [];
+  let html = marked.parse(text, { renderer: makeRenderer(toc, plays), gfm: true, mangle: false, headerIds: false });
   const rendered = maths.map((m) => renderMath(m));
   html = html.replace(/<p>\s*KXMATH(\d+)X\s*<\/p>/g, (_, i) => `<div class="math-display">${rendered[+i]}</div>`);
   html = html.replace(/KXMATH(\d+)X/g, (_, i) => rendered[+i]);
@@ -120,7 +143,7 @@ export function renderArticleBody(body, articleId) {
   }).join('');
   const sec1 = html.match(/<h2 id="s-\d+"[^>]*>(?:0\. )?[^<]*핵심 요약[\s\S]*?<\/h2>([\s\S]*?)(?=<\/section>)/) || html.match(/<h2 id="s-1"[^>]*>[\s\S]*?<\/h2>([\s\S]*?)(?=<\/section>)/);
   const vizUsed = [...body.matchAll(/data-viz="([\w-]+)"/g)].map((x) => x[1]);
-  return { html, toc, questions, summaryHtml: sec1 ? sec1[1].trim() : '', plain: stripTags(html), vizUsed, mathCount: maths.length };
+  return { html, toc, questions, summaryHtml: sec1 ? sec1[1].trim() : '', plain: stripTags(html.replace(/<div class="play-static">[\s\S]*?<\/div><\/div>/g, '</div>')), vizUsed, mathCount: maths.length, plays };
 }
 
 export function loadContent() {
@@ -266,6 +289,21 @@ export function validateAll({ graph, roles, articles, profile = { projects: [] }
       if (r.questions.filter((q) => q.type === 'easy').length < 2) errors.push(`${tag}: 한눈에 보기의 쉬운 확인 질문(data-type="easy")이 2개 미만`);
       for (const q of r.questions) if (!/정답/.test(q.answer) || !/해설/.test(q.answer)) errors.push(`${tag}: 정답·해설이 없는 문항 — ${stripTags(q.question).slice(0, 30)}`);
       for (const v of r.vizUsed) if (!VIZ_NAMES.includes(v)) errors.push(`${tag}: 알 수 없는 시각화 ${v}`);
+      // 실행 체험 블록: 형식, 기본값 실행, @expect(본문 값과 일치) 검사
+      r.plays.forEach((pl, i) => {
+        const where = `${tag}: 직접 해보기 #${i + 1}`;
+        if (pl.parseError) { errors.push(`${where} — ${pl.parseError}`); return; }
+        if (pl.error) errors.push(`${where} — 기본값 실행 실패: ${pl.error}`);
+        if (!pl.expects.length) errors.push(`${where} — // @expect 가 최소 1개 필요(본문 값과 실행 결과 일치 확인)`);
+        if (pl.params.length > 4) warnings.push(`${where} — 슬라이더 ${pl.params.length}개는 많음(4개 이하 권장)`);
+        for (const ex of pl.expects) {
+          const unknown = Object.keys(ex.assign).filter((k) => !pl.params.some((p) => p.name === k));
+          if (unknown.length) { errors.push(`${where} — @expect에 없는 매개변수 ${unknown.join(', ')}`); continue; }
+          const res = runPlayNode(pl, ex.assign);
+          if (res.error) errors.push(`${where} — @expect 실행 실패(${JSON.stringify(ex.assign)}): ${res.error}`);
+          else if (!playResultMatches(res.result, ex.value)) errors.push(`${where} — @expect 불일치(${JSON.stringify(ex.assign)}): 기대 ${ex.value}, 실제 ${res.result}`);
+        }
+      });
       if (/TODO|TBD|lorem/i.test(body)) errors.push(`${tag}: 미완성 표시(TODO/TBD) 포함`);
     } catch (e) {
       errors.push(`${tag}: 렌더링 실패 — ${e.message}`);

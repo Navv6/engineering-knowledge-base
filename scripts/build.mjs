@@ -42,7 +42,7 @@ if (/url\(fonts\//.test(katexCss)) throw new Error('KaTeX 폰트 인라인 실�
 const strip = (f) => fs.readFileSync(path.join(ROOT, 'src', f), 'utf8')
   .replace(/^import\s+\{[^}]*\}\s+from\s+'\.\/[\w.]+';\s*$/gm, '')
   .replace(/^export\s+(?=(async\s+)?function|const|let|class)/gm, '');
-const bundle = ['core.js', 'store.js', 'viz.js', 'app.js'].map((f) => `// ---- ${f} ----\n${strip(f)}`).join('\n');
+const bundle = ['core.js', 'store.js', 'viz.js', 'play.js', 'app.js'].map((f) => `// ---- ${f} ----\n${strip(f)}`).join('\n');
 if (/<\/script/i.test(bundle)) throw new Error('번들에 </script 문자열이 있습니다');
 
 const THREE_VER = '0.160.0';

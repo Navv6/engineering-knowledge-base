@@ -195,6 +195,31 @@ DeepVi의 $T = 0.3$에서는 1등 후보가 약 96%로 거의 항상 뽑히고, 
 
 어텐션 점수표는 $n \times n$이다. 컨텍스트가 1,000토큰이면 100만 칸, 10,000토큰이면 1억 칸으로 **100배**가 된다(CS-ALG-002의 $O(n^2)$). 긴 문서를 통째로 넣는 것보다 관련 부분만 검색해 넣는 RAG가 비용과 정확도 모두에서 유리한 이유 중 하나다(실제 구현은 최적화 기법으로 이 비용을 줄이지만, 길이에 따른 부담은 남는다). AI-NATIVE-001의 "context rot"도 함께 보면 좋다.
 
+
+### 직접 해보기
+
+temperature를 0.1부터 3까지 움직여 보세요. 낮추면 1등 후보로 확률이 몰리고, 높이면 평평해집니다. 코드에서 후보 토큰과 로짓을 바꿔 볼 수도 있습니다.
+
+```runjs
+// @title temperature를 바꾸면 다음 토큰 확률이 어떻게 바뀌나
+// @label 1등 후보 확률
+// @param T | temperature | 0.1 | 3 | 1 | 0.1
+// @expect T=1 => 0.6652
+// @expect T=0.3 => 0.9644
+// @expect T=2 => 0.5065
+const tokens = ['좋네요', '괜찮네요', '춥네요'];  // 후보 토큰
+const logits = [2, 1, 0];                         // 모델이 낸 점수(로짓)
+const scaled = logits.map((z) => z / T);
+const top = Math.max(...scaled);                  // 계산이 넘치지 않도록 최댓값을 뺀다(결과는 같음)
+const exps = scaled.map((z) => Math.exp(z - top));
+const sum = exps.reduce((a, b) => a + b, 0);
+const probs = exps.map((e) => e / sum);
+bars(tokens, probs);
+const entropy = -probs.reduce((s, p) => s + (p > 0 ? p * Math.log2(p) : 0), 0);
+log('분포의 엔트로피(불확실성):', entropy.toFixed(3), '비트');
+result(+probs[0].toFixed(4));
+```
+
 ## 7. 시각화와 해석
 
 어텐션 가중치를 토큰 × 토큰 열지도(heatmap)로 그리면 "이 단어가 어느 단어를 많이 봤는지"가 보인다. 다만 어텐션 가중치가 곧 "모델이 판단한 이유"라고 해석하는 데는 논쟁이 있어, 설명 도구로 과신하지 않는다. 예제 1의 temperature 표는 막대그래프 세 묶음으로 그리면, $T$가 낮을수록 막대 하나만 솟고 높을수록 고르게 퍼지는 모습이 보인다.

@@ -181,6 +181,33 @@ $a$, $b$는 "사전에 본 것처럼 치는 성공·실패 수"로 해석할 수
 
 "B가 A보다 나을 확률이 약 82%"라고 직접 말할 수 있다. 다만 82%는 결정적이지 않으므로, B로 바꾸는 비용과 틀렸을 때의 손실을 함께 보고 결정한다.
 
+
+### 직접 해보기
+
+기저율·민감도·위양성률을 바꿔 보세요. 기저율 1%에서 10%로 올리면 같은 검사라도 사후확률이 약 15%에서 67%로 뜁니다.
+
+```runjs
+// @title 기저율이 사후확률을 얼마나 바꾸나(1,000명으로 세기)
+// @label 양성일 때 실제 위험할 확률
+// @param base | 기저율(%) | 0.5 | 50 | 1 | 0.5
+// @param sens | 민감도(%) | 50 | 100 | 90 | 1
+// @param fpr | 위양성률(%) | 0 | 30 | 5 | 0.5
+// @expect base=1, sens=90, fpr=5 => 0.1538
+// @expect base=10, sens=90, fpr=5 => 0.6667
+const N = 1000;
+const sick = N * base / 100;          // 실제로 위험한 수
+const healthy = N - sick;
+const truePos = sick * sens / 100;    // 위험한데 양성
+const falsePos = healthy * fpr / 100; // 정상인데 양성
+table([
+  ['실제 위험', sick.toFixed(1), truePos.toFixed(1)],
+  ['실제 정상', healthy.toFixed(1), falsePos.toFixed(1)],
+], ['', '인원', '양성 판정']);
+const post = truePos / (truePos + falsePos);
+log('양성', (truePos + falsePos).toFixed(1), '명 중 진짜 위험은', truePos.toFixed(1), '명');
+result(+post.toFixed(4));
+```
+
 ## 7. 시각화와 해석
 
 예제 2의 사전(평평한 선), 가능도, 사후(0.67 근처에 솟은 언덕)를 한 그림에 그리면 "데이터가 믿음을 어떻게 옮기는지"가 보인다. 표본이 100개, 1,000개로 늘면 사후 언덕이 점점 좁고 높아진다. 예제 1은 1,000명을 점 1,000개로 그리고 양성인 점을 색칠하면, 색칠된 점 대부분이 건강한 사람 쪽에 있다는 것이 한눈에 보인다.
