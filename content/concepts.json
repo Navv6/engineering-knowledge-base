@@ -1386,6 +1386,336 @@
         "architecture"
       ],
       "planned_article": "SE-RULE-001"
+    },
+    {
+      "id": "number-representation",
+      "title_ko": "수의 표현과 부동소수점",
+      "title_en": "Number Representation and Floating Point",
+      "aliases": [
+        "부동소수점",
+        "floating point",
+        "2진수",
+        "binary number",
+        "IEEE 754",
+        "수치 오차",
+        "0.1+0.2"
+      ],
+      "discipline": "CS",
+      "tags": [
+        "cs"
+      ],
+      "planned_article": "CS-NUM-001"
+    },
+    {
+      "id": "os-memory",
+      "title_ko": "운영체제와 메모리 관리",
+      "title_en": "Operating Systems and Memory",
+      "aliases": [
+        "운영체제",
+        "operating system",
+        "가상 메모리",
+        "virtual memory",
+        "스택과 힙",
+        "stack and heap",
+        "메모리 누수"
+      ],
+      "discipline": "CS",
+      "tags": [
+        "cs"
+      ],
+      "planned_article": "CS-OS-002"
+    },
+    {
+      "id": "distributed-consistency",
+      "title_ko": "분산 시스템과 일관성",
+      "title_en": "Distributed Systems and Consistency",
+      "aliases": [
+        "분산 시스템",
+        "distributed system",
+        "CAP 정리",
+        "CAP theorem",
+        "최종 일관성",
+        "eventual consistency",
+        "복제 지연",
+        "replication lag"
+      ],
+      "discipline": "CS",
+      "tags": [
+        "cs"
+      ],
+      "planned_article": "CS-DIST-001"
+    },
+    {
+      "id": "combinatorics",
+      "title_ko": "경우의 수와 조합",
+      "title_en": "Counting and Combinatorics",
+      "aliases": [
+        "경우의 수",
+        "순열",
+        "permutation",
+        "조합",
+        "combination",
+        "팩토리얼",
+        "factorial"
+      ],
+      "discipline": "MATH",
+      "tags": [
+        "math"
+      ],
+      "planned_article": "MATH-COMB-001"
+    },
+    {
+      "id": "correlation-covariance",
+      "title_ko": "상관과 공분산",
+      "title_en": "Correlation and Covariance",
+      "aliases": [
+        "상관계수",
+        "correlation",
+        "공분산",
+        "covariance",
+        "피어슨 상관",
+        "Pearson correlation",
+        "상관과 인과"
+      ],
+      "discipline": "STAT",
+      "tags": [
+        "statistics"
+      ],
+      "planned_article": "STAT-CORR-001"
+    },
+    {
+      "id": "resampling-bootstrap",
+      "title_ko": "재표본추출과 부트스트랩",
+      "title_en": "Resampling and the Bootstrap",
+      "aliases": [
+        "부트스트랩",
+        "bootstrap",
+        "재표본추출",
+        "resampling",
+        "순열 검정",
+        "permutation test"
+      ],
+      "discipline": "STAT",
+      "tags": [
+        "statistics"
+      ],
+      "planned_article": "STAT-BOOT-001"
+    },
+    {
+      "id": "queueing-theory",
+      "title_ko": "대기행렬 이론과 리틀의 법칙",
+      "title_en": "Queueing Theory and Little's Law",
+      "aliases": [
+        "대기행렬",
+        "queueing theory",
+        "리틀의 법칙",
+        "Little's law",
+        "도착률",
+        "처리율",
+        "utilization"
+      ],
+      "discipline": "OR",
+      "tags": [
+        "optimization"
+      ],
+      "planned_article": "OR-QUEUE-001"
+    },
+    {
+      "id": "neural-networks",
+      "title_ko": "신경망과 역전파",
+      "title_en": "Neural Networks and Backpropagation",
+      "aliases": [
+        "신경망",
+        "neural network",
+        "역전파",
+        "backpropagation",
+        "활성화 함수",
+        "activation function",
+        "퍼셉트론",
+        "perceptron"
+      ],
+      "discipline": "AI",
+      "tags": [
+        "ml"
+      ],
+      "planned_article": "AI-NN-001"
+    },
+    {
+      "id": "overfitting-validation",
+      "title_ko": "과적합과 교차검증",
+      "title_en": "Overfitting and Cross-Validation",
+      "aliases": [
+        "과적합",
+        "overfitting",
+        "교차검증",
+        "cross-validation",
+        "편향-분산",
+        "bias-variance",
+        "규제",
+        "regularization",
+        "데이터 누수",
+        "data leakage"
+      ],
+      "discipline": "AI",
+      "tags": [
+        "ml"
+      ],
+      "planned_article": "AI-VAL-001"
+    },
+    {
+      "id": "logistic-regression",
+      "title_ko": "로지스틱 회귀",
+      "title_en": "Logistic Regression",
+      "aliases": [
+        "로지스틱 회귀",
+        "logistic regression",
+        "시그모이드",
+        "sigmoid",
+        "오즈",
+        "odds",
+        "로그 손실",
+        "log loss"
+      ],
+      "discipline": "AI",
+      "tags": [
+        "ml"
+      ],
+      "planned_article": "AI-LOGIT-001"
+    },
+    {
+      "id": "anomaly-detection",
+      "title_ko": "이상 탐지",
+      "title_en": "Anomaly Detection",
+      "aliases": [
+        "이상 탐지",
+        "anomaly detection",
+        "이상치",
+        "outlier",
+        "z-score",
+        "IQR",
+        "Isolation Forest"
+      ],
+      "discipline": "AI",
+      "tags": [
+        "ml"
+      ],
+      "planned_article": "AI-ANOM-001"
+    },
+    {
+      "id": "dataframe-pandas",
+      "title_ko": "데이터프레임과 pandas",
+      "title_en": "DataFrames and pandas",
+      "aliases": [
+        "pandas",
+        "판다스",
+        "데이터프레임",
+        "DataFrame",
+        "groupby",
+        "merge"
+      ],
+      "discipline": "DE",
+      "tags": [
+        "data"
+      ],
+      "planned_article": "DE-PANDAS-001"
+    },
+    {
+      "id": "columnar-storage",
+      "title_ko": "컬럼 저장과 Parquet",
+      "title_en": "Columnar Storage and Parquet",
+      "aliases": [
+        "컬럼 저장",
+        "columnar storage",
+        "Parquet",
+        "파케이",
+        "열 지향",
+        "column-oriented",
+        "압축"
+      ],
+      "discipline": "DE",
+      "tags": [
+        "data"
+      ],
+      "planned_article": "DE-COL-001"
+    },
+    {
+      "id": "stream-processing",
+      "title_ko": "스트림 처리와 실시간 파이프라인",
+      "title_en": "Stream Processing",
+      "aliases": [
+        "스트림 처리",
+        "stream processing",
+        "실시간 처리",
+        "윈도 집계",
+        "windowing",
+        "워터마크",
+        "watermark"
+      ],
+      "discipline": "DE",
+      "tags": [
+        "data"
+      ],
+      "planned_article": "DE-STREAM-001"
+    },
+    {
+      "id": "workflow-orchestration",
+      "title_ko": "워크플로 오케스트레이션",
+      "title_en": "Workflow Orchestration",
+      "aliases": [
+        "오케스트레이션",
+        "orchestration",
+        "Airflow",
+        "DAG 스케줄링",
+        "workflow",
+        "백필",
+        "backfill",
+        "워크플로 오케스트레이션"
+      ],
+      "discipline": "DE",
+      "tags": [
+        "data"
+      ],
+      "planned_article": "DE-ORCH-001"
+    },
+    {
+      "id": "linux-shell",
+      "title_ko": "리눅스와 셸 기초",
+      "title_en": "Linux and Shell Basics",
+      "aliases": [
+        "리눅스",
+        "linux",
+        "셸",
+        "shell",
+        "bash",
+        "터미널",
+        "terminal",
+        "파일 권한"
+      ],
+      "discipline": "OPS",
+      "tags": [
+        "infra"
+      ],
+      "planned_article": "OPS-SHELL-001"
+    },
+    {
+      "id": "cloud-basics",
+      "title_ko": "클라우드 컴퓨팅 기초",
+      "title_en": "Cloud Computing Basics",
+      "aliases": [
+        "클라우드",
+        "cloud computing",
+        "IaaS",
+        "PaaS",
+        "서버리스",
+        "serverless",
+        "오토스케일링",
+        "autoscaling"
+      ],
+      "discipline": "OPS",
+      "tags": [
+        "infra"
+      ],
+      "planned_article": "OPS-CLOUD-001"
     }
   ],
   "relations": [
@@ -1973,6 +2303,246 @@
       "from": "decision-trees",
       "to": "rule-engines",
       "type": "prerequisite"
+    },
+    {
+      "from": "math-exp-log",
+      "to": "number-representation",
+      "type": "prerequisite"
+    },
+    {
+      "from": "number-representation",
+      "to": "file-formats-encoding",
+      "type": "related"
+    },
+    {
+      "from": "algorithms-data-structures",
+      "to": "os-memory",
+      "type": "prerequisite"
+    },
+    {
+      "from": "os-memory",
+      "to": "process-thread-concurrency",
+      "type": "related"
+    },
+    {
+      "from": "os-memory",
+      "to": "caching",
+      "type": "related"
+    },
+    {
+      "from": "networking-http",
+      "to": "distributed-consistency",
+      "type": "prerequisite"
+    },
+    {
+      "from": "transactions-acid",
+      "to": "distributed-consistency",
+      "type": "prerequisite"
+    },
+    {
+      "from": "distributed-consistency",
+      "to": "caching",
+      "type": "related"
+    },
+    {
+      "from": "distributed-consistency",
+      "to": "message-queue",
+      "type": "related"
+    },
+    {
+      "from": "math-sigma-notation",
+      "to": "combinatorics",
+      "type": "prerequisite"
+    },
+    {
+      "from": "combinatorics",
+      "to": "probability-basics",
+      "type": "related"
+    },
+    {
+      "from": "stat-descriptive",
+      "to": "correlation-covariance",
+      "type": "prerequisite"
+    },
+    {
+      "from": "correlation-covariance",
+      "to": "linear-regression",
+      "type": "related"
+    },
+    {
+      "from": "correlation-covariance",
+      "to": "causal-inference",
+      "type": "related"
+    },
+    {
+      "from": "statistical-estimation",
+      "to": "resampling-bootstrap",
+      "type": "prerequisite"
+    },
+    {
+      "from": "resampling-bootstrap",
+      "to": "hypothesis-testing",
+      "type": "related"
+    },
+    {
+      "from": "probability-basics",
+      "to": "queueing-theory",
+      "type": "prerequisite"
+    },
+    {
+      "from": "queueing-theory",
+      "to": "message-queue",
+      "type": "related"
+    },
+    {
+      "from": "queueing-theory",
+      "to": "observability",
+      "type": "related"
+    },
+    {
+      "from": "calculus-gradient",
+      "to": "neural-networks",
+      "type": "prerequisite"
+    },
+    {
+      "from": "matrices-linear-maps",
+      "to": "neural-networks",
+      "type": "prerequisite"
+    },
+    {
+      "from": "neural-networks",
+      "to": "llm-transformer",
+      "type": "related"
+    },
+    {
+      "from": "linear-regression",
+      "to": "overfitting-validation",
+      "type": "prerequisite"
+    },
+    {
+      "from": "classification-metrics",
+      "to": "overfitting-validation",
+      "type": "prerequisite"
+    },
+    {
+      "from": "overfitting-validation",
+      "to": "decision-trees",
+      "type": "related"
+    },
+    {
+      "from": "linear-regression",
+      "to": "logistic-regression",
+      "type": "prerequisite"
+    },
+    {
+      "from": "math-exp-log",
+      "to": "logistic-regression",
+      "type": "prerequisite"
+    },
+    {
+      "from": "probability-basics",
+      "to": "logistic-regression",
+      "type": "prerequisite"
+    },
+    {
+      "from": "logistic-regression",
+      "to": "classification-metrics",
+      "type": "related"
+    },
+    {
+      "from": "stat-descriptive",
+      "to": "anomaly-detection",
+      "type": "prerequisite"
+    },
+    {
+      "from": "spc",
+      "to": "anomaly-detection",
+      "type": "prerequisite"
+    },
+    {
+      "from": "anomaly-detection",
+      "to": "clustering",
+      "type": "related"
+    },
+    {
+      "from": "anomaly-detection",
+      "to": "data-quality",
+      "type": "related"
+    },
+    {
+      "from": "sql-basics",
+      "to": "dataframe-pandas",
+      "type": "prerequisite"
+    },
+    {
+      "from": "dataframe-pandas",
+      "to": "data-quality",
+      "type": "related"
+    },
+    {
+      "from": "file-formats-encoding",
+      "to": "columnar-storage",
+      "type": "prerequisite"
+    },
+    {
+      "from": "data-warehouse",
+      "to": "columnar-storage",
+      "type": "prerequisite"
+    },
+    {
+      "from": "message-queue",
+      "to": "stream-processing",
+      "type": "prerequisite"
+    },
+    {
+      "from": "data-pipeline-etl",
+      "to": "stream-processing",
+      "type": "prerequisite"
+    },
+    {
+      "from": "stream-processing",
+      "to": "event-driven",
+      "type": "related"
+    },
+    {
+      "from": "data-pipeline-etl",
+      "to": "workflow-orchestration",
+      "type": "prerequisite"
+    },
+    {
+      "from": "graph-theory",
+      "to": "workflow-orchestration",
+      "type": "prerequisite"
+    },
+    {
+      "from": "workflow-orchestration",
+      "to": "deployment-environments",
+      "type": "related"
+    },
+    {
+      "from": "file-formats-encoding",
+      "to": "linux-shell",
+      "type": "prerequisite"
+    },
+    {
+      "from": "linux-shell",
+      "to": "deployment-environments",
+      "type": "related"
+    },
+    {
+      "from": "networking-http",
+      "to": "cloud-basics",
+      "type": "prerequisite"
+    },
+    {
+      "from": "deployment-environments",
+      "to": "cloud-basics",
+      "type": "prerequisite"
+    },
+    {
+      "from": "cloud-basics",
+      "to": "observability",
+      "type": "related"
     }
   ]
 }
