@@ -9,7 +9,7 @@ const ARTICLES = KB.articles.filter((a) => a.status === 'published');
 const ART = Object.fromEntries(ARTICLES.map((a) => [a.id, a]));
 const CON = Object.fromEntries(KB.concepts.map((c) => [c.id, c]));
 const ART_BY_CONCEPT = {};
-for (const a of ARTICLES) (ART_BY_CONCEPT[a.concept] ||= []).push(a);
+for (const a of ARTICLES) if (a.track !== 'trends') (ART_BY_CONCEPT[a.concept] ||= []).push(a); // 동향 브리프는 개념의 대표 설명집이 아님
 const FIRST_ART = Object.fromEntries(Object.entries(ART_BY_CONCEPT).map(([k, v]) => [k, v[0]]));
 const DISC_ORDER = Object.keys(KB.disciplines);
 const DEPTH = prerequisiteDepth(KB.concepts.map((c) => c.id), KB.relations);
@@ -17,7 +17,19 @@ const ORDER = curriculumOrder(ARTICLES, DEPTH, DISC_ORDER, CON);
 const INDEX = buildSearchIndex(ARTICLES, CON);
 const FOUNDATION_DISC = ['CS', 'MATH', 'STAT', 'OR'];
 const TYPE_KO = { concept: '개념 설명형', judgment: '선택 근거형', applied: '실무 응용형' };
-const TRACK_KO = { foundations: 'Foundations', engineering: 'Engineering' };
+const TRACK_KO = { foundations: 'Foundations', engineering: 'Engineering', trends: '기술 동향' };
+// 기술 동향 브리프: 기준일(as_of)·유효기간(valid_until)이 있는 최신 정보. 유효기간이 지나면 '재확인 필요'
+const BRIEFS = ARTICLES.filter((a) => a.track === 'trends').sort((a, b) => (b.as_of || '').localeCompare(a.as_of || ''));
+const todayYMD = () => new Date().toISOString().slice(0, 10);
+const briefStale = (a) => a.valid_until && todayYMD() > a.valid_until;
+const briefBadge = (a) => `<span class="chip mono">기준일 ${esc(a.as_of)}</span>${briefStale(a) ? `<span class="pill warn" title="유효기간 ${esc(a.valid_until)}이 지났습니다. 내용이 바뀌었을 수 있습니다.">재확인 필요</span>` : `<span class="pill ok">유효 ~${esc(a.valid_until)}</span>`}`;
+function briefCard(a) {
+  return `<article class="card brief-card"><p class="eyebrow mono">${a.id} · 기술 동향</p><h3><a href="#a-${a.id}">${esc(a.title)}</a></h3><div class="chips">${briefBadge(a)}${minutes(a)}</div><div class="prose small">${a.summaryHtml}</div><p class="small muted">이어지는 설명집: ${(a.related_articles || []).filter((id) => ART[id]).map((id) => `<a href="#a-${id}">${esc(ART[id].title)}</a>`).join(', ')}</p></article>`;
+}
+function viewTrends() {
+  return `<header class="page-head"><h1>기술 동향</h1><p class="lede">지금 쓰이는 기술의 변화를 기준일과 함께 정리하고, 그 원리를 설명하는 기초·실무 설명집으로 연결합니다. 유효기간이 지난 브리프는 내용이 바뀌었을 수 있어 '재확인 필요'로 표시합니다.</p></header>
+  ${BRIEFS.length ? `<div class="cards">${BRIEFS.map(briefCard).join('')}</div>` : '<p class="empty">아직 공개된 기술 동향 브리프가 없습니다.</p>'}`;
+}
 const DAYS = ['일', '월', '화', '수', '목', '금', '토'];
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -148,6 +160,7 @@ function viewToday() {
   </header>
   ${(() => { const last = RUNS.find((r) => (r.created || []).length); return last ? `<p class="new-banner">최근 추가 <span class="mono">${esc(String(last.started_at).slice(0, 10))}</span> · ${last.created.filter((id) => ART[id]).map((id) => `<a href="#a-${id}">${esc(ART[id].title)}</a>`).join(', ')}</p>` : ''; })()}
   ${reviewCard()}
+  ${BRIEFS.length ? `<section class="brief-today" aria-label="최신 기술 동향"><h2>최신 기술 동향 <small><a href="#trends">전체 보기</a></small></h2>${briefCard(BRIEFS[0])}</section>` : ''}
   <section class="today-grid" aria-label="오늘의 추천">
     <div class="lane"><h2 class="lane-h">Foundations <small>선행 관계 순서</small></h2>${pick.foundations.map((x) => articleCard(x.article, { reason: x.reason })).join('')}${emptyF}</div>
     <div class="lane"><h2 class="lane-h">Engineering <small>직무·공고 우선순위</small></h2>${pick.engineering.map((x) => articleCard(x.article, { reason: x.reason })).join('')}${emptyE}</div>
@@ -202,8 +215,9 @@ function viewArticle(id) {
     <p class="eyebrow mono">${a.id} · ${TRACK_KO[a.track]} · ${esc(KB.disciplines[c.discipline].en)}</p>
     <h1>${esc(a.title)}</h1>
     <p class="en">${esc(a.title_en)}</p>
-    <div class="chips">${discChip(c.discipline)}<span class="chip">${a.difficulty}</span><span class="chip mono" title="학습 깊이 L1 개념 · L2 원리 · L3 판단 · L4 응용">${a.depth.join('·')}</span>${minutes(a)}<span class="chip mono">v${a.version} · 검증 ${a.verified_at}</span></div>
+    <div class="chips">${discChip(c.discipline)}<span class="chip">${a.difficulty}</span><span class="chip mono" title="학습 깊이 L1 개념 · L2 원리 · L3 판단 · L4 응용">${a.depth.join('·')}</span>${minutes(a)}<span class="chip mono">v${a.version} · 검증 ${a.verified_at}</span>${a.track === 'trends' ? briefBadge(a) : ''}</div>
   </header>
+  ${a.track === 'trends' ? `<section class="brief-links" aria-label="이어지는 설명집"><h2>이 동향을 이해하는 데 필요한 설명집</h2><ul>${(a.related_articles || []).filter((id) => ART[id]).map((id) => `<li><a href="#a-${id}">${esc(ART[id].title)}</a> <span class="mono muted">${id}</span></li>`).join('')}</ul>${briefStale(a) ? '<p class="small"><span class="pill warn">재확인 필요</span> 유효기간이 지난 브리프입니다. 최신 공식 문서에서 다시 확인하세요.</p>' : ''}</section>` : ''}
   <section class="learn-card" aria-label="학습 정보">
     <div><h2>학습 목표</h2><ul>${a.objectives.map((o) => `<li>${esc(o)}</li>`).join('')}</ul></div>
     <div><h2>선행 지식</h2><ul>${(a.prerequisites || []).map((o) => `<li>${esc(o)}</li>`).join('')}</ul><h2>관련 직무</h2><p>${(a.roles || []).map(esc).join(', ')}</p></div>
@@ -344,7 +358,7 @@ function viewLibrary() {
   <form class="filters" id="lib-form" role="search">
     <label class="grow" for="lib-q"><span class="sr-only">검색어</span><input id="lib-q" type="search" placeholder="예: 신뢰구간, cosine, B-Tree, 인덱스" value="${esc(libState.q)}" autocomplete="off"></label>
     <select id="lib-disc" aria-label="학문">${opt('', '모든 학문', libState.disc)}${DISC_ORDER.map((d) => opt(d, KB.disciplines[d].ko, libState.disc)).join('')}</select>
-    <select id="lib-track" aria-label="트랙">${opt('', '모든 트랙', libState.track)}${opt('foundations', 'Foundations', libState.track)}${opt('engineering', 'Engineering', libState.track)}</select>
+    <select id="lib-track" aria-label="트랙">${opt('', '모든 트랙', libState.track)}${opt('foundations', 'Foundations', libState.track)}${opt('engineering', 'Engineering', libState.track)}${opt('trends', '기술 동향', libState.track)}</select>
     <select id="lib-diff" aria-label="난이도">${opt('', '모든 난이도', libState.diff)}${['입문', '중급', '심화'].map((d) => opt(d, d, libState.diff)).join('')}</select>
     <select id="lib-mins" aria-label="읽기 시간">${opt('', '모든 분량', libState.mins)}${opt('15', '15분 이하', libState.mins)}${opt('30', '30분 이하', libState.mins)}</select>
     <select id="lib-role" aria-label="직무">${opt('', '모든 직무', libState.role)}${roleNames.map((r) => opt(r, r, libState.role)).join('')}</select>
@@ -566,9 +580,9 @@ function wirePrefs() {
 /* ---------- 라우팅 ---------- */
 const ROUTES = {
   today: [viewToday], review: [() => { ivState.due = true; return viewInterview(); }, wireInterview], foundations: [viewFoundations], engineering: [viewEngineering], map: [viewMap, wireMap],
-  gap: [viewGap, wireGap], interview: [viewInterview, wireInterview], library: [viewLibrary, wireLibrary], prefs: [viewPrefs, wirePrefs],
+  gap: [viewGap, wireGap], interview: [viewInterview, wireInterview], library: [viewLibrary, wireLibrary], prefs: [viewPrefs, wirePrefs], trends: [viewTrends],
 };
-const TITLES = { review: '오늘의 복습', today: '오늘의 읽기', foundations: 'Foundations', engineering: 'Engineering', map: 'Knowledge Map', gap: 'Skill Gap', interview: 'Interview', library: 'Library', prefs: '학습 설정' };
+const TITLES = { review: '오늘의 복습', today: '오늘의 읽기', foundations: 'Foundations', engineering: 'Engineering', map: 'Knowledge Map', gap: 'Skill Gap', interview: 'Interview', library: 'Library', prefs: '학습 설정', trends: '기술 동향' };
 function route() {
   cleanup();
   const hash = decodeURIComponent(location.hash.slice(1)) || 'today';
@@ -600,7 +614,7 @@ document.addEventListener('keydown', (e) => {
   if (e.key === '/' && !/input|textarea|select/i.test(document.activeElement.tagName)) { e.preventDefault(); location.hash = 'library'; setTimeout(() => $('#lib-q')?.focus(), 30); }
 });
 $('#nav-search').addEventListener('submit', (e) => { e.preventDefault(); libState.q = $('#nav-q').value; if (location.hash === '#library') route(); else location.hash = 'library'; });
-document.querySelectorAll('.nav a[data-count]').forEach((a) => { const k = a.dataset.count; const n = k === 'foundations' ? ARTICLES.filter((x) => x.track === 'foundations').length : k === 'engineering' ? ARTICLES.filter((x) => x.track === 'engineering').length : k === 'interview' ? KB.questions.length : ARTICLES.length; a.querySelector('.count').textContent = n; });
+document.querySelectorAll('.nav a[data-count]').forEach((a) => { const k = a.dataset.count; const n = k === 'foundations' ? ARTICLES.filter((x) => x.track === 'foundations').length : k === 'engineering' ? ARTICLES.filter((x) => x.track === 'engineering').length : k === 'interview' ? KB.questions.length : k === 'trends' ? BRIEFS.length : ARTICLES.length; a.querySelector('.count').textContent = n; });
 $('#skip-link').addEventListener('click', () => main.focus());
 renderStorageBadge();
 route();

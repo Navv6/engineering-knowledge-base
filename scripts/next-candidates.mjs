@@ -13,7 +13,7 @@ import * as core from '../src/core.js';
 const { graph, roles, articles } = loadContent();
 const pub = articles.filter((a) => a.meta.status === 'published');
 const drafts = articles.filter((a) => a.meta.status !== 'published');
-const covered = new Set(pub.map((a) => a.meta.concept));
+const covered = new Set(pub.filter((a) => a.meta.track !== 'trends').map((a) => a.meta.concept)); // 동향 브리프는 개념을 '다룬 것'으로 세지 않음
 const byId = Object.fromEntries(graph.concepts.map((c) => [c.id, c]));
 const ids = graph.concepts.map((c) => c.id);
 const depth = core.prerequisiteDepth(ids, graph.relations);
@@ -47,7 +47,7 @@ const walkUp = (cid, from, seen = new Set()) => {
     walkUp(p, from, seen);
   }
 };
-for (const a of pub) walkUp(a.meta.concept, a.meta.id);
+for (const a of pub.filter((x) => x.meta.track !== 'trends')) walkUp(a.meta.concept, a.meta.id);
 const gaps = Object.keys(dependents)
   .sort((a, b) => (depth[a] - depth[b]) || (dependents[b].size - dependents[a].size) || a.localeCompare(b))
   .map((cid) => describe(byId[cid], { needed_by: [...dependents[cid]].sort() }));

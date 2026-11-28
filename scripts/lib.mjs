@@ -9,18 +9,21 @@ import { parsePlay, buildPlaySource, renderPlayOut, playResultMatches } from '..
 export const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..');
 export const CONTENT = path.join(ROOT, 'content');
 
-export const TRACKS = ['foundations', 'engineering'];
+export const TRACKS = ['foundations', 'engineering', 'trends'];
 export const DIFFICULTIES = ['입문', '중급', '심화'];
 export const DEPTHS = ['L1', 'L2', 'L3', 'L4'];
 export const STATUSES = ['draft', 'review', 'published'];
 export const RELATION_TYPES = ['prerequisite', 'related', 'application'];
 export const VIZ_NAMES = ['bigo', 'vector3d', 'ci', 'btree3d', 'embed3d'];
-export const READING_RANGE = { foundations: [15, 30], engineering: [5, 15] };
+export const READING_RANGE = { foundations: [15, 30], engineering: [5, 15], trends: [5, 15] };
 // 명세 4장의 구조 중 반드시 있어야 하는 핵심 절(나머지는 해당 시 작성)
 export const REQUIRED_SECTIONS = ['한눈에 보기', '핵심 요약', '개념과 등장 배경', '가정·한계', '이해 확인', '선행·후속'];
+// 기술 동향 브리프(track: trends)의 필수 절: 기준일이 있는 최신 정보 + 기초 설명집 연결
+export const REQUIRED_SECTIONS_TRENDS = ['한눈에 보기', '핵심 요약', '무엇이 바뀌었나', '기초 설명집과의 연결', '한계·확인 필요', '이해 확인', '선행·후속'];
 // 절 제목 → 학습 단계. 1 입문(한눈에 보기·선행/후속), 2 기본, 3 심화(그 외)
 export function sectionLevel(title) {
   if (/한눈에 보기|선행·후속/.test(title)) return 1;
+  if (/무엇이 바뀌었나|기초 설명집과의 연결|직접 해보기|한계·확인 필요/.test(title)) return 2;
   if (/핵심 요약|등장 배경|직관|단계별|계산|동작 예제|시각화|실무 사례|프로젝트와의 연결|가정·한계|흔한 오해|관계/.test(title)) return 2;
   return 3;
 }
@@ -275,8 +278,26 @@ export function validateAll({ graph, roles, articles, profile = { projects: [] }
         if (/example\.(com|org)|localhost|lorem/i.test(s.url)) errors.push(`${tag}: 가짜로 보이는 URL ${s.url}`);
       }
     }
-    // 절 구조
-    for (const sec of REQUIRED_SECTIONS) if (!new RegExp(`^## \\d+\\. .*${sec}`, 'm').test(body)) errors.push(`${tag}: 필수 절 누락 "${sec}"`);
+    // 절 구조(동향 브리프는 별도 규칙)
+    const reqSecs = meta.track === 'trends' ? REQUIRED_SECTIONS_TRENDS : REQUIRED_SECTIONS;
+    for (const sec of reqSecs) if (!new RegExp(`^## \\d+\\. .*${sec}`, 'm').test(body)) errors.push(`${tag}: 필수 절 누락 "${sec}"`);
+    if (meta.track === 'trends') {
+      const isDate = (d) => /^\d{4}-\d{2}-\d{2}$/.test(d || '');
+      if (!isDate(meta.as_of)) errors.push(`${tag}: 동향 브리프에 as_of(기준일, YYYY-MM-DD) 필요`);
+      if (!isDate(meta.valid_until)) errors.push(`${tag}: 동향 브리프에 valid_until(유효기간, YYYY-MM-DD) 필요`);
+      if (isDate(meta.as_of) && isDate(meta.valid_until)) {
+        const days = (Date.parse(meta.valid_until) - Date.parse(meta.as_of)) / 86400000;
+        if (days <= 0 || days > 180) errors.push(`${tag}: valid_until은 as_of 이후 180일 이내여야 함(현재 ${days}일)`);
+      }
+      if (!meta.scope) errors.push(`${tag}: 동향 브리프에 scope(주제 이름표) 필요`);
+      const rel = meta.related_articles || [];
+      if (rel.length < 2) errors.push(`${tag}: related_articles(연결할 기초·실무 설명집) 2개 이상 필요`);
+      for (const r of rel) {
+        const target = articles.find((x) => x.meta.id === r);
+        if (!target || target.meta.status !== 'published' || target.meta.track === 'trends') errors.push(`${tag}: related_articles의 ${r}는 공개된 기초·실무 설명집이 아님`);
+      }
+      if (!(meta.sources || []).some((s) => s.url)) errors.push(`${tag}: 동향 브리프는 접속해 확인한 URL 출처가 1개 이상 필요`);
+    }
     // 본문이 참조하는 문서 ID가 실제로 존재(또는 계획)하는지
     for (const ref of body.matchAll(/\b([A-Z]{2,6}-[A-Z]{2,6}-\d{3})\b/g)) {
       if (!knownIds.has(ref[1])) errors.push(`${tag}: 존재하지 않는 문서 ID 참조 ${ref[1]}`);

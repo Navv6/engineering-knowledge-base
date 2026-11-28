@@ -65,7 +65,7 @@ await check('첫 화면(오늘의 읽기) 렌더링, 두 트랙 추천 표시', 
   await shot(page, '01-today');
 });
 
-for (const [hash, h1] of [['foundations', 'Foundations'], ['engineering', 'Engineering'], ['library', 'Library'], ['interview', 'Interview'], ['gap', 'Skill Gap'], ['prefs', '학습 설정'], ['map', 'Knowledge Map']]) {
+for (const [hash, h1] of [['foundations', 'Foundations'], ['engineering', 'Engineering'], ['library', 'Library'], ['interview', 'Interview'], ['gap', 'Skill Gap'], ['prefs', '학습 설정'], ['map', 'Knowledge Map'], ['trends', '기술 동향']]) {
   await check(`화면 이동 #${hash}`, async () => {
     await page.goto(`${BASE}#${hash}`);
     await page.waitForSelector(`h1:has-text("${h1}")`);
@@ -311,6 +311,24 @@ await check('직접 해보기: 기본 결과, 슬라이더 실행, 무한 반복
   assert(!errors.length, errors.join(' | '));
 });
 
+await check('기술 동향: 기준일·유효기간 표시, 설명집 연결, 직접 해보기(NOT IN과 NULL)', async () => {
+  await page.goto(`${BASE}#trends`);
+  await page.waitForSelector('.brief-card');
+  const card = await page.locator('.brief-card').first().textContent();
+  assert(card.includes('기준일'), '기준일 표시 없음');
+  await page.goto(`${BASE}#today`);
+  await page.waitForSelector('.brief-today .brief-card');
+  await page.goto(`${BASE}#a-TREND-DB-001`);
+  const links = await page.$$eval('.brief-links li a', (els) => els.map((e) => e.getAttribute('href')));
+  assert(links.length >= 2 && links.includes('#a-DE-SQL-001'), `연결 설명집 ${links.join(',')}`);
+  const play = page.locator('.play').first();
+  await play.locator('input[data-name="withNull"]').waitFor();
+  assert((await play.locator('.play-result').textContent()).includes('2'), '기본 결과 2 없음');
+  await play.locator('input[data-name="withNull"]').evaluate((el) => { el.value = '1'; el.dispatchEvent(new Event('input', { bubbles: true })); });
+  await page.waitForFunction(() => /:\s*0\b/.test(document.querySelector('.play .play-result')?.textContent || ''), null, { timeout: 5000 });
+  assert(!errors.length, errors.join(' | '));
+});
+
 await check('Interview: 전체 문항 표시, 유형 필터, 답 접힘', async () => {
   await page.goto(`${BASE}#interview`);
   const nQ = await page.evaluate(() => window.__ekb.KB.questions.length);
@@ -346,7 +364,7 @@ await ctx.close();
 
 // 모바일·다크모드·저장소 차단
 const mobile = await newPage(browser, { viewport: { width: 390, height: 844 }, deviceScaleFactor: 1, colorScheme: 'dark', isMobile: true, hasTouch: true });
-for (const hash of ['today', 'library', 'a-AI-RAG-001', 'a-STAT-INF-001', 'map', 'gap', 'prefs', 'interview']) {
+for (const hash of ['today', 'library', 'a-AI-RAG-001', 'a-STAT-INF-001', 'map', 'gap', 'prefs', 'interview', 'trends', 'a-TREND-DB-001']) {
   await check(`모바일 390px 가로 넘침 없음 #${hash}`, async () => {
     await mobile.page.goto(`${BASE}#${hash}`);
     await mobile.page.waitForSelector('main h1');

@@ -336,3 +336,10 @@ section.lv[data-level="1"] h2 { border-top-color: var(--accent); }
 .pb-bar { display: block; height: 100%; background: var(--accent); }
 .pb-v { text-align: right; }
 .prose .play .play-static, .prose .play > pre.code { margin: 0; }
+
+/* 기술 동향 브리프 */
+.brief-links { margin: 12px 0 18px; padding: 12px 14px; border-left: 3px solid var(--pencil); background: var(--surface); border-radius: var(--r); }
+.brief-links h2 { font-size: 1rem; margin: 0 0 6px; }
+.brief-links ul { margin: 0; padding-left: 1.2em; }
+.brief-today { margin: 16px 0; }
+.brief-card .prose { margin: 6px 0; }
